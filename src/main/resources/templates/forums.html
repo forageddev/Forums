@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <div class="heading">
+        Forums
+    </div>
+
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item active">
+            <a href="/forums">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+    </ul>
+
+    <tr th:each="forum : ${forums}">
+        <h2 th:text="${forum.name}"></h2>
+        <div class="card card-forum">
+            <table class="table table-forum table-responsive">
+                <thead>
+                <tr>
+                    <th th:text="${forum.name}"></th>
+                    <th>Posts</th>
+                    <th>Latest Activity</th>
+                </tr>
+                </thead>
+                <colgroup>
+                    <col>
+                    <col width="10%">
+                    <col width="30%">
+                </colgroup>
+                <tbody th:each="subforum : ${forum.categories}">
+                <tr>
+                    <td class="forum-title">
+                        <a th:href="@{'/forums/' + ${subforum.id}}" th:text="${subforum.displayName}"></a>
+                        <div class="meta" th:text="${subforum.description}"></div>
+                    </td>
+                    <td class="forum-stats" th:text="${subforum.getThreads().size()}"></td>
+                    <td class="forum-latest" th:if="${subforum.lastActivity > 0}">
+                        <time th:datetime="${subforum.lastActivity}" data-format="ago" data-toggle="tooltip"></time>
+                    </td>
+                    <td class="forum-latest" th:if="${subforum.lastActivity < 0}">
+                        Never
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </tr>
+    <div class="card card-forum">
+    </div>
+</div>
+</body>
+</html>

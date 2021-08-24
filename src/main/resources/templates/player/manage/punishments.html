@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div class="block" th:fragment="punishments">
+    <button type="button" class="m-2 btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Create a punishment</button>
+
+    <div class="alert alert-danger" th:if="${user.punishments.isEmpty()}">
+        <i class="fas fa-times-circle fa-fw"></i> This player doesn't have any punishments
+    </div>
+
+    <div class="card-body" th:if="${!user.punishments.isEmpty()}">
+        <table class="table">
+            <thead class="table-dark">
+            <tr>
+                <td>Status</td>
+                <td>Type</td>
+                <td>Issued by</td>
+                <td>Reason</td>
+                <td>Created</td>
+                <td>Expires at</td>
+                <td>Edit</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="punishment : ${user.punishments}">
+                <td>
+                    <a href="/grant/53707">
+                        <span class="badge badge-success">Active</span>
+                    </a>
+                </td>
+                <td>
+                    <a th:text="${punishment.type.name()}" style="color: ${grant.rank.color}" href="/grant/53707"></a>
+                </td>
+                <td>
+                    <a th:text="${punishment.issuedBy}" style="color: #ff1940" href="/grant/53707"></a>
+                </td>
+                <td>
+                    <a th:text="${punishment.reason}" style="color: #666" href="/grant/53707"></a>
+                </td>
+                <td><time datetime="1567879782501" data-format="ago" data-toggle="tooltip"></time></td>
+                <td>Never</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
