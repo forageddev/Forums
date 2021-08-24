@@ -3,6 +3,7 @@ package gg.manny.forums.web.controller.api;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import gg.manny.forums.Application;
 import gg.manny.forums.rank.Rank;
 import gg.manny.forums.rank.RankRepository;
@@ -13,6 +14,7 @@ import gg.manny.forums.user.punishment.Punishment;
 import gg.manny.forums.user.punishment.PunishmentType;
 import gg.manny.forums.user.service.UserService;
 import gg.manny.forums.util.MojangUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.bson.json.JsonWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.StringReader;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -51,6 +54,7 @@ public class PlayerRestController {
             playerData.addProperty("username", user.getUsername());
 
             playerData.addProperty("email", user.getEmail());
+            playerData.addProperty("registered", user.isRegistered());
             playerData.addProperty("grants", grants.toString());
             playerData.addProperty("punishments", punishments.toString());
         }
@@ -62,7 +66,7 @@ public class PlayerRestController {
 
     @RequestMapping(value = "/api/v1/players/{id}/save", method = RequestMethod.POST)
     public String saveProfile(@PathVariable UUID id, @RequestBody String d) {
-        JsonObject data = new JsonParser().parse(d).getAsJsonObject().get("data").getAsJsonObject();
+        JsonObject data = new JsonParser().parse(d).getAsJsonObject();
         User user = userRepository.findById(id).orElse(new User());
         boolean error = false;
 
@@ -80,7 +84,12 @@ public class PlayerRestController {
         if (!error) {
             if (data.has("grants")) {
                 user.getGrants().clear();
-                new JsonParser().parse(data.get("grants").getAsString()).getAsJsonArray().forEach(element -> user.getGrants().add(new Grant(element.getAsJsonObject(), rankRepository.findByName(element.getAsJsonObject().get("group").getAsString()))));
+                data.get("grants").getAsJsonArray().forEach(element -> user.getGrants().add(new Grant(element.getAsJsonObject(), rankRepository.findByName(element.getAsJsonObject().get("group").getAsString()))));
+            }
+
+            if (data.has("punishments")) {
+                user.getPunishments().clear();
+                data.get("punishments").getAsJsonArray().forEach(element -> user.getPunishments().add(new Punishment(element.getAsJsonObject())));
             }
         }
 
