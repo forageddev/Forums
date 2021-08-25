@@ -28,6 +28,7 @@
 	--pageBackground: #EFEFEF;
 	--primaryBackground: #FFFFFF;
 	--secondaryBackground: #F5F5F5;
+	--extraBackground: #F9F9F9;
 	--primaryText: rgb(var(--gray800));
 	--secondaryText: rgb(var(--white));
 	--mutedText: rgb(var(--gray500));

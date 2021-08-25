@@ -1,6 +1,7 @@
 package gg.manny.forums.web.controller.api;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -66,7 +67,7 @@ public class PlayerRestController {
 
     @RequestMapping(value = "/api/v1/players/{id}/save", method = RequestMethod.POST)
     public String saveProfile(@PathVariable UUID id, @RequestBody String d) {
-        JsonObject data = new JsonParser().parse(d).getAsJsonObject();
+        JsonObject data = new JsonParser().parse(d).getAsJsonObject().get("data").getAsJsonObject();
         User user = userRepository.findById(id).orElse(new User());
         boolean error = false;
 
@@ -82,18 +83,32 @@ public class PlayerRestController {
         }
 
         if (!error) {
+            if (data.has("online")) {
+                user.setOnline(data.get("online").getAsBoolean());
+            }
+
             if (data.has("grants")) {
                 user.getGrants().clear();
-                data.get("grants").getAsJsonArray().forEach(element -> user.getGrants().add(new Grant(element.getAsJsonObject(), rankRepository.findByName(element.getAsJsonObject().get("group").getAsString()))));
+                for (JsonElement element : new JsonParser().parse(data.get("grants").getAsString()).getAsJsonArray()) {
+                    user.addGrant(
+                            new Grant(
+                                    element.getAsJsonObject(),
+                                    id,
+                                    rankRepository.findByName(element.getAsJsonObject().get("group").getAsString())
+                            )
+                    );
+                }
             }
 
             if (data.has("punishments")) {
                 user.getPunishments().clear();
-                data.get("punishments").getAsJsonArray().forEach(element -> user.getPunishments().add(new Punishment(element.getAsJsonObject())));
-            }
+                for (JsonElement element : new JsonParser().parse(data.get("punishments").getAsString()).getAsJsonArray()) {
+                    user.addPunishment(new Punishment(element.getAsJsonObject()));
+                }}
         }
 
         userService.save(user);
+
 
 
 

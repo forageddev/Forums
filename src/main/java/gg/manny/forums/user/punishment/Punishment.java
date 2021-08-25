@@ -2,9 +2,13 @@ package gg.manny.forums.user.punishment;
 
 import com.google.gson.JsonObject;
 import gg.manny.forums.rank.Rank;
+import gg.manny.forums.rank.RankRepository;
+import gg.manny.forums.user.UserRepository;
+import gg.manny.forums.util.MojangUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 
@@ -12,6 +16,9 @@ import java.util.UUID;
 
 @Getter @Setter @NoArgsConstructor
 public class Punishment {
+
+    @Autowired private RankRepository repository;
+    @Autowired private UserRepository userRepository;
 
     @Id @NonNull private UUID id = UUID.randomUUID();
     private PunishmentType type;
@@ -40,6 +47,38 @@ public class Punishment {
                 setRemovedBy(UUID.fromString(object.get("removedBy").getAsString()));
             if (!object.get("removedAt").isJsonNull()) setRemovedAt(object.get("removedAt").getAsLong());
             if (!object.get("removedReason").isJsonNull()) setRemovalReason(object.get("removedReason").getAsString());
+        }
+    }
+
+    public String getIssuedByName() {
+        try {
+            return MojangUtils.fetchName(issuedBy);
+        } catch (Exception x) {
+            return "Console";
+        }
+    }
+
+    public String getIssuedByStyles() {
+        try {
+            return userRepository.findById(issuedBy).orElse(null).getRankColor();
+        } catch (Exception x) {
+            return "text-danger";
+        }
+    }
+
+    public String getRemovedByName() {
+        try {
+            return MojangUtils.fetchName(removedBy);
+        } catch (Exception x) {
+            return "Console";
+        }
+    }
+
+    public String getRemovedByStyles() {
+        try {
+            return userRepository.findById(removedBy).orElse(null).getRankColor();
+        } catch (Exception x) {
+            return "text-danger";
         }
     }
 

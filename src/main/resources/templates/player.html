@@ -29,9 +29,7 @@
                     <div class="player-username">
                         <strong class="player-username" th:text="${user.username}"></strong>
                     </div>
-                    <div class="player-rank" style="color: darkred">
-                        Trial Owner
-                    </div>
+                    <div class="player-rank" style="color:" th:styleappend="${user.getRankColor()}" th:text="${user.getPrimaryGrant().getRankId()}"></div>
                 </div>
             </div>
         </div>

@@ -33,8 +33,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(name);
     }
 
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     /**
@@ -46,6 +46,8 @@ public class UserService implements UserDetailsService {
         UUID uniqueId = MojangUtils.fetchUUID(user.getUsername());
         if (uniqueId == null) throw new RuntimeException("Error finding uniqueId");
 
+        User existingUser = userRepository.findById(uniqueId).orElse(null);
+
         user.setId(uniqueId);
         user.setDateJoined(new Date(System.currentTimeMillis()));
         user.setDateLastSeen(new Date(System.currentTimeMillis()));
@@ -53,6 +55,11 @@ public class UserService implements UserDetailsService {
         user.setPassword(encoder.encode(user.getPassword()));
 
         user.setRegistered(true); // todo add confirmations by email
+
+        if (existingUser != null) {
+            user.getGrants().addAll(existingUser.getGrants());
+            user.getPunishments().addAll(existingUser.getPunishments());
+        }
 
         userRepository.save(user);
     }

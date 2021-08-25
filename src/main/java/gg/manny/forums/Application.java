@@ -72,6 +72,16 @@ public class Application {
                 adminRole.addPermission("permission.dashboard");
                 roleRepository.save(adminRole);
             }
+
+            if (!roleRepository.findById("owner").isPresent()) {
+                Rank adminRole = new Rank();
+                adminRole.setId("owner");
+                adminRole.setName("Owner");
+                adminRole.setColor("darkred");
+                adminRole.setWeight(Integer.MAX_VALUE);
+                adminRole.addPermission("permission.dashboard");
+                roleRepository.save(adminRole);
+            }
         };
 
     }

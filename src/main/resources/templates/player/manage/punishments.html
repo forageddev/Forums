@@ -11,39 +11,39 @@
     </div>
 
     <div class="card-body" th:if="${!user.punishments.isEmpty()}">
-        <table class="table">
-            <thead class="table-dark">
-            <tr>
-                <td>Status</td>
-                <td>Type</td>
-                <td>Issued by</td>
-                <td>Reason</td>
-                <td>Created</td>
-                <td>Expires at</td>
-                <td>Edit</td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="punishment : ${user.punishments}">
-                <td>
-                    <a href="/grant/53707">
-                        <span class="badge badge-success">Active</span>
-                    </a>
-                </td>
-                <td>
-                    <a th:text="${punishment.type.name()}" style="color: ${grant.rank.color}" href="/grant/53707"></a>
-                </td>
-                <td>
-                    <a th:text="${punishment.issuedBy}" style="color: #ff1940" href="/grant/53707"></a>
-                </td>
-                <td>
-                    <a th:text="${punishment.reason}" style="color: #666" href="/grant/53707"></a>
-                </td>
-                <td><time datetime="1567879782501" data-format="ago" data-toggle="tooltip"></time></td>
-                <td>Never</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="card p-1" style="background: var(--extraBackground)" th:each="punishment : ${user.punishments}">
+            <div class="container d-flex d-inline d-block p-2" th:if="${punishment.isActive()}">
+                &zwnj;<img height="16" th:if="${punishment.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${punishment.issuedBy.toString()} + '?size=16?overlay'}">
+                <img height="16" th:if="${punishment.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+
+                &zwnj; <p style="margin-bottom: 0" th:class="${punishment.getIssuedByStyles()}" th:text="${punishment.getIssuedByName()}"></p>
+
+                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getType().getAction()}"></p>
+
+                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
+                <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
+
+                &zwnj; for
+
+                &zwnj; <p style="margin-bottom: 0" th:text="${punishment.reason}"></p>
+            </div>
+
+            <strike class="container d-flex d-inline d-block p-2" th:if="${!punishment.isActive()}">
+                &zwnj; &zwnj;<img height="16" th:if="${punishment.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${punishment.issuedBy.toString()} + '?size=16?overlay'}">
+                <img height="16" th:if="${punishment.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+
+                &zwnj; <p style="margin-bottom: 0" th:class="${punishment.getIssuedByStyles()}" th:text="${punishment.getIssuedByName()}"></p>
+
+                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getType().getAction()}"></p>
+
+                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
+                <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
+
+                &zwnj; for
+
+                &zwnj; <p style="margin-bottom: 0" th:text="${punishment.reason}"></p>
+            </strike>
+        </div>
     </div>
 </div>
 </body>
