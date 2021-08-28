@@ -13,6 +13,8 @@ public interface UserRepository extends MongoRepository<User, UUID> {
 
     User findByUsername(String username);
 
+    User findByUsernameIgnoreCase(String username);
+
     User findByEmail(String email);
 
     List<User> findByUsernameIgnoreCaseStartingWith(String username, Pageable pageable);
