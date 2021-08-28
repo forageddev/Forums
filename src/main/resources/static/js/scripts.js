@@ -146,10 +146,9 @@ $('#input-searchPlayer').keyup(function() {
 				}
 			}
 
-			dropdownItems += '<div class="container d-flex"><img src="https://crafatar.com/avatars/392b3a27-d17f-4a02-be8a-2302726946c1?size=24&overlay"</img>' + '<a class="dropdown-item" href="/player/' + item + '">' +
-				username + '</a></div>';
 
-
+                dropdownItems += '<div class="container d-flex"><a class="dropdown-item" href="/player/' + item + '">' +
+                                                username + '</a></div>';
 		});
 
 		if (suggestions.length == 1) {
