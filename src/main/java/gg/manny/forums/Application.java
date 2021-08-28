@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.manny.forums.rank.Rank;
 import gg.manny.forums.rank.RankRepository;
+import gg.manny.forums.web.controller.StaffController;
 import lombok.Getter;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -14,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Arrays;
 import java.util.Random;
 
 @Getter
@@ -53,34 +55,14 @@ public class Application {
     CommandLineRunner init(RankRepository roleRepository) {
 
         return args -> {
-
             if (!roleRepository.findById("default").isPresent()) {
-                Rank userRole = new Rank();
-                userRole.setId("default");
-                userRole.setName("Default");
-                userRole.setColor("#ffff");
-                userRole.setWeight(-1);
-                roleRepository.save(userRole);
-            }
-
-            if (!roleRepository.findById("admin").isPresent()) {
-                Rank adminRole = new Rank();
-                adminRole.setId("admin");
-                adminRole.setName("Admin");
-                adminRole.setColor("#4444");
-                adminRole.setWeight(Integer.MAX_VALUE);
-                adminRole.addPermission("permission.dashboard");
-                roleRepository.save(adminRole);
-            }
-
-            if (!roleRepository.findById("owner").isPresent()) {
-                Rank adminRole = new Rank();
-                adminRole.setId("owner");
-                adminRole.setName("Owner");
-                adminRole.setColor("darkred");
-                adminRole.setWeight(Integer.MAX_VALUE);
-                adminRole.addPermission("permission.dashboard");
-                roleRepository.save(adminRole);
+                Rank role = new Rank();
+                role.setId("default");
+                role.setName("Default");
+                role.setColor("&f");
+                role.setForumColor("#ffff");
+                role.setWeight(0);
+                roleRepository.save(role);
             }
         };
 
