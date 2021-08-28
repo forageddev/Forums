@@ -11,47 +11,58 @@
     </div>
 
     <div class="card-body" th:if="${!user.grants.isEmpty()}">
-        <div class="card p-1" style="background: var(--extraBackground)" th:each="grant : ${user.grants}">
-            <div class="container d-flex d-inline d-block p-2" th:if="${grant.isActive()}">
-                &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
-                <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+        <a class="card p-1" style="background: var(--extraBackground)" th:each="grant : ${user.grants}" th:href="@{'#collapseGrant-' + ${grant.id.toString().split('-')[0]}}" data-toggle="collapse" aria-controls="collapseBan">
+            <div class="container-fluid">
+                <div class="container d-flex d-inline d-block p-2" th:if="${grant.isActive()}">
+                    &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
+                    <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
 
-                &zwnj; <p style="margin-bottom: 0" th:class="${grant.getIssuedByStyles()}" th:text="${grant.getIssuedByName()}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:class="${grant.getIssuedByStyles()}" th:text="${grant.getIssuedByName()}"></p>
 
-                &zwnj; granted
+                    &zwnj; granted
 
-                &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
-                 <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
+                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
+                    <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
 
-                &zwnj; the
+                    &zwnj; the
 
-                &zwnj; <p style="margin-bottom: 0" th:text="${grant.rankId}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rankId}"></p>
 
-                &zwnj; rank for
+                    &zwnj; rank for
 
-                &zwnj; <p style="margin-bottom: 0" th:text="${grant.reason}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.reason}"></p>
+                </div>
+
+                <strike class="container d-flex d-inline d-block p-2" th:if="${!grant.isActive()}">
+                    &zwnj; &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
+                    <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+
+                    &zwnj; <p style="margin-bottom: 0" th:class="${grant.getIssuedByStyles()}" th:text="${grant.getIssuedByName()}"></p>
+
+                    &zwnj; granted
+
+                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
+                    <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
+
+                    &zwnj; the
+
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rankId}"></p>
+
+                    &zwnj; rank for
+
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.reason}"></p>
+                </strike>
             </div>
 
-            <strike class="container d-flex d-inline d-block p-2" th:if="${!grant.isActive()}">
-                &zwnj; &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
-                <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+            <div class="container collapse ml-3 mr-3" th:id="@{'collapseGrant-' + ${grant.id.toString().split('-')[0]}}">
+                <strong>Issuer:</strong>
+                <span style="margin-bottom: 0;" th:styleappend="@{'color: ' + ${grant.getIssuedByStyles()}}" th:text="${grant.getIssuedByName()}"></span>
+                <br>
+                <strong>Reason:</strong>
+                <span style="margin-bottom: 0;" th:text="${grant.getReason()}"></span>
 
-                &zwnj; <p style="margin-bottom: 0" th:class="${grant.getIssuedByStyles()}" th:text="${grant.getIssuedByName()}"></p>
-
-                &zwnj; granted
-
-                &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
-                <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
-
-                &zwnj; the
-
-                &zwnj; <p style="margin-bottom: 0" th:text="${grant.rankId}"></p>
-
-                &zwnj; rank for
-
-                &zwnj; <p style="margin-bottom: 0" th:text="${grant.reason}"></p>
-            </strike>
-        </div>
+            </div>
+        </a>
     </div>
 </div>
 </body>
