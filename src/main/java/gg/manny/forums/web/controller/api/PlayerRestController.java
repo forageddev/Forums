@@ -77,7 +77,7 @@ public class PlayerRestController {
 
     @RequestMapping(value = "/api/v1/player/save", method = RequestMethod.POST)
     public String saveProfile(HttpServletRequest request) {
-        JsonObject data = new JsonParser().parse(request.getParameter("data")).getAsJsonObject().get("data").getAsJsonObject();
+        JsonObject data = new JsonParser().parse(request.getParameter("data")).getAsJsonObject();
         UUID id = UUID.fromString(data.get("id").getAsString());
         User user = userRepository.findById(id).orElse(new User());
         boolean error = false;
@@ -103,7 +103,7 @@ public class PlayerRestController {
                         new Grant(
                             element.getAsJsonObject(),
                             id,
-                            rankRepository.findByName(element.getAsJsonObject().get("group").getAsString())
+                            rankRepository.findByName(element.getAsJsonObject().get("rank").getAsString())
                         )
                     );
                 }
@@ -117,7 +117,6 @@ public class PlayerRestController {
         }
 
         userService.save(user);
-
 
         JsonObject response = new JsonObject();
         response.addProperty("success", !error);

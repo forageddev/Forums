@@ -7,6 +7,7 @@ import gg.manny.forums.util.CC;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -121,6 +122,7 @@ public class Rank implements Comparable<Rank> {
         object.addProperty("color", color);
         object.addProperty("forumColor", forumColor);
         object.addProperty("weight", weight);
+        object.addProperty("permissions", JSONArray.toJSONString(permissions));
         return object;
     }
 }
