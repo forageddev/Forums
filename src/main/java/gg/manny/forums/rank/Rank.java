@@ -1,5 +1,9 @@
 package gg.manny.forums.rank;
 
+import com.google.gson.JsonObject;
+import gg.manny.forums.user.User;
+import gg.manny.forums.user.UserRepository;
+import gg.manny.forums.util.CC;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Document(collection = "roles")
@@ -30,8 +35,11 @@ public class Rank implements Comparable<Rank> {
     /** Returns the prefix of a role */
     @Setter private String prefix = "";
 
+    /** Returns the color of a role, it uses chatcolor for bukkit */
+    @Setter private String color = "&f";
+
     /** Returns the color of a role, it uses hex color codes otherwise will return without a colour */
-    @Setter private String color = "#ffff";
+    @Setter private String forumColor = "#ffff";
 
     /** Returns the weight of a role, this sorts roles into hierarchy order */
     @Setter private int weight = -1;
@@ -53,7 +61,7 @@ public class Rank implements Comparable<Rank> {
      * @return Coloured display name
      */
     public String getDisplayName() {
-        return color + name;
+        return getColor() + name;
     }
 
     /**
@@ -97,5 +105,22 @@ public class Rank implements Comparable<Rank> {
     @Override
     public int compareTo(Rank role) {
         return role.getWeight() - this.getWeight();
+    }
+
+    public List<User> getUsersWithRank(UserRepository repository) {
+        List<User> users = repository.findAll();
+        users.removeIf(user -> !user.getPrimaryGrant().getRankId().equalsIgnoreCase(id));
+        return users;
+    }
+
+    public JsonObject toJson() {
+        JsonObject object = new JsonObject();
+        object.addProperty("id", id);
+        object.addProperty("name", name);
+        object.addProperty("prefix", prefix);
+        object.addProperty("color", color);
+        object.addProperty("forumColor", forumColor);
+        object.addProperty("weight", weight);
+        return object;
     }
 }
