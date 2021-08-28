@@ -52,6 +52,7 @@ public class ForumController {
     public ModelAndView home() {
         ModelAndView modelAndView = new ModelAndView("forums");
         modelAndView.addObject("forums", forumRepository.findAll());
+        System.out.println("error with model and view");
         return modelAndView;
     }
 
