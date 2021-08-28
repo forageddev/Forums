@@ -28,7 +28,7 @@ public class Punishment {
     private UUID issuedBy;
     private long issuedAt = System.currentTimeMillis();
 
-    private Long duration, expiresAt;
+    private Long duration;
 
     private String removalReason;
     private UUID removedBy;
@@ -37,9 +37,9 @@ public class Punishment {
     public Punishment(JsonObject object) {
         this.id = UUID.fromString(object.get("uniqueId").getAsString());
         this.type = PunishmentType.valueOf(object.get("type").getAsString());
-        this.issuedBy = object.get("addedBy").isJsonNull() ? null : UUID.fromString(object.get("addedBy").getAsString());
-        this.issuedAt = object.get("addedAt").getAsLong();
-        this.reason = object.get("addedReason").getAsString();
+        this.issuedBy = object.get("issuedBy").isJsonNull() ? null : UUID.fromString(object.get("issuedBy").getAsString());
+        this.issuedAt = object.get("issuedAt").getAsLong();
+        this.reason = object.get("reason").getAsString();
         this.duration = object.get("duration").getAsLong();
 
         if (!isActive()) {
@@ -84,8 +84,8 @@ public class Punishment {
 
     public boolean isActive() {
         if (removedAt == null) {
-            if (expiresAt != null) {
-                if (System.currentTimeMillis() >= expiresAt) {
+            if (duration != null && duration != Long.MAX_VALUE) {
+                if (System.currentTimeMillis() >= (issuedAt + duration)) {
                     return false;
                 }
             }
@@ -94,18 +94,21 @@ public class Punishment {
         return false;
     }
 
+
     public JsonObject toJson() {
         JsonObject object = new JsonObject();
         object.addProperty("uniqueId", getId().toString());
         object.addProperty("type", getType().name());
-        object.addProperty("addedBy", getIssuedBy() == null ? null : getIssuedBy().toString());
-        object.addProperty("addedAt", getIssuedAt());
-        object.addProperty("addedReason", getReason());
+        object.addProperty("issuedBy", getIssuedBy() == null ? null : getIssuedBy().toString());
+        object.addProperty("issuedAt", getIssuedAt());
+        object.addProperty("reason", getReason());
         object.addProperty("duration", getDuration());
-        object.addProperty("removedBy", getRemovedBy() == null ? null : getRemovedBy().toString());
-        object.addProperty("removedAt", getRemovedAt());
-        object.addProperty("removedReason", getRemovalReason());
-        object.addProperty("removed", !isActive());
+        if (!isActive()) {
+            object.addProperty("removedBy", getRemovedBy() == null ? null : getRemovedBy().toString());
+            object.addProperty("removedAt", getRemovedAt());
+            object.addProperty("removedReason", getRemovalReason());
+            object.addProperty("removed", !isActive());
+        }
         return object;
     }
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <div class="heading">
+        Staff
+    </div>
+
+    <div class="row">
+        <div class="col-md-9">
+            <div class="staff-members">
+                <tr th:each="rank : ${ranks}">
+
+                    <div class="staff-member-group" th:id="${rank.id}">
+
+                        <ta th:each="user : ${rank.getUsersWithRank(controller)}">
+                            <a th:href="@{'/player/' + ${user.username.toLowerCase()}}" class="staff-member">
+                                <img class="staff-head" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?scale=3&amp;overlay'}">
+
+                                <h1 th:text="${user.username}"></h1>
+                                <h2 th:style="@{'color:' + ${user.getRankColor()}}" th:text="${user.getPrimaryGrant().getRankId()}"></h2>
+                            </a>
+                        </ta>
+                    </div>
+                </tr>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div id="jump-toolbar">
+                <div class="header">Jump To</div>
+                <div id="ranks">
+                    <div th:each="rank : ${ranks}">
+                        <a th:id="@{${rank.id} + '-button'}" th:href="@{'#' + ${rank.id}}" th:style="@{'background-color:' + ${rank.getForumColor()} + '; color: white;'}" class="rank" th:text="${rank.name}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
