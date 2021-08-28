@@ -30,7 +30,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User findUserByName(String name) {
-        return userRepository.findByUsername(name);
+        return userRepository.findByUsernameIgnoreCase(name);
     }
 
     public User save(User user) {
