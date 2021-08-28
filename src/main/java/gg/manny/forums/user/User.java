@@ -83,13 +83,21 @@ public class User {
     }
 
     public Grant getPrimaryGrant() {
-        getGrants().forEach(grant -> System.out.println(grant.getRankId()));
         for (Grant grant : getGrants()) {
             if (grant.isActive()) {
                 return grant;
             }
         }
-        return null;
+        Grant grant = new Grant();
+        grant.setRankId("Default");
+        return grant;
+    }
+
+    public boolean hasPermission(String permission) {
+        Rank rank = repository.findById(getPrimaryGrant().getRankId()).orElse(null);
+        if (rank == null) return false;
+        return rank.hasPermission(permission);
+
     }
 
     public String getLastServer() {
