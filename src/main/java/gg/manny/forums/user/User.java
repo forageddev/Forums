@@ -6,6 +6,7 @@ import gg.manny.forums.rank.Rank;
 import gg.manny.forums.rank.RankRepository;
 import gg.manny.forums.user.grant.Grant;
 import gg.manny.forums.user.punishment.Punishment;
+import gg.manny.forums.user.punishment.PunishmentType;
 import gg.manny.forums.util.CC;
 import lombok.Getter;
 import lombok.NonNull;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.parameters.P;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,6 +72,17 @@ public class User {
         punishments.add(punishment);
     }
 
+    public boolean hasActivePunishment(PunishmentType type) {
+        return getActivePunishment(type) != null;
+    }
+
+    public Punishment getActivePunishment(PunishmentType type) {
+        for (Punishment punishment : punishments) {
+            if (punishment.isActive() && punishment.getType().equals(type)) return punishment;
+        }
+        return null;
+    }
+
     // Todo get their active role -- or default when not active
     // todo add their active grant and prevent inactive (temporarily ones) from being active
     public List<Grant> getActiveGrants() {
@@ -83,7 +96,7 @@ public class User {
     }
 
     public Grant getPrimaryGrant() {
-        for (Grant grant : getGrants()) {
+        for (Grant grant : getActiveGrants()) {
             if (grant.isActive()) {
                 return grant;
             }

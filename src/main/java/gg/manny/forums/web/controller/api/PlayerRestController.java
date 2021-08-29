@@ -10,6 +10,7 @@ import gg.manny.forums.user.User;
 import gg.manny.forums.user.UserRepository;
 import gg.manny.forums.user.grant.Grant;
 import gg.manny.forums.user.punishment.Punishment;
+import gg.manny.forums.user.punishment.PunishmentType;
 import gg.manny.forums.user.service.UserService;
 import gg.manny.forums.util.MojangUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ public class PlayerRestController {
             }
         }
 
+
         data.addProperty("success", user != null);
 
         JsonObject playerData = new JsonObject();
@@ -70,9 +72,72 @@ public class PlayerRestController {
             playerData.addProperty("punishments", punishments.toString());
         }
 
-
         data.add("player", playerData);
         return Application.GSON.toJson(data);
+    }
+
+    @RequestMapping(value = "/api/v1/player/punish", method = RequestMethod.POST)
+    public String punishProfile(HttpServletRequest request) {
+        JsonObject response = new JsonObject();
+        JsonObject data = new JsonParser().parse(request.getParameter("punishment")).getAsJsonObject();
+        UUID id = UUID.fromString(request.getParameter("target"));
+        User user = userRepository.findById(id).orElse(new User());
+        boolean error = false;
+
+        if (user.getId() == null) {
+            try {
+                user.setId(id);
+                user.setUsername(MojangUtils.fetchName(id));
+                user.setDateJoined(new Date(System.currentTimeMillis()));
+                user.setDateLastSeen(new Date(System.currentTimeMillis()));
+            } catch (Exception e) {
+                error = true;
+                response.addProperty("status", "unable-to-create");
+            }
+        }
+
+        if (!error) {
+            if (Boolean.parseBoolean(request.getParameter("undo"))) {
+                PunishmentType type = PunishmentType.valueOf(data.get("type").getAsString());
+                UUID remover = UUID.fromString(data.get("removedBy").getAsString());
+                String reason = data.get("removalReason").getAsString();
+
+                if (user.hasActivePunishment(type)) {
+                    Punishment punishment = user.getActivePunishment(type);
+
+                    punishment.setRemovedBy(remover);
+                    punishment.setRemovedAt(System.currentTimeMillis());
+                    punishment.setRemovalReason(reason);
+                    response.addProperty("status", "success");
+                } else {
+                    response.addProperty("status", "not-found");
+                }
+            } else {
+                user.addPunishment(new Punishment(data.getAsJsonObject()));
+                response.addProperty("status", "success");
+            }
+
+            userService.save(user);
+        }
+
+
+        response.addProperty("success", !error);
+        return Application.GSON.toJson(response);
+    }
+
+    @RequestMapping(value = "/api/v1/player/status", method = RequestMethod.POST)
+    public String updateStatus(HttpServletRequest request) {
+        UUID id = UUID.fromString(request.getParameter("id"));
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            user.setOnline(Boolean.parseBoolean(request.getParameter("status")));
+            userService.save(user);
+        }
+
+
+        JsonObject response = new JsonObject();
+        response.addProperty("success", user != null);
+        return Application.GSON.toJson(response);
     }
 
     @RequestMapping(value = "/api/v1/player/save", method = RequestMethod.POST)

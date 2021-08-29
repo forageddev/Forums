@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <div class="heading">
+        Leaderboards
+    </div>
+
+    <div class="row">
+        <th th:each="user : ${users}">
+            <div class="col-md-3">
+                <div class="leaderboard text-center">
+                    <div class="header">
+                        Global
+                    </div>
+                    <div class="leaderboard-content">
+                        <top class="leaderboard-sub-heading mt-2">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h2 class="text-center">Rank</h2>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h2 class="text-center">User</h2>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h2 class="text-center">Value</h2>
+                                </div>
+                            </div>
+                        </top>
+
+                        <pos class="leaderboard-position" th:each="pos : ${new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }}">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h2 class="text-center pos" th:text="${pos}"></h2>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <a th:href="@{'/player/' + ${user.username}}" class="text-center">
+                                        <img class="staff-head" th:src="@{'https://crafatar.com/avatars/' + ${user.id.toString()} + '?size=24&overlay'}">
+                                        <h2 class="text-center ml-1" th:text="${user.username}"></h2>
+                                    </a>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <h2 class="text-center" th:text="1000"></h2>
+                                </div>
+                            </div>
+                        </pos>
+                    </div>
+                </div>
+            </div>
+        </th>
+    </div>
+</div>
+</body>
+</html>

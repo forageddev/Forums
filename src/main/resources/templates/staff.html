@@ -8,7 +8,7 @@
         Staff
     </div>
 
-    <div class="row">
+    <div class="row staff-row">
         <div class="col-md-9">
             <div class="staff-members">
                 <tr th:each="rank : ${ranks}">
@@ -16,8 +16,8 @@
                     <div class="staff-member-group" th:id="${rank.id}">
 
                         <ta th:each="user : ${rank.getUsersWithRank(controller)}">
-                            <a th:href="@{'/player/' + ${user.username.toLowerCase()}}" class="staff-member">
-                                <img class="staff-head" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?scale=3&amp;overlay'}">
+                            <a th:href="@{'/player/' + ${user.username}}" class="staff-member">
+                                <img class="staff-head ml-5 mr-5" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?scale=3&overlay'}">
 
                                 <h1 th:text="${user.username}"></h1>
                                 <h2 th:style="@{'color:' + ${user.getRankColor()}}" th:text="${user.getPrimaryGrant().getRankId()}"></h2>
