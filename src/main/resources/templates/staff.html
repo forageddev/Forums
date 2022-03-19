@@ -4,38 +4,31 @@
 <body>
 
 <div layout:fragment="content">
-    <div class="heading">
-        Staff
+    <div class="heading" th:text="${#httpServletRequest.requestURI.replace('/', '')}">
+
     </div>
 
     <div class="row staff-row">
-        <div class="col-md-9">
-            <div class="staff-members">
-                <tr th:each="rank : ${ranks}">
+        <div class="col-md-12 staff-members">
+            <tr th:each="entry, stat : ${data}">
 
-                    <div class="staff-member-group" th:id="${rank.id}">
+                <div th:style="@{'background-color:' + ${entry.key.getForumColor()} + '; color: white;'}" class="rank" th:text="${entry.key.name}">
 
-                        <ta th:each="user : ${rank.getUsersWithRank(controller)}">
-                            <a th:href="@{'/player/' + ${user.username}}" class="staff-member">
-                                <img class="staff-head ml-5 mr-5" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?scale=3&overlay'}">
-
-                                <h1 th:text="${user.username}"></h1>
-                                <h2 th:style="@{'color:' + ${user.getRankColor()}}" th:text="${user.getPrimaryGrant().getRankId()}"></h2>
-                            </a>
-                        </ta>
-                    </div>
-                </tr>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div id="jump-toolbar">
-                <div class="header">Jump To</div>
-                <div id="ranks">
-                    <div th:each="rank : ${ranks}">
-                        <a th:id="@{${rank.id} + '-button'}" th:href="@{'#' + ${rank.id}}" th:style="@{'background-color:' + ${rank.getForumColor()} + '; color: white;'}" class="rank" th:text="${rank.name}"></a>
-                    </div>
                 </div>
-            </div>
+
+                <div class="staff-member-group" th:id="${entry.key.id}">
+
+                    <ta th:each="user : ${entry.value}">
+                        <a th:href="@{'/player/' + ${user.username}}" class="staff-member">
+                            <div class="staff-head text-center ml-5 mr-5">
+                                <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.id.toString()} + '?overlay'}">
+                            </div>
+
+                            <h1 th:style="@{'color:' + ${user.getRankColor()}}" th:text="${user.username}"></h1>
+                        </a>
+                    </ta>
+                </div>
+            </tr>
         </div>
     </div>
 </div>

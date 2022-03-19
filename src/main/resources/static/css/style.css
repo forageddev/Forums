@@ -1,8 +1,3 @@
-/*	===================
-	THE CRAFT (Stylesheet)
-	By Xemah
-	=================== */
-
 /*	FONT IMPORT
 	=================== */
 
@@ -25,14 +20,14 @@
 	=================== */
 
 :root {
-	--pageBackground: #EFEFEF;
-	--primaryBackground: #FFFFFF;
-	--secondaryBackground: #F5F5F5;
-	--extraBackground: #F9F9F9;
-	--primaryText: rgb(var(--gray800));
+	--pageBackground: #212121;
+	--primaryBackground: #232323;
+	--secondaryBackground: #252525;
+	--extraBackground: #2C2D2B;
+	--primaryText: rgb(var(--gray500));
 	--secondaryText: rgb(var(--white));
 	--mutedText: rgb(var(--gray500));
-	--navbarBackground: #fff;
+	--navbarBackground: #1B1B1B;
 	--white: 255, 255, 255;
 	--gray100: 245, 245, 245;
 	--gray200: 238, 238, 238;
@@ -47,8 +42,8 @@
 	--weightRegular: 500;
 	--weightMedium: 600;
 	--weightBold: 700;
-	--primary: 221, 194, 89;
-	--primaryLighter: 219, 199, 70;
+	--primary: 50, 91, 255;
+	--primaryLighter: 50, 91, 230;
 	--transitionColor: color 0.2s ease;
 	--transitionBackground: background 0.2s ease;
 	--transitionOpacity: opacity 0.15s ease;
@@ -138,7 +133,7 @@ body {
 }
 
 .navbar .nav-item.active .nav-link {
-	color: rgb(var(--primary));
+	color: rgb(var(--white));
 	font-weight: var(--weightBold);
 }
 
@@ -160,6 +155,8 @@ body {
 	height: 22px;
 	width: 22px;
 	margin-right: 1rem;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
@@ -169,7 +166,9 @@ body {
 		padding: 0.5rem 1.5rem;
 		color: rgb(var(--white));
 		font-size: 0.75rem;
-		border-radius: 5rem;
+
+	border-color: var(--pageBackground);
+	border-radius: 5rem;
 		transition: var(--transitionOpacity);
 	}
 	.navbar .nav-item.store-item .nav-link:hover {
@@ -215,25 +214,20 @@ body {
     min-width: 100%;
 }
 
-.staff-head img {
-    display: block;
-    width: 125%;
-    height: 125%;
-    text-align: left;
-    margin-left: -8px;
-}
 .staff-head {
-    transform: scale(0.9) translateX(5%) translateY(5%);
-    text-align: center;
-}
+	height: 125px;
+	width: 125px;
+	margin: 0 auto 0.5rem;
 
-.staff-head-border {
-    background-color: white;
+	border-radius: 50%;
+	overflow: hidden;
 }
 
 .staff-head img {
-    display: block;
-    text-align: left;
+	height: 150px;
+
+	padding: 2px;
+	margin: 10px 0;
 }
 
 .staff-member {
@@ -242,8 +236,10 @@ body {
     min-width: calc(25% - 15px);
     margin-bottom: 15px;
     margin-right: 15px;
-    background-color: #fafafa;
-    border-radius: 6px;
+    background-color: #232323;
+
+	border-color: var(--pageBackground);
+	border-radius: 6px;
     padding: 15px;
     display: flex;
     justify-content: center;
@@ -255,46 +251,12 @@ body {
 .staff-member h1 {
     margin: 0;
     margin-top: 5px;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: 1px;
-    text-indent: 1px;
-    color: #181818;
-}
-
-.staff-member h2 {
-    margin: 0;
-    margin-top: 5px;
-    font-size: 11px;
-    font-weight: 1000;
-    letter-spacing: 6px;
+    font-size: 14px;
     text-indent: 6px;
-    text-transform: uppercase;
     text-align: center;
 }
 
 
-#jump-toolbar {
-    margin-top: 15px;
-    color: #8b8b8b;
-    font-size: 12px;
-    text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-indent: 2px;
-}
-
-#jump-toolbar .header {
-    padding: 7.5px;
-    text-align: center;
-    background-color: #EBEBEB;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-}
-
-#toolbar {
-    height: 100%;
-}
 
 .staff-row .col-md-3 {
     padding-left: 0;
@@ -306,37 +268,23 @@ body {
     padding-bottom: 0;
 }
 
-#jump-toolbar #ranks {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: #fafafa;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    box-shadow: 0 1px 0px 0 rgba(0, 0, 0, .13);
-    padding: 15px;
-    padding-top: 7.5px;
-}
-
-#ranks .rank {
+.rank {
     width: 100%;
     text-align: center;
-    padding: 7.5px;
-    margin-top: 7.5px;
+    padding: 4px;
+    margin-top: 15.5px;
+    margin-bottom: 7.5px;
     display: block;
     text-decoration: none;
-    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: var(--weightBold);
+    letter-spacing: 2px;
+
+	border-color: var(--pageBackground);
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
     box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.32), inset 0 0 0 2px rgba(255, 255, 255, 0.19);
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
-}
-
-#ranks > div {
-    width: 100%;
-    box-shadow: 0 1px 0px 0 rgba(0, 0, 0, .13);
-    margin-right: 15px;
-    margin-left: 15px;
-    border-radius: 6px;
 }
 
 @media (max-width: 993px) {
@@ -412,7 +360,7 @@ body {
 
 .header {
 	background: rgb(var(--primary));
-	background: linear-gradient(rgba(var(--primary), 0.9), rgba(var(--primary), 0.9)), url('../img/background.png') no-repeat center 100% / cover;
+	background: linear-gradient(rgba(30, 30, 30, 0.9), rgba(40, 40, 40, 0.9)), url('../img/background.png') no-repeat center 100% / cover;
 	animation: background 10s ease-in-out infinite alternate;
 	padding: 3.5rem;
 	padding-bottom: calc(3.5rem + 20px);
@@ -421,7 +369,7 @@ body {
 }
 
 .header .header-logo {
-	width: 150px;
+	width: 200px;
 	margin-right: 1rem;
 }
 
@@ -452,6 +400,8 @@ body {
 	animation: background 10s ease-in-out infinite alternate;
 	margin: 1rem 0;
 	padding: 2rem;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	color: rgb(var(--white));
 	font-size: 1.5rem;
@@ -479,6 +429,8 @@ body {
 .heading .heading-avatar {
 	width: 35px;
 	height: 35px;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	margin-right: 0.75rem;
 }
@@ -487,11 +439,13 @@ body {
 	=================== */
 
 .status-bar {
-	background: rgba(var(--white), 0.975);
+	background: rgba(30, 30, 30, 0.975);
 	margin-top: -28px;
 	margin-bottom: 1rem;
 	padding: 0.75rem 1.1rem;
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	font-size: 0.9rem;
 }
@@ -557,6 +511,8 @@ body {
 	margin-bottom: 1rem;
 	padding: 1rem 1.25rem;
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	color: var(--primaryText);
 	font-size: 0.8rem;
@@ -614,6 +570,8 @@ body {
 	background: var(--primaryBackground);
 	padding: 0.6rem 1rem;
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
@@ -645,6 +603,8 @@ body {
 .card {
 	background: var(--primaryBackground);
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	padding: 1rem;
 	margin-bottom: 1rem;
@@ -653,6 +613,8 @@ body {
 .card-body {
 	background: var(--primaryBackground);
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	padding: 1rem;
 	margin-bottom: 1rem;
@@ -689,11 +651,15 @@ body {
 	margin-right: auto;
 	color: var(--primaryText);
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
 .card > .card-body {
 	border: none;
+
+	border-color: var(--pageBackground);
 	border-radius: 0;
 }
 
@@ -778,7 +744,7 @@ body {
 	bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgb(var(--white)), rgba(var(--white), 0.85), rgba(var(--white), 0.5), transparent);
+    background: linear-gradient(to top, rgb(var(--pageBackground)), rgba(var(--pageBackground), 0.85), rgba(var(--pageBackground), 0.5), transparent);
     height: 50px;
 }
 
@@ -790,10 +756,22 @@ body {
 
 /*	FORUM CARD
 	=================== */
+.button-forum-post {
+    margin: 0;
+    padding: 0;
+    color: rgb(var(--white));
+    font-size: 0.6rem;
+    font-weight: var(--weightBold);
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    transition: var(--transitionColor);
+}
 
 .card-forum {
 	background: var(--primaryBackground);
 	padding: 0;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	overflow: hidden;
 }
@@ -834,6 +812,8 @@ body {
 	height: 35px;
 	width: 35px;
 	margin-right: 1rem;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
@@ -857,6 +837,8 @@ body {
 .card-leaderboard {
 	background: var(--primaryBackground);
 	padding: 0;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	overflow: hidden;
 }
@@ -899,6 +881,8 @@ body {
 	padding: 0;
 	margin: 0;
 	border: none;
+
+	border-color: var(--pageBackground);
 	border-radius: 0;
 	overflow: hidden;
 }
@@ -934,6 +918,8 @@ body {
 .card-profile .card-body {
 	margin: 0;
 	padding: 1rem;
+
+	border-color: var(--pageBackground);
 	border-radius: 0 0 0.25rem 0.25rem;
 }
 
@@ -942,12 +928,16 @@ body {
 	width: 125px;
 	margin: 0 auto 0.5rem;
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 50%;
 	overflow: hidden;
 }
 
 .card-profile .card-body .player-avatar img {
 	height: 150px;
+
+	border-color: var(--pageBackground);
 	border-radius: 12px;
 	padding: 2px;
 	margin: 10px 0;
@@ -998,7 +988,9 @@ body {
     height: 6px;
     width: 6px;
     margin-right: 7px;
-    border-radius: 50%;
+
+	border-color: var(--pageBackground);
+	border-radius: 50%;
 }
 
 .player-status-meta {
@@ -1016,6 +1008,8 @@ body {
 
 .card-players-list .card-body {
 	padding-bottom: 0.25rem;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
@@ -1049,7 +1043,9 @@ body {
 	height: 150px;
 	margin: 0 auto 1rem;
     border: solid 1px rgb(var(--gray300));
-    border-radius: 50%;
+
+	border-color: var(--pageBackground);
+	border-radius: 50%;
     text-align: center;
     overflow: hidden;
 }
@@ -1089,6 +1085,8 @@ body {
 .card-profile-stats {
 	background: var(--primaryBackground);
 	padding: 0;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
@@ -1109,6 +1107,8 @@ body {
 	margin: 0;
 	padding: 0;
 	border: none;
+
+	border-color: var(--pageBackground);
 	border-radius: 0 0 0.25rem 0.25rem;
 	overflow: hidden;
 }
@@ -1188,7 +1188,9 @@ body {
 .friends-list-item img {
     width: 30px;
     height: 30px;
-    border-radius: 0.25rem;
+
+	border-color: var(--pageBackground);
+	border-radius: 0.25rem;
 }
 
 /*	SEASON SELECTION
@@ -1308,7 +1310,9 @@ body {
 	width: 18px;
 	height: 18px;
     margin-right: 0.5rem;
-    border-radius: 0.2rem;
+
+	border-color: var(--pageBackground);
+	border-radius: 0.2rem;
 }
 
 .table-leaderboard tr.rank-1 td img {
@@ -1338,7 +1342,9 @@ body {
     width: 20px;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+
+	border-color: var(--pageBackground);
+	border-radius: 50%;
 	background: rgb(var(--white));
 	color: rgb(var(--white));
 	font-size: 0.6rem;
@@ -1361,6 +1367,8 @@ body {
 	=================== */
 
 .table-leaderboard-detailed {
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	overflow: hidden;
 }
@@ -1383,6 +1391,8 @@ body {
 
 .table-forum {
 	border: none;
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	overflow: hidden;
 }
@@ -1490,6 +1500,8 @@ body {
 .nav-pills .nav-item .nav-link.active {
 	background: rgb(var(--primaryLighter));
 	border: none;
+
+	border-color: var(--pageBackground);
 	border-radius: 5rem;
 	color: rgb(var(--white));
 }
@@ -1501,6 +1513,8 @@ body {
 	background: none;
 	padding: 0.5rem;
 	border: solid 1px rgb(var(--gray400));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	box-shadow: none !important;
 	color: var(--primaryText);
@@ -1518,7 +1532,9 @@ body {
 .btn {
     padding: 0.4rem 1.4rem;
 	border: none !important;
-    border-radius: 0.25rem;
+
+	border-color: var(--pageBackground);
+	border-radius: 0.25rem;
     box-sizing: border-box;
     box-shadow: none !important;
     color: rgb(var(--white)) !important;
@@ -1570,7 +1586,9 @@ body {
     font-size: 0.65rem;
     font-weight: var(--weightMedium);
     letter-spacing: 0.1rem;
-    border-radius: 0.25rem;
+
+	border-color: var(--pageBackground);
+	border-radius: 0.25rem;
 	padding: 0.4rem 1rem;
 }
 
@@ -1581,6 +1599,8 @@ body {
 	background: var(--primaryBackground);
 	padding: 0.35rem 0;
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 }
 
@@ -1638,6 +1658,8 @@ body {
 	width: 28px;
 	padding: 0;
 	border: solid 1px rgb(var(--gray300));
+
+	border-color: var(--pageBackground);
 	border-radius: 0.25rem;
 	color: var(--primaryContent);
 	font-size: 0.75rem;
@@ -1834,6 +1856,8 @@ a:hover div {
 	background: var(--primaryBackground);
 	padding: 1.2rem 1.5rem;
 	border: none !important;
+
+	border-color: var(--pageBackground);
 	border-radius: 5rem;
 	transition: box-shadow 0.2s ease;
 }
@@ -1856,7 +1880,9 @@ a:hover div {
 .tooltip-inner {
     font-family: 'Raleway', sans-serif;
     padding: 0.2rem 0.6rem;
-    border-radius: 0.25rem;
+
+	border-color: var(--pageBackground);
+	border-radius: 0.25rem;
     font-size: 0.75rem;
 }
 

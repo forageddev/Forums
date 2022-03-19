@@ -16,7 +16,7 @@
             <div class="card card-profile">
                 <div class="card-header" th:style="'background: ' + ${user.online ? '#3CB152' : '#C62828'} + ';'">
                     <strong th:text="${user.online ? 'Online' : 'Offline'}"></strong>
-                    <div th:if="${user.online}" th:text="'Playing on' + ${user.lastServer}"></div>
+                    <div th:if="${user.online}" th:text="'Playing on ' + ${user.lastServer}"></div>
                     <div th:if="${!user.online}">
                         Last seen
                         <time th:datetime="${user.dateLastSeen.getTime()}" data-format="ago" data-toggle="tooltip"></time>
@@ -24,7 +24,7 @@
                 </div>
                 <div class="card-body">
                     <div class="player-avatar">
-                        <img th:src="@{'https://crafatar.com/renders/body/' + ${user.id.toString()} + '?overlay'}">
+                        <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.id.toString()} + '?overlay'}">
                     </div>
                     <div class="player-username">
                         <strong class="player-username" th:text="${user.username}"></strong>

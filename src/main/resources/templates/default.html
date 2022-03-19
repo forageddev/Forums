@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Nasa</title>
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">NoDebuff</title>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
@@ -18,12 +18,11 @@
     <div>
         <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" href="/">Nasa</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
                     <i class="fas fa-bars fa-fw"></i>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav mr-auto">
                         <li class="nav-item" th:classappend="${#httpServletRequest.requestURI == '/' ? 'active':''}">
                             <a class="nav-link" href="/">Home</a>
                         </li>
@@ -33,15 +32,14 @@
                         <li class="nav-item" th:classappend="${#httpServletRequest.requestURI == '/leaderboards' ? 'active':''}">
                             <a class="nav-link" href="/leaderboards">Leaderboards</a>
                         </li>
-                        <li class="nav-item" th:classappend="${#httpServletRequest.requestURI == '/support' ? 'active':''}">
-                            <a class="nav-link" href="/support">Support</a>
-                        </li>
                         <li class="nav-item" th:classappend="${#httpServletRequest.requestURI == '/staff' ? 'active':''}">
                             <a class="nav-link" href="/staff">Staff</a>
                         </li>
                         <li class="nav-item" th:classappend="${#httpServletRequest.requestURI == '/famous' ? 'active':''}">
                             <a class="nav-link" href="/famous/">Famous</a>
                         </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
                         <li class="nav-item store-item">
                             <a class="nav-link" href="https://store.thecraft.rip"><i class="fas fa-shopping-basket fa-fw"></i> Store</a>
                         </li>
@@ -83,7 +81,7 @@
             <img class="header-logo" th:src="@{/img/logo.png}">
             <h1>
                 <div class="subtitle">
-                    Grow and explore, on your own or with a team.
+                    Currently in development
                 </div>
             </h1>
         </div>

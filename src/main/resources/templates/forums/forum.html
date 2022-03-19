@@ -17,8 +17,8 @@
         </li>
 
         <div class="navbar-nav ml-auto nav-item">
-            <a href="/thread/create" class="btn btn-success">
-                New Post
+            <a href="/thread/create" class="btn btn-primary button-forum-post">
+                <h2 class="button-forum-post">New thread</h2>
             </a>
         </div>
     </ul>
@@ -46,7 +46,7 @@
                     <div>
                         <a th:href="${thread.getFriendlyUrl()}" th:text="${thread.title}"></a>
                         <div class="meta">
-                            by <a th:href="@{'/player/' + ${thread.author.username}}" style="color: red" th:text="${thread.author.username}"></a>
+                            by <a th:href="@{'/player/' + ${thread.author.username}}"  th:style="@{'color: ' + ${thread.author.getRankColor()}}" th:text="${thread.author.username}"></a>
                             &bull;
                             <time th:datetime="${thread.timestamp}" data-format="ago" data-toggle="tooltip"></time>
                         </div>
