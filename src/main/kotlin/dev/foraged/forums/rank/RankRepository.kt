@@ -13,6 +13,7 @@ interface RankRepository : MongoRepository<Rank?, String?>
      *
      * @return Role that matches the criteria name
      */
+
     fun findByName(name: String?): Rank?
-    override fun findById(id: String): Optional<Rank?>
+    fun findById(id: String): Optional<Rank?>
 }

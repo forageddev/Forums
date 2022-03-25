@@ -1,6 +1,6 @@
 package dev.foraged.forums.web.controller
 
-import dev.foraged.forums.forum.repository.CategoryRepository
+import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.impl.ForumService
@@ -15,27 +15,14 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.ModelAndView
 
 @Controller
-class ForumController
+class ForumController @Autowired constructor(val userService: UserService, val forumService: ForumService, val categoryRepository: ForumCategoryRepository, val forumRepository: ForumRepository, val threadRepository: ThreadRepository)
 {
-    @Autowired
-    private val userService: UserService? = null
 
-    @Autowired
-    private val forumService: ForumService? = null
-
-    @Autowired
-    private val categoryRepository: CategoryRepository? = null
-
-    @Autowired
-    private val forumRepository: ForumRepository? = null
-
-    @Autowired
-    private val threadRepository: ThreadRepository? = null
     @RequestMapping(value = ["/forums/{id}"], method = [RequestMethod.GET])
     fun forumCategory(@PathVariable id: String): ModelAndView
     {
         val modelAndView = ModelAndView("forums/forum")
-        val subForum = categoryRepository!!.findById(id).orElse(null)
+        val subForum = categoryRepository.findById(id).orElse(null)
         if (subForum != null)
         {
             modelAndView.addObject("forum", subForum)
@@ -51,7 +38,7 @@ class ForumController
     fun home(): ModelAndView
     {
         val modelAndView = ModelAndView("forums")
-        modelAndView.addObject("forums", forumRepository!!.findAll())
+        modelAndView.addObject("forums", forumRepository.findAll())
         println("error with model and view")
         return modelAndView
     }

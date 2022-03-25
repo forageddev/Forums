@@ -1,128 +1,66 @@
 package dev.foraged.forums.user.grant
 
 import com.google.gson.JsonObject
+import com.google.gson.annotations.JsonAdapter
 import dev.foraged.forums.rank.Rank
 import dev.foraged.forums.rank.RankRepository
+import dev.foraged.forums.rank.adapter.RankReferenceJsonAdapter
+import dev.foraged.forums.user.User
 import dev.foraged.forums.user.UserRepository
-import dev.foraged.forums.util.MojangUtils
-import lombok.*
+import dev.foraged.forums.user.adapter.UserReferenceJsonAdapter
+import dev.foraged.forums.util.JsonChain
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.mapping.DBRef
+import org.springframework.stereotype.Component
 import java.util.*
 
-@Getter
-@Setter
-@NoArgsConstructor
-class Grant(`object`: JsonObject, private val target: UUID, rank: Rank) : Comparable<Grant>
+class Grant(
+    @DBRef @JsonAdapter(RankReferenceJsonAdapter::class) var rank: Rank,
+    var duration: Long = Long.MAX_VALUE,
+    var issuedReason: String = "",
+    var issuedBy: UUID? = null,
+    var issuedOn: String = "",
+    var issuedAt: Long = System.currentTimeMillis(),
+
+    var removed: Boolean = false,
+    var removedReason: String = "",
+    var removedBy: UUID? = null,
+    var removedOn: String? = null,
+    var removedAt: Long? = null,
+
+    val id: String = RandomStringUtils.randomAlphanumeric(24)
+) : Comparable<Grant>
 {
-    @Autowired
-    private val repository: RankRepository? = null
-
-    @Autowired
-    private val userRepository: UserRepository? = null
-    private val id: UUID
-    private val rankId // Used for POST data to convert id into rank (limitations of Springboot)
-            : String
-
-    @DBRef
-    private val rank: Rank
-    var reason: String
-    private val issuedBy: UUID?
-    private var issuedAt = System.currentTimeMillis()
-    private val duration: Long?
-    private val removalReason: String? = null
-    private val removedBy: UUID? = null
-    private val removedAt: Long? = null
-    private var removed = false
-    val issuedByName: String?
-        get() = try
-        {
-            MojangUtils.fetchName(issuedBy)
-        } catch (x: Exception)
-        {
-            "Console"
-        }
-    val issuedByStyles: String?
-        get() = try
-        {
-            userRepository!!.findById(issuedBy).orElse(null).rankColor
-        } catch (x: Exception)
-        {
-            "text-danger"
-        }
-    val removedByName: String?
-        get() = try
-        {
-            MojangUtils.fetchName(removedBy)
-        } catch (x: Exception)
-        {
-            "Console"
-        }
-    val removedByStyles: String?
-        get() = try
-        {
-            userRepository!!.findById(removedBy).orElse(null).rankColor
-        } catch (x: Exception)
-        {
-            "text-danger"
-        }
-    val isActive: Boolean
-        get()
-        {
-            if (removedAt == null)
-            {
-                if (duration != null && duration != Long.MAX_VALUE)
-                {
-                    if (System.currentTimeMillis() >= issuedAt + duration)
-                    {
-                        return false
-                    }
-                }
-                return true
-            }
-            return false
+    val active: Boolean
+        get() {
+            if (removedAt != null) return false
+            if (duration != Long.MAX_VALUE) if (System.currentTimeMillis() >= issuedAt + duration) return false
+            return true
         }
 
-    override fun compareTo(o: Grant): Int
-    {
-        return java.lang.Boolean.compare(!isActive, !o.isActive)
+    override fun compareTo(other: Grant): Int {
+        return (other.issuedAt - issuedAt).toInt()
     }
 
-    fun toJson(): JsonObject
-    {
-        val `object` = JsonObject()
-        `object`.addProperty("id", getId().toString())
-        `object`.addProperty("target", getTarget().toString())
-        `object`.addProperty("rank", getRankId())
-        `object`.addProperty("issuedBy", if (getIssuedBy() == null) null else getIssuedBy().toString())
-        `object`.addProperty("issuedAt", getIssuedAt())
-        `object`.addProperty("reason", getReason())
-        `object`.addProperty("duration", getDuration())
-        if (removed)
-        {
-            `object`.addProperty("removedBy", if (getRemovedBy() == null) null else getRemovedBy().toString())
-            `object`.addProperty("removedAt", getRemovedAt())
-            `object`.addProperty("removedReason", getRemovalReason())
-            `object`.addProperty("removed", removed)
-        }
-        return `object`
-    }
+    fun json() : JsonObject {
+        val chain = JsonChain()
+            .append("id", id)
+            .append("rank", rank.id)
+            .append("issuedBy", issuedBy)
+            .append("issuedAt", issuedAt)
+            .append("issuedOn", issuedOn)
+            .append("issuedReason", issuedReason)
+            .append("duration", duration)
 
-    init
-    {
-        id = UUID.fromString(`object`["id"].asString)
-        rankId = `object`["rank"].asString
-        this.rank = rank
-        issuedBy = if (`object`["issuedBy"].isJsonNull) null else UUID.fromString(`object`["issuedBy"].asString)
-        issuedAt = `object`["issuedAt"].asLong
-        reason = `object`["reason"].asString
-        duration = `object`["duration"].asLong
-        if (`object`.has("removed") && `object`["removed"].asBoolean)
-        {
-            removed = `object`["removed"].asBoolean
-            if (!`object`["removedBy"].isJsonNull) setRemovedBy(UUID.fromString(`object`["removedBy"].asString))
-            if (!`object`["removedAt"].isJsonNull) setRemovedAt(`object`["removedAt"].asLong)
-            if (!`object`["removedReason"].isJsonNull) setRemovalReason(`object`["removedReason"].asString)
+        if (removed) {
+            chain
+                .append("removedBy", removedBy)
+                .append("removedAt", removedAt)
+                .append("removedReason", removedReason)
+                .append("removedOn", removedOn)
+                .append("removed", removed)
         }
+        return chain.complete()
     }
 }

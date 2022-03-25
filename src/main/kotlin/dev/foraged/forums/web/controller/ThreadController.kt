@@ -1,8 +1,7 @@
 package dev.foraged.forums.web.controller
 
-import dev.foraged.forums.Application
 import dev.foraged.forums.forum.ForumThread
-import dev.foraged.forums.forum.repository.CategoryRepository
+import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.impl.ForumService
@@ -25,20 +24,11 @@ import javax.validation.Valid
 @Controller
 class ThreadController
 {
-    @Autowired
-    private val userService: UserService? = null
-
-    @Autowired
-    private val forumRepository: ForumRepository? = null
-
-    @Autowired
-    private val forumService: ForumService? = null
-
-    @Autowired
-    private val threadRepository: ThreadRepository? = null
-
-    @Autowired
-    private val categoryRepository: CategoryRepository? = null
+    @Autowired lateinit var userService: UserService
+    @Autowired lateinit var forumRepository: ForumRepository
+    @Autowired lateinit var forumService: ForumService
+    @Autowired lateinit var threadRepository: ThreadRepository
+    @Autowired lateinit var categoryRepository: ForumCategoryRepository
 
     //
     // Get thread details
@@ -132,12 +122,12 @@ class ThreadController
                 HttpStatus.NOT_FOUND, "Category not found"
             )
         }
-        val user = request.session.getAttribute("user") as User
+        val user = request.session.getAttribute("user") as User?
             ?: throw ResponseStatusException(
                 HttpStatus.FORBIDDEN, "User not logged in" // todo We should also re-direct to /login/
             )
         modelAndView.addObject("id", id)
-        modelAndView.addObject("forums", forumService.getSubForums())
+        modelAndView.addObject("forums", forumService.subForums)
 
         // todo make sure they have access to the forum they are trying to post to
         return modelAndView
@@ -145,25 +135,25 @@ class ThreadController
 
     @RequestMapping(value = ["/thread/create"], method = [RequestMethod.POST])
     fun createThread(
-        thread: @Valid ForumThread?,
+        thread: @Valid ForumThread,
         bindingResult: BindingResult?,
         request: HttpServletRequest
     ): ModelAndView
     {
         // todo make sure they have access to the forum they are trying to post to
-        val subForum = categoryRepository!!.findByDisplayName(thread.getForum())
+        val subForum = categoryRepository!!.findByDisplayName(thread.forum)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Category not found"
             )
-        thread.setCategory(subForum)
+        thread.category = subForum
         val forum = subForum.forum
         // if(forum.hasAccess(user) && subForum.hasAccess(user)) // make sure it just sends an error saying u cant go there buddy!
         val user = request.session.getAttribute("user") as User
             ?: throw ResponseStatusException(
                 HttpStatus.FORBIDDEN, "User not logged in" // todo We should also re-direct to /login/
             )
-        thread.setId(threadId)
-        thread.setAuthor(user) // debug todo set to user -- also make sure they're logging in LOL
+
+        thread.author = user // debug todo set to user -- also make sure they're logging in LOL
         subForum.threads.add(thread) // only stores id now
         subForum.lastActivity = System.currentTimeMillis()
         threadRepository!!.save(thread)
@@ -172,22 +162,6 @@ class ThreadController
         println("Saved and updated.")
 
         // Redirect them to there new thread :D
-        return ModelAndView("redirect:" + thread.getFriendlyUrl())
+        return ModelAndView("redirect:" + thread.friendlyUrl)
     }// Gotta make sure there is no thread id called that or we'll be in some issues.
-
-    /**
-     * Returns unique thread id for a forum thread
-     * @return Thread identifier
-     */
-    val threadId: String
-        get()
-        {
-            var threadId: Int =
-                Application.Companion.RANDOM.nextInt(900) + 100 // Gotta make sure there is no thread id called that or we'll be in some issues.
-            while (threadRepository!!.findById(threadId.toString()).isPresent)
-            {
-                threadId++
-            }
-            return threadId.toString()
-        }
 }

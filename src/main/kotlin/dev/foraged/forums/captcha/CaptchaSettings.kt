@@ -5,4 +5,4 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConfigurationProperties(prefix = "google.recaptcha.key")
-data class CaptchaSettings(val site: String? = null, val secret: String? = null)
+data class CaptchaSettings(var site: String? = null, var secret: String? = null)

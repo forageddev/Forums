@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-class PageConfig : WebMvcConfigurer
+open class PageConfig : WebMvcConfigurer
 {
     override fun addViewControllers(registry: ViewControllerRegistry)
     {
@@ -19,13 +19,13 @@ class PageConfig : WebMvcConfigurer
     }
 
     @Bean
-    fun layoutDialect(): LayoutDialect
+    open fun layoutDialect(): LayoutDialect
     {
         return LayoutDialect()
     }
 
     @Bean
-    fun passwordEncoder(): BCryptPasswordEncoder
+    open fun passwordEncoder(): BCryptPasswordEncoder
     {
         return BCryptPasswordEncoder()
     }

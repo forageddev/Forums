@@ -9,6 +9,7 @@ package dev.foraged.forums.util
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import java.util.*
 
 class JsonChain
 {
@@ -28,13 +29,21 @@ class JsonChain
 
     fun append(key: String, value: String?) : JsonChain
     {
-        json.addProperty(key, value)
+        if (value == "null") json.add(key, null)
+        else json.addProperty(key, value)
         return this
     }
 
     fun append(key: String, value: Char?) : JsonChain
     {
         json.addProperty(key, value)
+        return this
+    }
+
+    fun append(key: String, value: UUID?) : JsonChain
+    {
+        if (value == null) json.add(key, null)
+        else json.addProperty(key, value.toString())
         return this
     }
 

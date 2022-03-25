@@ -11,13 +11,14 @@
     </div>
 
     <div class="card-body" th:if="${!user.grants.isEmpty()}">
-        <a class="card p-1" style="background: var(--extraBackground)" th:each="grant : ${user.grants}" th:href="@{'#collapseGrant-' + ${grant.id.toString().split('-')[0]}}" data-toggle="collapse" aria-controls="collapseBan">
+        <a class="card p-1" style="background: #232323; color: var(--font-color)" th:each="grant : ${user.grants}" th:href="@{'#collapseGrant-' + ${grant.id.toString().split('-')[0]}}" data-toggle="collapse" aria-controls="collapseBan">
             <div class="container-fluid">
-                <div class="container d-flex d-inline d-block p-2" th:if="${grant.isActive()}">
+                <div class="container-fluid d-flex d-inline d-block p-2" th:if="${grant.active}">
                     &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
                     <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
 
-                    &zwnj; <p style="margin-bottom: 0" th:class="${grant.getIssuedByStyles()}" th:text="${grant.getIssuedByName()}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy != null}" th:class="${grant.issuedBy.getRankColor()}" th:text="${grant.issuedBy.name}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy == null}">Console</p>
 
                     &zwnj; granted
 
@@ -26,18 +27,19 @@
 
                     &zwnj; the
 
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rankId}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rank.id}"></p>
 
                     &zwnj; rank for
 
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.reason}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.issuedReason}"></p>
                 </div>
 
-                <strike class="container d-flex d-inline d-block p-2" th:if="${!grant.isActive()}">
+                <strike class="container-fluid d-flex d-inline d-block p-2" th:if="${!grant.active}">
                     &zwnj; &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
                     <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
 
-                    &zwnj; <p style="margin-bottom: 0" th:class="${grant.getIssuedByStyles()}" th:text="${grant.getIssuedByName()}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy != null}" th:class="${grant.issuedBy.getRankColor()}" th:text="${grant.issuedBy.name}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy == null}">Console</p>
 
                     &zwnj; granted
 
@@ -46,20 +48,23 @@
 
                     &zwnj; the
 
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rankId}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rank.id}"></p>
 
                     &zwnj; rank for
 
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.reason}"></p>
+                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.issuedReason}"></p>
                 </strike>
             </div>
 
-            <div class="container collapse ml-3 mr-3" th:id="@{'collapseGrant-' + ${grant.id.toString().split('-')[0]}}">
+            <div class="container-fluid collapse ml-3 mr-3" th:id="@{'collapseGrant-' + ${grant.id.toString().split('-')[0]}}">
                 <strong>Issuer:</strong>
-                <span style="margin-bottom: 0;" th:styleappend="@{'color: ' + ${grant.getIssuedByStyles()}}" th:text="${grant.getIssuedByName()}"></span>
+                <span th:if="${grant.issuedBy != null}" style="margin-bottom: 0;" th:styleappend="@{'color: ' + ${grant.issuedBy.getRankColor()}}" th:text="${grant.issuedBy.name}"></span>
+                <span th:if="${grant.issuedBy == null}">Console</span>
+
+
                 <br>
                 <strong>Reason:</strong>
-                <span style="margin-bottom: 0;" th:text="${grant.getReason()}"></span>
+                <span style="margin-bottom: 0;" th:text="${grant.issuedReason}"></span>
 
             </div>
         </a>

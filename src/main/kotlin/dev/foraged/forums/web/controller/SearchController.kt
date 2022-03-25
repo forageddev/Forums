@@ -26,8 +26,8 @@ class SearchController
     fun getPlayerByName(@RequestParam query: String?): String
     {
         val queryData = JsonObject()
-        userRepository!!.findByUsernameIgnoreCaseStartingWith(query, PageRequest.of(0, 5))
-            .forEach(Consumer { user: User? -> queryData.addProperty(user.getUsername(), user.getId().toString()) })
-        return Application.Companion.GSON.toJson(queryData)
+        userRepository!!.findByUsernameIgnoreCaseStartingWith(query, PageRequest.of(0, 5)).filterNotNull()
+            .forEach(Consumer { user: User -> queryData.addProperty(user.username, user.id.toString()) })
+        return Application.GSON.toJson(queryData)
     }
 }

@@ -4,27 +4,19 @@
 <body>
 
 <div layout:fragment="content">
-    <div class="heading" th:text="${#httpServletRequest.requestURI.replace('/', '')}">
-
-    </div>
-
-    <div class="row staff-row">
-        <div class="col-md-12 staff-members">
+    <div class="row staff-row justify-content-center">
+        <div class="col staff-members text-center">
             <tr th:each="entry, stat : ${data}">
-
-                <div th:style="@{'background-color:' + ${entry.key.getForumColor()} + '; color: white;'}" class="rank" th:text="${entry.key.name}">
-
-                </div>
-
                 <div class="staff-member-group" th:id="${entry.key.id}">
 
-                    <ta th:each="user : ${entry.value}">
-                        <a th:href="@{'/player/' + ${user.username}}" class="staff-member">
+                    <ta class="m-1" th:each="user : ${entry.value}">
+                        <a th:href="@{'/player/' + ${user.username}}" class="staff-member col">
                             <div class="staff-head text-center ml-5 mr-5">
                                 <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.id.toString()} + '?overlay'}">
                             </div>
 
-                            <h1 th:style="@{'color:' + ${user.getRankColor()}}" th:text="${user.username}"></h1>
+                            <h4 style="color: #D9D9D9" th:text="${user.username}"></h4>
+                            <h1 th:style="@{'color:' + ${entry.key.hexColor}}" th:text="${#strings.toUpperCase(entry.key.name)}"></h1>
                         </a>
                     </ta>
                 </div>

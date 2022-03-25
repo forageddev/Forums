@@ -7,66 +7,33 @@
 <body>
 <div layout:fragment="content">
     <div class="container">
-        <div class="status-bar">
-            <div class="row align-items-center">
-                <div class="col-lg-4">
-                    <div class="social-item">
-                        <div class="social-icon">
-                            <i class="fa fa-bullhorn fa-fw"></i>
-                        </div>
-                        <div class="social-content">
-                            <div class="social-title">We're recruiting staff!</div>
-                            <a class="social-meta" href="https://discord.gg/fHg7UPXt">Apply here</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="server-status">
-                        There are <span data-playercounter-ip="95.217.56.149:6666"></span> players online
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="social-item">
-                        <div class="social-icon">
-                            <i class="fab fa-discord fa-fw"></i>
-                        </div>
-                        <div class="social-content">
-                            <div class="social-title">Join our discord</div>
-                            <a class="social-meta" href="https://discord.gg/nodebuff">For new updates</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        test
     </div>
     <div th:if="${announcements != null}">
         <tr th:each="announcement : ${announcements}">
             <div class="card card-news">
                 <div>
-                    <div class="news-content p-5">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img class="img-fluid" style="border-radius: 10px;max-height: 300px;max-width: 534px" src="https://preview.redd.it/0oor3rnbalk71.jpg?width=640&crop=smart&auto=webp&s=977b5b22f7ada88502fc88ba29f1294b9cfa0863">
+                    <div class="news-avatar">
+                        <img th:src="@{'https://crafatar.com/renders/body/' + ${announcement.author.id.toString()} + '?overlay'}">
+                    </div>
+                    <div class="news-content">
+                        <div class="card-header">
+                            <td th:text="${announcement.title}"></td>
+                            <div class="card-subheader">
+                                by </td> <a th:href="@{'/player/' + ${announcement.author.username}}" th:text="${announcement.author.username}"></a>
+                                &bull;
+                                <time th:datetime="${announcement.timestamp}" data-format="ago" data-toggle="tooltip"></time>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card-header">
-                                    <td th:text="${announcement.title}"></td>
-                                    <div class="card-subheader">
-                                        by </td> <a th:href="@{'/player/' + ${announcement.author.username}}" th:style="@{'color: ' + ${announcement.author.getRankColor()}}" th:text="${announcement.author.username}"></a>
-                                        &bull;
-                                        <time th:datetime="${announcement.timestamp}" data-format="ago" data-toggle="tooltip"></time>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="content" th:utext="${announcement.formattedBody}">
-
-                                    </div>
-                                </div>
-                                <a class="btn btn-primary btn-sm btn-block mt-3" th:href="${announcement.getFriendlyUrl()}">READ MORE...</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="content" th:utext="${announcement.formattedBody}">
 
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary btn-sm btn-block" th:href="${announcement.getFriendlyUrl()}">READ MORE...</a>
                 </div>
             </div>
     </div>

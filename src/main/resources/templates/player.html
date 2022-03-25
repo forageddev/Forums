@@ -7,12 +7,8 @@
 
 <body>
 <div layout:fragment="content">
-    <div class="heading">
-        <img th:src="@{'https://crafatar.com/avatars/' + ${user.id.toString()} + '?size=24?overlay'}" class="heading-avatar" th:text="${user.username}">
-    </div>
-
     <div class="row">
-        <div class="col-md-4 col-lg-3">
+        <div class="col-md-12 col-lg-4">
             <div class="card card-profile">
                 <div class="card-header" th:style="'background: ' + ${user.online ? '#3CB152' : '#C62828'} + ';'">
                     <strong th:text="${user.online ? 'Online' : 'Offline'}"></strong>
@@ -29,12 +25,12 @@
                     <div class="player-username">
                         <strong class="player-username" th:text="${user.username}"></strong>
                     </div>
-                    <div class="player-rank" style="color:" th:styleappend="${user.getRankColor()}" th:text="${user.getPrimaryGrant().getRankId()}"></div>
+                    <div class="player-rank" style="color:" th:styleappend="${user.getRankColor()}" th:text="${user.primaryGrant.rank.id}"></div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8 col-lg-9">
+        <div class="col-md-12 col-lg-8">
             <div class="card-body">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
@@ -46,16 +42,11 @@
                     <li class="nav-item">
                         <a class="nav-link" th:classappend="${page} == 'forums' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/threads'">Forums</a>
                     </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${page} == 'manage' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/grants'">Manage</a>
-                    </li>
                 </ul>
             </div>
             <div th:replace="'/player/' + ${page} :: ${page}"></div>
         </div>
     </div>
-</div>
 </div>
 </body>
 </html>

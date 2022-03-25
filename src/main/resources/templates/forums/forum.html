@@ -4,8 +4,6 @@
 <body>
 
 <div layout:fragment="content">
-    <div class="heading" th:text="${forum.displayName}"></div>
-
     <ul class="breadcrumb text-capitalize">
         <li class="breadcrumb-item">
             <a href="/forums">
@@ -16,10 +14,8 @@
             <a th:href="${forum.friendlyUrl}" th:text="${forum.displayName}"></a>
         </li>
 
-        <div class="navbar-nav ml-auto nav-item">
-            <a href="/thread/create" class="btn btn-primary button-forum-post">
-                <h2 class="button-forum-post">New thread</h2>
-            </a>
+        <div class="navbar-nav ml-auto nav-item" th:if="${session.user != null}">
+            <a href="/thread/create" class="btn">New thread</a>
         </div>
     </ul>
 
@@ -28,34 +24,43 @@
             <thead>
             <tr>
                 <th th:text="${forum.displayName}"></th>
-                <th>Threads</th>
-                <th>Replies</th>
-                <th>Latest Activity</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Threads</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Replies</th>
+                <th>Activity</th>
             </tr>
             </thead>
             <colgroup>
-                <col>
-                <col width="10%">
-                <col width="10%">
+                <col width="55%">
+                <col class="d-none d-sm-none d-xs-none d-md-table-cell" width="10%">
+                <col class="d-none d-sm-none d-xs-none d-md-table-cell" width="10%">
                 <col width="25%">
             </colgroup>
             <tbody>
             <tr th:each="thread : ${threads}">
                 <td class="forum-title forum-title-upvotes">
-                    <div class="upvotes" th:value="${thread.upvotes}"></div>
-                    <div>
-                        <a th:href="${thread.getFriendlyUrl()}" th:text="${thread.title}"></a>
-                        <div class="meta">
-                            by <a th:href="@{'/player/' + ${thread.author.username}}"  th:style="@{'color: ' + ${thread.author.getRankColor()}}" th:text="${thread.author.username}"></a>
-                            &bull;
-                            <time th:datetime="${thread.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                    <div class="row" style="width: 100%">
+                        <div class="col-lg-2 col-md-4 d-md-none d-none d-sm-none d-xs-none d-lg-block">
+                            <div>
+                                <img style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${thread.author.id.toString().replace('-', '')} + '?size=32&overlay=true'}">
+                            </div>
+                        </div>
+                        <div class="col-lg-10 col-md-8 col-sm-12">
+                            <div class="upvotes" th:value="${thread.upvotes}"></div>
+                            <div>
+                                <a th:href="${thread.friendlyUrl}" th:text="${thread.title}"></a>
+                                <div class="meta">
+                                    by <a th:href="@{'/player/' + ${thread.author.username}}"  th:style="@{'color: ' + ${thread.author.getRankColor()}}" th:text="${thread.author.username}"></a>
+                                    &bull;
+                                    <time th:datetime="${thread.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </td>
-                <td class="forum-stats" th:text="${thread.replies.size()}"></td>
-                <td class="forum-stats" th:text="${thread.replies.size()}"></td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${thread.replies.size()}"></td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${thread.replies.size()}"></td>
                 <td class="forum-latest">
-                    <div class="meta" th:if="${thread.lastReply == null}">No replies yet</div>
+                    <div class="meta" th:if="${thread.lastReply == null}">None</div>
                     <div th:if="${thread.lastReply != null}">
                         by <a th:href="@{'/player/' + ${thread.lastReply.author.username}}" style="color: red;" th:text="${thread.lastReply.getAuthor().username}"></a>
                         <div class="meta">

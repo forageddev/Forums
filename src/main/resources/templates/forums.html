@@ -4,10 +4,6 @@
 <body>
 
 <div layout:fragment="content">
-    <div class="heading">
-        Forums
-    </div>
-
     <ul class="breadcrumb text-capitalize">
         <li class="breadcrumb-item active">
             <a href="/forums">
@@ -24,11 +20,11 @@
                 <tr>
                     <th th:text="${forum.name}"></th>
                     <th>Posts</th>
-                    <th>Latest Activity</th>
+                    <th>Activity</th>
                 </tr>
                 </thead>
                 <colgroup>
-                    <col>
+                    <col width="60%">
                     <col width="10%">
                     <col width="30%">
                 </colgroup>
@@ -43,7 +39,7 @@
                         <time th:datetime="${subforum.lastActivity}" data-format="ago" data-toggle="tooltip"></time>
                     </td>
                     <td class="forum-latest" th:if="${subforum.lastActivity < 0}">
-                        Never
+                        None
                     </td>
                 </tr>
                 </tbody>

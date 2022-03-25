@@ -14,17 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod
 @Controller
 class DebugController
 {
-    @Autowired
-    private val userService: UserService? = null
+    @Autowired lateinit var userService: UserService
+    @Autowired lateinit var forumService: ForumService
+    @Autowired lateinit var forumRepository: ForumRepository
+    @Autowired lateinit var threadRepository: ThreadRepository
 
-    @Autowired
-    private val forumService: ForumService? = null
-
-    @Autowired
-    private val forumRepository: ForumRepository? = null
-
-    @Autowired
-    private val threadRepository: ThreadRepository? = null
     @RequestMapping(value = ["/test"], method = [RequestMethod.GET])
     fun home(): UserDetails?
     {

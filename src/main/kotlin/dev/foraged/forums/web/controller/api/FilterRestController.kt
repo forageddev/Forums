@@ -1,3 +1,4 @@
+/*
 package dev.foraged.forums.web.controller.api
 
 import com.google.gson.JsonArray
@@ -46,4 +47,4 @@ class FilterRestController
         response.addProperty("success", true)
         return Application.Companion.GSON.toJson(response)
     }
-}
+} todo reimplimend this but better and actually functional?*/

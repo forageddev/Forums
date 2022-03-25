@@ -1,32 +1,25 @@
 package dev.foraged.forums.rank
 
 import com.google.gson.JsonObject
+import dev.foraged.forums.Application
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.UserRepository
 import dev.foraged.forums.util.JsonChain
-import dev.foraged.forums.util.Utils
 import net.minidev.json.JSONArray
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.index.IndexDirection
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
-import java.util.function.Consumer
-import java.util.function.Function
-import java.util.stream.Collectors
 
 @Document(collection = "roles")
 class Rank(
     @Id val id: String,
     @Indexed(unique = true, direction = IndexDirection.DESCENDING) var name: String? = null,
     var prefix: String = "",
-    var color: String = "",
-    var hexColor: String = "",
-    var weight: Int = -1,
-) : Comparable<Rank>
-{
+    var color: String = "&f",
+    var hexColor: String = "#ffffff",
+    var weight: Int = 0,
 
     /**
      * Returns permission nodes that a role has, these nodes are given to the user
@@ -34,12 +27,12 @@ class Rank(
      * transformed into GrantedAuthority
      * @see org.springframework.security.core.GrantedAuthority
      */
-    private val permissions: MutableList<String> = ArrayList()
+    var permissions: MutableList<String> = mutableListOf(),
 
     /** Returns roles that are subsidiaries of parent role  */
-    @DBRef
-    private val inherits: MutableList<Rank> = ArrayList()
-
+    @DBRef var inherits: MutableList<Rank> = mutableListOf()
+) : Comparable<Rank>
+{
     /**
      * Permissions that are from parent role included with child
      * role permissions.
@@ -47,13 +40,9 @@ class Rank(
      * @return Permissions from parent and child roles
      */
     val compoundedPermissions: List<String>
-        get()
-        {
-            val toReturn: MutableList<String> = ArrayList(permissions)
-            for (inheritedRole in inheritedRoles)
-            {
-                toReturn.addAll(inheritedRole!!.compoundedPermissions)
-            }
+        get() {
+            val toReturn: MutableList<String> = permissions
+            for (rank in inherits) toReturn.addAll(rank.compoundedPermissions)
             return toReturn
         }
 
@@ -64,8 +53,7 @@ class Rank(
      * @param node Permission to check
      * @return Whether it contains it or not.
      */
-    fun hasPermission(node: String): Boolean
-    {
+    fun hasPermission(node: String): Boolean {
         return permissions.contains(node) || compoundedPermissions.contains(node)
     }
 
@@ -74,8 +62,7 @@ class Rank(
      *
      * @param node Permission to add
      */
-    fun addPermission(node: String)
-    {
+    fun addPermission(node: String) {
         permissions.add(node)
     }
 
@@ -84,18 +71,20 @@ class Rank(
      *
      * @param id Role id to add
      */
-    fun addInherit(id: String)
-    {
-        Utils.rank(id)!!.ifPresent { rank: Rank -> inherits.add(rank) }
+    fun addInherit(id: String) {
+        Application.CONTEXT.beanFactory.getBean(RankRepository::class.java).findById(id).ifPresent {
+            inherits.add(it)
+        }
     }
 
-    override fun compareTo(role: Rank): Int {
-        return role.weight - this.weight
+    override fun compareTo(other: Rank): Int {
+        return other.weight - this.weight
     }
 
     fun getUsersWithRank(repository: UserRepository): List<User?> {
-        val users = repository.findAll()
-        users.removeIf { user: User? -> !user.getPrimaryGrant().rankId.equals(id, ignoreCase = true) }
+        val users = repository.findAll().filterNotNull().filter {
+            it.primaryGrant!!.rank.id == id
+        }
         return users
     }
 

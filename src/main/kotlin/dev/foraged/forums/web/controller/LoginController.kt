@@ -1,23 +1,21 @@
 package dev.foraged.forums.web.controller
 
+import com.google.gson.JsonObject
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.validation.BindingResult
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 
 @Controller
-class LoginController
+class LoginController @Autowired constructor(val userService: UserService)
 {
-    @Autowired
-    private val userService: UserService? = null
 
     @Autowired
     private val forumRepository: ForumRepository? = null
@@ -37,44 +35,53 @@ class LoginController
     fun register(): ModelAndView
     {
         val modelAndView = ModelAndView()
-        val user = User()
-        modelAndView.addObject("user", user)
-        modelAndView.viewName = "register"
+        modelAndView.viewName = "register-help"
         return modelAndView
     }
 
-    @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
-    fun createNewUser(user: @Valid User?, bindingResult: BindingResult): ModelAndView
+    @RequestMapping(value = ["/register/{token}"], method = [RequestMethod.GET])
+    fun register(@PathVariable token: String, response: HttpServletResponse): ModelAndView
     {
         val modelAndView = ModelAndView()
-        val userExists = userService!!.findUserByName(user.getUsername())
-        if (userExists != null && userExists.email != null)
-        {
+        val user = userService.findUserByRegisterSecret(token)
+        if (user == null) {
+            response.sendError(501, "Invalid or expired registration code.")
+            modelAndView.viewName = "error"
+        } else {
+            modelAndView.addObject("registerSecret", user.registerSecret)
+            modelAndView.addObject("email", user.email)
+            modelAndView.addObject("username", user.username)
+            modelAndView.viewName = "register"
+        }
+
+        return modelAndView
+    }
+
+    data class Register(val secret: String, val username: String, val email: String, val password: String)
+
+    @RequestMapping(value = ["/register"], method = [RequestMethod.POST])
+    fun createNewUser(@Valid register: Register, bindingResult: BindingResult): ModelAndView
+    {
+        val modelAndView = ModelAndView()
+        val userExists = userService.findUserByRegisterSecret(register.secret)
+        if (userExists == null) {
             bindingResult
                 .rejectValue(
-                    "email", "error.user",
-                    "There is already a user registered with the username provided"
+                    "secret", "error.user",
+                    "Invalid or expired registration code."
                 )
         }
-        if (bindingResult.hasErrors())
-        {
-            modelAndView.viewName = "register"
-        } else
-        {
-            try
-            {
-                userService.createUser(user)
-                modelAndView.addObject("successMessage", "User has been registered successfully")
-                modelAndView.addObject("user", User())
-                modelAndView.viewName = "login"
-            } catch (e: Exception)
-            {
-                bindingResult
-                    .rejectValue(
-                        "uuid", "error.user",
-                        "You must use a valid minecraft username."
-                    )
-            }
+        if (bindingResult.hasErrors()) modelAndView.viewName = "register"
+        else try {
+            userService.createUser(User(register.username, register.email, register.password))
+            modelAndView.addObject("successMessage", "User has been registered successfully")
+            modelAndView.viewName = "login"
+        } catch (e: Exception) {
+            bindingResult
+                .rejectValue(
+                    "uuid", "error.user",
+                    "You must use a valid minecraft username."
+                )
         }
         return modelAndView
     }

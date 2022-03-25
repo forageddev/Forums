@@ -2,6 +2,7 @@ package dev.foraged.forums.forum
 
 import dev.foraged.forums.Application
 import dev.foraged.forums.user.User
+import org.apache.commons.lang3.RandomStringUtils
 import org.commonmark.node.Node
 import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.DBRef
@@ -10,20 +11,20 @@ import java.util.*
 
 @Document(collection = "threads")
 class ForumThread(
-    val id: String,
+    val id: String = RandomStringUtils.randomAlphanumeric(12),
     @DBRef var author: User? = null,
     var title: String = "",
     var body: String = "",
 
     var forum: String? = null, // forum is stored in
-    @DBRef val category: ForumCategory? = null // forum category is stored in
+    @DBRef var category: ForumCategory? = null, // forum category is stored in
     val timestamp: Long = System.currentTimeMillis(),
     var lastEdited: Long? = null,
     var lastEditedBy: UUID? = null,
     var upvotes: Int = 0,
     var parentThread: String? = null,
 
-)
+    )
 {
     /**
      * Comments posted on parent thread which are visible
@@ -32,7 +33,7 @@ class ForumThread(
      *
      * TODO link to parent thread?
      */
-    private val replies: List<ForumThread> = LinkedList() // Changed to link because it's in order
+    var replies: LinkedList<ForumThread> = LinkedList() // Changed to link because it's in order
 
     /**
      * Timestamp on last replied which is updated

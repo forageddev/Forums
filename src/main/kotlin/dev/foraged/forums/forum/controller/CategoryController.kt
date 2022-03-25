@@ -1,20 +1,18 @@
 package dev.foraged.forums.forum.controller
 
-import dev.foraged.forums.Application
 import dev.foraged.forums.forum.ForumCategory
 import dev.foraged.forums.forum.ForumThread
-import dev.foraged.forums.forum.repository.CategoryRepository
+import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.ICategoryService
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
+import org.apache.commons.lang3.RandomStringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Consumer
 
 @RestController
 @RequestMapping("/api/forum/category")
@@ -26,16 +24,13 @@ class CategoryController
     @Autowired lateinit var forumService: ForumRepository
     @Autowired lateinit var userService: UserService
     @Autowired lateinit var threadRepository: ThreadRepository
-    @Autowired lateinit var categoryRepository: CategoryRepository
+    @Autowired lateinit var categoryRepository: ForumCategoryRepository
 
-    fun createThread(forum: ForumCategory, author: User, title: String, content: String?)
+    fun createThread(forum: ForumCategory, author: User, title: String, content: String)
     {
-        var id: Int = Application.Companion.RANDOM.nextInt(900) + 100
-        while (!forum.threads.isEmpty() && forum.threads.contains(id.toString()))
-        {
-            id++
-        }
-        val thread = ForumThread(id.toString(), author, title)
+        val id: String = RandomStringUtils.randomAlphanumeric(12)
+
+        val thread = ForumThread(id, author, title)
         thread.body = content
         forum.threads.add(thread)
         threadRepository!!.save(thread) // Adds the thread to global thread collection
@@ -43,18 +38,11 @@ class CategoryController
         println("Created thread $id")
     }
 
-    fun createReply(thread: ForumThread, author: User, content: String?)
+    fun createReply(thread: ForumThread, author: User, content: String)
     {
-        val id = AtomicInteger(Application.Companion.RANDOM.nextInt(900) + 100)
-        thread.replies.forEach(Consumer { reply: ForumThread ->
-            if (reply.id.toInt() == id.get())
-            {
-                id.getAndIncrement()
-            }
-        })
-        val reply = ForumThread(id.get().toString(), author)
-        reply.setBody(content)
-        thread.replies.add(reply)
+        val id: String = RandomStringUtils.randomAlphanumeric(12)
+
+        thread.replies.add(ForumThread(id = id, author = author, body = content))
         println("Added reply " + id + " for " + thread.id)
     }
 

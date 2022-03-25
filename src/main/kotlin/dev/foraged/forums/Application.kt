@@ -8,9 +8,10 @@ import org.commonmark.renderer.html.HtmlRenderer
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
-import java.util.*
+import revxrsal.commands.cli.ConsoleCommandHandler
 
 @SpringBootApplication
 @ComponentScan("dev.foraged.forums")
@@ -19,36 +20,40 @@ open class Application
     @Bean
     open fun init(roleRepository: RankRepository): CommandLineRunner
     {
-        return CommandLineRunner { args: Array<String?>? ->
-            if (!roleRepository.findById("default").isPresent)
-            {
-                val role = Rank()
-                role.id = "default"
-                role.name = "Default"
-                role.color = "&f"
-                role.forumColor = "#ffff"
-                role.weight = 0
-                roleRepository.save(role)
-            }
+        return CommandLineRunner {
+            if (!roleRepository.findById("default").isPresent) roleRepository.save(Rank(id = "default", name = "Default"))
         }
+
+
     }
 
     companion object
     {
-        val RANDOM = Random()
+        val COMMAND_HANDLER = ConsoleCommandHandler.create()
         val MARKDOWN_PARSER = Parser.builder().build()
         val MARKDOWN_RENDERER = HtmlRenderer.builder().build()
         val GSON = GsonBuilder()
             .serializeNulls()
-            .setPrettyPrinting()
             .create()
 
         lateinit var INSTANCE: Application
+        lateinit var CONTEXT: ConfigurableApplicationContext
 
         @JvmStatic
         fun main(args: Array<String>) {
-            SpringApplication.run(Application::class.java, *args)
+            CONTEXT = SpringApplication.run(Application::class.java, *args)
             INSTANCE = Application()
+
+            // initialize mail variables
+            val properties = System.getProperties()
+            properties["mail.smtp.host"] = "smtp.gmail.com"
+            properties["mail.smtp.port"] = "465"
+            properties["mail.smtp.ssl.enable"] = "true"
+            properties["mail.smtp.auth"] = "true"
+
+
+            COMMAND_HANDLER.pollInput()
+
         }
     }
 }

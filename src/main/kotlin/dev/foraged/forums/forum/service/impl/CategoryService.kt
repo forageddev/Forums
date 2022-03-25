@@ -11,27 +11,27 @@ import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Repository
 
 @Repository
-class CategoryService : ICategoryService
+open class CategoryService : ICategoryService
 {
-    @Autowired
-    private val mongoTemplate: MongoTemplate? = null
+    @Autowired lateinit var mongoTemplate: MongoTemplate
+
     override fun findAll(): List<ForumCategory>?
     {
-        return mongoTemplate!!.findAll(ForumCategory::class.java)
+        return mongoTemplate.findAll(ForumCategory::class.java)
     }
 
     override fun getCategory(name: String?): ForumCategory?
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(name))
-        return mongoTemplate!!.findOne(query, ForumCategory::class.java)
+        return mongoTemplate.findOne(query, ForumCategory::class.java)
     }
 
     override fun updateCategory(categoryName: String?, newCategory: ForumCategory): Boolean
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(categoryName))
-        val category = mongoTemplate!!.findOne(query, ForumCategory::class.java)
+        val category = mongoTemplate.findOne(query, ForumCategory::class.java)
         if (category != null && (newCategory.displayName.equals(category.displayName, ignoreCase = true) || getCategory(
                 newCategory.displayName
             ) != null)
@@ -52,7 +52,7 @@ class CategoryService : ICategoryService
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(categoryName))
-        val category = mongoTemplate!!.findOne(query, ForumCategory::class.java)
+        val category = mongoTemplate.findOne(query, ForumCategory::class.java)
         if (category != null)
         {
             val update = Update()
@@ -67,7 +67,7 @@ class CategoryService : ICategoryService
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(categoryName))
-        val category = mongoTemplate!!.findOne(query, ForumCategory::class.java)
+        val category = mongoTemplate.findOne(query, ForumCategory::class.java)
         if (category != null)
         {
             val update = Update()
@@ -82,7 +82,7 @@ class CategoryService : ICategoryService
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(categoryName))
-        val category = mongoTemplate!!.findOne(query, ForumCategory::class.java)
+        val category = mongoTemplate.findOne(query, ForumCategory::class.java)
         if (category != null)
         {
             val update = Update()
@@ -97,7 +97,7 @@ class CategoryService : ICategoryService
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(categoryName))
-        val category = mongoTemplate!!.findOne(query, ForumCategory::class.java)
+        val category = mongoTemplate.findOne(query, ForumCategory::class.java)
         if (category != null)
         {
             val update = Update()
@@ -112,7 +112,7 @@ class CategoryService : ICategoryService
     {
         val query = Query()
         query.addCriteria(Criteria.where("name").`is`(name))
-        return mongoTemplate!!.findAndRemove(query, ForumCategory::class.java)
+        return mongoTemplate.findAndRemove(query, ForumCategory::class.java)
     }
 
     override fun addThread(category: ForumCategory?, thread: ForumThread?): ForumThread?

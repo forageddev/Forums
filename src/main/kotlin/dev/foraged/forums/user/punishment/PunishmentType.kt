@@ -1,18 +1,11 @@
 package dev.foraged.forums.user.punishment
 
-import lombok.AllArgsConstructor
-import lombok.Getter
-
-@Getter
-@AllArgsConstructor
-enum class PunishmentType
+enum class PunishmentType(val action: String, val color: String)
 {
-    WARN("warned", "#fff"), KICK("kicked", "#E74C3C"), MUTE("muted", "#F8C471"), BAN(
-    "banned",
-    "#B03A2E"
-),
+    WARN("warned", "#fff"),
+    MUTE("muted", "#F8C471"),
+    REQUEST_BAN("request_ban", "#F8C471"),
+    KICK("kicked", "#E74C3C"),
+    BAN("banned", "#B03A2E"),
     BLACKLIST("blacklisted", "#B03A2E");
-
-    private val action: String? = null
-    private val color: String? = null
 }

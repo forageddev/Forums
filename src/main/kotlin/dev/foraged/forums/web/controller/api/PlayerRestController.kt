@@ -10,126 +10,103 @@ import dev.foraged.forums.user.punishment.Punishment
 import dev.foraged.forums.user.punishment.PunishmentType
 import dev.foraged.forums.user.service.UserService
 import dev.foraged.forums.util.MojangUtils
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import java.lang.Boolean
 import java.util.*
-import java.util.function.Consumer
+import javax.mail.*
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeBodyPart
+import javax.mail.internet.MimeMessage
+import javax.mail.internet.MimeMultipart
 import javax.servlet.http.HttpServletRequest
-import kotlin.Any
 import kotlin.Exception
-import kotlin.Long
 import kotlin.String
-import kotlin.toString
 
 @RestController
-class PlayerRestController
+class PlayerRestController @Autowired constructor(val userService: UserService, val userRepository: UserRepository, val rankRepository: RankRepository)
 {
-    @Autowired
-    private val userService: UserService? = null
-
-    @Autowired
-    private val userRepository: UserRepository? = null
-
-    @Autowired
-    private val rankRepository: RankRepository? = null
     @RequestMapping(value = ["/api/v1/player"], method = [RequestMethod.POST])
-    fun getData(request: HttpServletRequest): String
-    {
+    fun getData(request: HttpServletRequest): String {
         val data = JsonObject()
         var user: User? = null
         val type = request.getParameter("type")
         val value = request.getParameter("value")
         when (type)
         {
-            "UUID" ->
-            {
-                user = userRepository!!.findById(UUID.fromString(value)).orElse(null)
-            }
-            "USERNAME" ->
-            {
-                user = userRepository!!.findByUsernameIgnoreCase(value)
-            }
-            "EMAIL" ->
-            {
-                user = userRepository!!.findByEmail(value)
-            }
+            "UUID" -> user = userRepository.findById(UUID.fromString(value)).orElse(null)
+            "USERNAME" -> user = userRepository.findByUsernameIgnoreCase(value)
+            "EMAIL" -> user = userRepository.findByEmail(value)
         }
-        if (user == null && !type.equals("EMAIL", ignoreCase = true))
-        {
-            try
-            {
-                user = User()
-                if (value.contains("-"))
-                {
-                    user.id = UUID.fromString(value)
-                } else
-                {
-                    user.id = MojangUtils.fetchUUID(value)
-                }
-                user.username = MojangUtils.fetchName(user.id)
-                user.dateJoined = Date(System.currentTimeMillis())
-                user.dateLastSeen = Date(System.currentTimeMillis())
-                user.lastServer = "hub-01"
+        if (user == null && !type.equals("EMAIL", ignoreCase = true)) {
+            try {
+                user = User(
+                    id =
+                        if (value.contains("-")) {
+                            UUID.fromString(value)
+                        } else {
+                            MojangUtils.fetchUUID(value)!!
+                        },
+                    lastServer = "hub-01"
+                )
                 println("created new user")
-            } catch (e: Exception)
-            {
+            } catch (e: Exception) {
                 user = null
             }
         }
         data.addProperty("success", user != null)
         println("success = $data")
-        val playerData = JsonObject()
-        if (user != null)
-        {
-            if (user.grants.isEmpty())
-            {
-                val grant = Grant()
-                grant.id = UUID.randomUUID()
-                grant.target = user.id
-                grant.rankId = "default"
-                grant.duration = Long.MAX_VALUE
-                grant.setReason("Default Grant")
-                grant.issuedAt = System.currentTimeMillis()
-                user.addGrant(grant)
-                println("added default grant coz not exist")
-            }
-            val grants = JsonArray()
-            val punishments = JsonArray()
-            for (grant in user.grants) grants.add(grant.toJson())
-            for (punishment in user.punishments) punishments.add(punishment.toJson())
-            playerData.addProperty("id", user.id.toString())
-            playerData.addProperty("username", user.username)
-            playerData.addProperty("email", user.email)
-            if (user.lastServer != null) playerData.addProperty("lastServer", user.lastServer)
-            if (user.authSecret != null) playerData.addProperty("authSecret", user.authSecret)
-            if (user.lastAuthenticatedAddress != null) playerData.addProperty(
-                "lastAuthenticatedAddress",
-                user.lastAuthenticatedAddress
-            )
-            playerData.addProperty("registered", user.isRegistered)
-            playerData.addProperty("dateJoined", user.dateJoined.time)
-            playerData.addProperty("dateLastSeen", user.dateLastSeen.time)
-            playerData.addProperty("grants", grants.toString())
-            playerData.addProperty("punishments", punishments.toString())
-            val metadata = JsonObject()
-            user.metaData.forEach { (key: String, `val`: Any) ->
-                if (key.lowercase(Locale.getDefault()).contains("options"))
-                {
-                    metadata.addProperty(key, ("" + `val`).toLong())
-                } else
-                {
-                    metadata.addProperty(key, "" + `val`)
-                }
-            }
-            playerData.add("metadata", metadata)
-            userService!!.save(user)
+        if (user != null) {
+            userService.save(user)
             println("return yes good")
         }
-        data.add("player", playerData)
-        return Application.Companion.GSON.toJson(data)
+        data.add("user", user!!.json())
+        return Application.GSON.toJson(data)
+    }
+
+    @RequestMapping(value = ["/api/v1/player/register/"], method = [RequestMethod.POST])
+    fun registerSite(request: HttpServletRequest): String {
+        val data = JsonObject()
+        var user: User? = null
+        val email = request.getParameter("email")
+        val value = request.getParameter("id")
+
+        user = userRepository.findById(UUID.fromString(value)).get()
+        user.registerSecret = RandomStringUtils.randomAlphanumeric(16)
+        userRepository.save(user)
+
+        val session = Session.getInstance(System.getProperties(), object: Authenticator() {
+            override fun getPasswordAuthentication(): PasswordAuthentication
+            {
+                return PasswordAuthentication("no-reply@endermite.gg", "txxoptdvwxvijrwp")
+            }
+        })
+
+        try {
+            val message = MimeMessage(session)
+            message.setFrom("no-reply@endermite.gg")
+            message.addRecipient(Message.RecipientType.TO, InternetAddress(email))
+            message.subject = "Nasa Network - Account Registration"
+
+            val multipart = MimeMultipart()
+            val part = MimeBodyPart()
+            part.setText("You can follow this link to complete your registration on the Nasa Network!\n" +
+                    "\n" +
+                    "https://nasa.gg/register/${user.registerSecret}")
+            multipart.addBodyPart(part)
+            message.setContent(multipart)
+            Transport.send(message)
+
+            data.addProperty("success", true)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            data.addProperty("success", false)
+        }
+
+        return Application.GSON.toJson(data)
     }
 
     @RequestMapping(value = ["/api/v1/player/punish"], method = [RequestMethod.POST])
@@ -138,55 +115,38 @@ class PlayerRestController
         val response = JsonObject()
         val data = JsonParser().parse(request.getParameter("punishment")).asJsonObject
         val id = UUID.fromString(request.getParameter("target"))
-        val user = userRepository!!.findById(id).orElse(User())!!
+        val user = userRepository.findById(id).get()
+
         var error = false
-        if (user.id == null)
-        {
-            try
-            {
-                user.id = id
-                user.username = MojangUtils.fetchName(id)
-                user.dateJoined = Date(System.currentTimeMillis())
-                user.dateLastSeen = Date(System.currentTimeMillis())
-            } catch (e: Exception)
-            {
+
+        val type = PunishmentType.valueOf(data["type"].asString)
+        if (Boolean.parseBoolean(request.getParameter("undo"))) {
+            val remover = UUID.fromString(data["removedBy"].asString)
+            val reason = data["removedReason"].asString
+            if (user.hasActivePunishment(type)) {
+                val punishment = user.getActivePunishment(type)!!
+                punishment.removedBy = remover
+                punishment.removedAt = System.currentTimeMillis()
+                punishment.removedReason = reason
+                punishment.removed = true
+                response.addProperty("status", "success")
+            } else {
+                response.addProperty("status", "not-found")
                 error = true
-                response.addProperty("status", "unable-to-create")
+            }
+        } else {
+            if (user.hasActivePunishment(type)) {
+                response.addProperty("status", "already-found")
+                error = true
+            } else {
+                user.addPunishment(Application.GSON.fromJson(data.asJsonObject, Punishment::class.java))
+                response.addProperty("status", "success")
             }
         }
-        if (!error)
-        {
-            val type = PunishmentType.valueOf(data["type"].asString)
-            if (Boolean.parseBoolean(request.getParameter("undo")))
-            {
-                val remover = UUID.fromString(data["removedBy"].asString)
-                val reason = data["removalReason"].asString
-                if (user.hasActivePunishment(type))
-                {
-                    val punishment = user.getActivePunishment(type)
-                    punishment.removedBy = remover
-                    punishment.removedAt = System.currentTimeMillis()
-                    punishment.removalReason = reason
-                    response.addProperty("status", "success")
-                } else
-                {
-                    response.addProperty("status", "not-found")
-                }
-            } else
-            {
-                if (user.hasActivePunishment(type))
-                {
-                    response.addProperty("status", "already-found")
-                } else
-                {
-                    user.addPunishment(Punishment(data.asJsonObject))
-                    response.addProperty("status", "success")
-                }
-            }
-            userService!!.save(user)
-        }
+        userService.save(user)
+
         response.addProperty("success", !error)
-        return Application.Companion.GSON.toJson(response)
+        return Application.GSON.toJson(response)
     }
 
     @RequestMapping(value = ["/api/v1/player/grant"], method = [RequestMethod.POST])
@@ -194,59 +154,38 @@ class PlayerRestController
     {
         val response = JsonObject()
         val data = JsonParser().parse(request.getParameter("grant")).asJsonObject
-        val id = UUID.fromString(request.getParameter("target"))
-        val user = userRepository!!.findById(id).orElse(User())!!
+        val targetUuid = UUID.fromString(request.getParameter("target"))
+        val user = userRepository.findById(targetUuid).get()
         var error = false
-        if (user.id == null)
-        {
-            try
-            {
-                user.id = id
-                user.username = MojangUtils.fetchName(id)
-                user.dateJoined = Date(System.currentTimeMillis())
-                user.dateLastSeen = Date(System.currentTimeMillis())
-            } catch (e: Exception)
-            {
-                error = true
-                response.addProperty("status", "unable-to-create")
-            }
-        }
-        if (!error)
-        {
-            if (Boolean.parseBoolean(request.getParameter("undo")))
-            {
-                val uuid = UUID.fromString(data["id"].asString)
+
+        if (!error) {
+            if (Boolean.parseBoolean(request.getParameter("undo"))) {
+                val id = data["id"].asString
                 val remover = UUID.fromString(data["removedBy"].asString)
-                val reason = data["removalReason"].asString
+                val reason = data["removedReason"].asString
                 println("got here")
-                if (user.activeGrants.stream().anyMatch { g: Grant? -> g.getId().toString() == uuid.toString() })
+                if (user.activeGrants.filterNotNull().any { it.id == id.toString() }) //) .stream().anyMatch { g: Grant? -> g.getId().toString() == uuid.toString() })
                 {
-                    val grant =
-                        user.grants.stream().filter { g: Grant -> g.id.toString() == uuid.toString() }.findFirst()
-                            .orElse(null)
+                    val grant = user.grants.filterNotNull().find { it.id == id }!!
                     println("found grant")
-                    grant.isRemoved = true
+                    grant.removed = true
                     grant.removedBy = remover
                     grant.removedAt = System.currentTimeMillis()
-                    grant.removalReason = reason
-                    userService!!.save(user)
+                    grant.removedReason = reason
+                    userService.save(user)
                     response.addProperty("status", "success")
-                } else
-                {
+                } else {
                     response.addProperty("status", "not-found")
                 }
             } else
             {
-                user.addGrant(
-                    Grant(
-                        data.asJsonObject,
-                        id,
-                        rankRepository!!.findByName(data.asJsonObject["rank"].asString)!!
-                    )
-                )
+                val grant = Application.GSON.fromJson(data.asJsonObject, Grant::class.java)
+                grant.rank = Application.CONTEXT.beanFactory.getBean(RankRepository::class.java).findById(data.asJsonObject["rank"].asString).get()
+
+                    //Utils.INSTANCE.rank(data.asJsonObject["rank"].asString).get() old
                 response.addProperty("status", "success")
             }
-            userService!!.save(user)
+            userService.save(user)
         }
         response.addProperty("success", !error)
         return Application.Companion.GSON.toJson(response)
@@ -256,15 +195,14 @@ class PlayerRestController
     fun updateStatus(request: HttpServletRequest): String
     {
         val id = UUID.fromString(request.getParameter("id"))
-        val user = userRepository!!.findById(id).orElse(null)
-        if (user != null)
-        {
-            user.isOnline = Boolean.parseBoolean(request.getParameter("status"))
-            userService!!.save(user)
+        val user = userRepository.findById(id).orElse(null)
+        if (user != null) {
+            user.online = Boolean.parseBoolean(request.getParameter("status"))
+            userService.save(user)
         }
         val response = JsonObject()
         response.addProperty("success", user != null)
-        return Application.Companion.GSON.toJson(response)
+        return Application.GSON.toJson(response)
     }
 
     @RequestMapping(value = ["/api/v1/player/register"], method = [RequestMethod.POST])
@@ -286,16 +224,14 @@ class PlayerRestController
     {
         val data = JsonParser().parse(request.getParameter("data")).asJsonObject
         val id = UUID.fromString(data["id"].asString)
-        val user = userRepository!!.findById(id).orElse(User())!!
+        val user = userRepository.findById(id).get()!!
+
         var error = false
-        if (user.id == null)
-        {
+        if (user.id == null) {
             try
             {
                 user.id = id
-                user.username = MojangUtils.fetchName(id)
-                user.dateJoined = Date(System.currentTimeMillis())
-                user.dateLastSeen = Date(System.currentTimeMillis())
+                user.username = MojangUtils.fetchName(id)!!
             } catch (e: Exception)
             {
                 error = true
@@ -313,13 +249,7 @@ class PlayerRestController
                 user.grants.clear()
                 for (element in JsonParser().parse(data["grants"].asString).asJsonArray)
                 {
-                    user.addGrant(
-                        Grant(
-                            element.asJsonObject,
-                            id,
-                            rankRepository!!.findByName(element.asJsonObject["rank"].asString)!!
-                        )
-                    )
+                    user.addGrant(Application.GSON.fromJson(element.asJsonObject, Grant::class.java))
                 }
             }
             if (data.has("punishments"))
@@ -327,26 +257,15 @@ class PlayerRestController
                 user.punishments.clear()
                 for (element in JsonParser().parse(data["punishments"].asString).asJsonArray)
                 {
-                    user.addPunishment(Punishment(element.asJsonObject))
+                    user.addPunishment(Application.GSON.fromJson(element.asJsonObject, Punishment::class.java))
                 }
             }
-            if (data.has("metadata"))
-            {
-                val metadata = data["metadata"].asJsonObject
-                metadata.entrySet().forEach(Consumer { (key, value): Map.Entry<String, JsonElement> ->
-                    if (key.lowercase(Locale.getDefault()).contains("options"))
-                    {
-                        user.metaData[key] = value.asLong
-                    } else
-                    {
-                        user.metaData[key] = value.asString
-                    }
-                })
-            }
+            // todo some meta data saving or osmthing honestly most this shit needs re-writing at some point#
+            // its a fucking shit show lmao
         }
-        userService!!.save(user)
+        userService.save(user)
         val response = JsonObject()
         response.addProperty("success", !error)
-        return Application.Companion.GSON.toJson(response)
+        return Application.GSON.toJson(response)
     }
 }

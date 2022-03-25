@@ -8,10 +8,8 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 
 @Service
-class ForumService : IForumService
+class ForumService @Autowired constructor(val mongoTemplate: MongoTemplate) : IForumService
 {
-    @Autowired
-    private val mongoTemplate: MongoTemplate? = null
     override fun findAll(): List<Forum>
     {
         return mongoTemplate!!.findAll(Forum::class.java)

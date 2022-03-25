@@ -18,7 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig : WebSecurityConfigurerAdapter()
+open class WebSecurityConfig : WebSecurityConfigurerAdapter()
 {
     @Autowired
     private val bCryptPasswordEncoder: BCryptPasswordEncoder? = null
@@ -26,7 +26,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter()
     @Autowired
     var customizeAuthenticationSuccessHandler: CustomizeAuthenticationSuccessHandler? = null
     @Bean
-    fun mongoUserDetails(): UserDetailsService
+    open fun mongoUserDetails(): UserDetailsService
     {
         return UserService()
     }
@@ -70,7 +70,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter()
     }
 
     @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource
+    open fun corsConfigurationSource(): CorsConfigurationSource
     {
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf("*")

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<head>
+
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="body">
+        <div class="content">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    Welcome to the official Nasa Store. To begin shopping, please select a category from the sidebar. Please note that ranks cost a one-time fee and are unlocked permanently!
+
+                    <div class="body-obj">
+                        <p class="title-of-subject support">Support</p>
+                        <p>Need any questions answered before checkout? Waited more than 20 minutes but your package
+                            still has not arrived? Ask the community/staff on Discord, or for payment support, submit a
+                            support ticket on our website.</p>
+                        <a class="support-button" href="/status">Order History</a>
+                        <a class="support-button" href="https://discord.gg/nasagg">Discord Server</a>
+                    </div>
+                    <div class="body-obj">
+                        <p class="title-of-subject refund">Refund policy</p>
+                        <div>
+                            <p>All payments are final and non-refundable.
+                                Attempting a chargeback or opening a PayPal dispute will result in <b>permanent</b> and
+                                irreversible <b>banishment</b> from all of our servers, and other minecraft stores.
+                                <br><br>
+                                It could take between 1-20 minutes for your purchase to be credited in-game. If you are
+                                still not credited after this time period, please open a support ticket on our forums
+                                with
+                                proof of purchase and we will look into your issue.</p>
+                        </div>
+                        <a class="terms-button triplezone__toogle--modal" data-remote="/terms" href="javascript;;">Terms and Conditions</a>
+                        <a class="terms-button triplezone__toogle--modal" href="/tebex-privacy" data-remote="/tebex-privacy" onclick="if(showModal) { showModal(&quot;/tebex-privacy&quot;); return false; }">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="panel panel-default module">
+                <div class="panel-heading">Top Customer This Month</div>
+                <div class="panel-body">
+                    <div class="top-donator">
+                        <div class="avatar">
+                            <img src="https://crafatar.com/renders/body/dd815a8246084908a0e9e38d964ef0d7" width="40">
+                        </div>
+                        <div class="info">
+                            <div class="ign">Joe moma</div>
+                            <div class="amount">
+                                Donated the most
+
+                                this month.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><ul class="nasa-buyer-list">
+
+            <li>
+                <div class="avatar">
+                    <img src="https://cravatar.eu/avatar/2fa1fa9b79e14fcab6574331d5ca3f46/64" width="28" class="nasa-avatar-img" title="XILED_Dragon">
+                </div>
+            </li>
+            <li>
+                <div class="avatar">
+                    <img src="https://cravatar.eu/avatar/2fa1fa9b79e14fcab6574331d5ca3f46/64" width="28" class="nasa-avatar-img" title="XILED_Dragon">
+                </div>
+            </li>
+            <li>
+                <div class="avatar">
+                    <img src="https://cravatar.eu/avatar/5d0c42cebb1149e193783341e87e8704/64" width="28" class="nasa-avatar-img" title="Wubstep">
+                </div>
+            </li>
+            <li>
+                <div class="avatar">
+                    <img src="https://cravatar.eu/avatar/acf7392f86c74cc2878a6a5b40b2b4a1/64" width="28" class="nasa-avatar-img" title="Pixxelss">
+                </div>
+            </li>
+            <li>
+                <div class="avatar">
+                    <img src="https://cravatar.eu/avatar/dd815a8246084908a0e9e38d964ef0d7/64" width="28" class="nasa-avatar-img" title="LostorWhat">
+                </div>
+            </li>
+        </ul><div class="panel panel-default module payment-module">
+            <div class="panel-heading">Community Goal</div>
+            <div class="panel-body">
+                <div class="donation-goal">
+                    <div class="nasa-progressbar">
+                        <div class="nasa-progressbar-box kpb-box1" percent-fill="10" style="background-color: rgb(53, 92, 125); opacity: 0.7;"></div>
+                        <div class="nasa-progressbar-box kpb-box2" percent-fill="20"></div>
+                        <div class="nasa-progressbar-box kpb-box3" percent-fill="30"></div>
+                        <div class="nasa-progressbar-box kpb-box4" percent-fill="40"></div>
+                        <div class="nasa-progressbar-box kpb-box5" percent-fill="50"></div>
+                        <div class="nasa-progressbar-box kpb-box6" percent-fill="60"></div>
+                        <div class="nasa-progressbar-box kpb-box7" percent-fill="70"></div>
+                        <div class="nasa-progressbar-box kpb-box8" percent-fill="80"></div>
+                        <div class="nasa-progressbar-box kpb-box9" percent-fill="90"></div>
+                        <div class="nasa-progressbar-box kpb-box10" percent-fill="100"></div>
+                    </div>
+
+                    <div class="nasa-paymentPercentage"><span>7</span>%</div>
+                </div>
+            </div>
+        </div>
+
+            <script>
+
+                var paymentGoalStatus = 7;
+                if(paymentGoalStatus != 0) {
+                    isGoalAvailable = true;
+                }else {
+                    document.querySelector(".nasa-paymentPercentage span").innerHTML = "0";
+                }
+
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/gh/leonardosnt/mc-player-counter/dist/mc-player-counter.min.js"></script>

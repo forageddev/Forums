@@ -14,18 +14,15 @@ import org.springframework.web.servlet.ModelAndView
 import javax.validation.Valid
 
 @Controller
-class UserController
-{
-    @Autowired
-    private val userService: UserService? = null
+class UserController {
+    @Autowired lateinit var userService: UserService
+    @Autowired lateinit var rankRepository: RankRepository
 
-    @Autowired
-    private val rankRepository: RankRepository? = null
     @RequestMapping(value = ["/player/{id}"], method = [RequestMethod.GET])
     fun getPlayer(@PathVariable id: String?): ModelAndView
     {
         val modelAndView = ModelAndView("player")
-        val user = userService!!.findUserByName(id)
+        val user = userService.findUserByName(id)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Player not found"
             )
@@ -62,16 +59,16 @@ class UserController
     }
 
     @RequestMapping(value = ["/player/{id}/grants/create"], method = [RequestMethod.POST])
-    fun getGrants(@PathVariable id: String, grant: @Valid Grant?): ModelAndView
+    fun getGrants(@PathVariable id: String, grant: @Valid Grant): ModelAndView
     {
-        val user = userService!!.findUserByName(id)
+        val user = userService.findUserByName(id)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Player not found"
             )
-        val rank = rankRepository!!.findById(grant.getRankId())
-        if (rank.isPresent)
-        {
-            grant.setRank(rank.get())
+
+        val rank = rankRepository.findById(grant.rank.id)
+        if (rank.isPresent) {
+            grant.rank = rank.get()
             user.grants.add(grant)
             return ModelAndView("redirect:/player/$id/grants")
         }
