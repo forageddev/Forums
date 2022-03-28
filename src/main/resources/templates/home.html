@@ -6,35 +6,31 @@
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="container">
-        test
-    </div>
     <div th:if="${announcements != null}">
-        <tr th:each="announcement : ${announcements}">
-            <div class="card card-news">
-                <div>
-                    <div class="news-avatar">
-                        <img th:src="@{'https://crafatar.com/renders/body/' + ${announcement.author.id.toString()} + '?overlay'}">
+        <tr th:each="thread : ${announcements}">
+            <div class="card card-thread">
+                <div class="row">
+                    <div class="col-lg-12 col-xl-1">
+                        <a th:href="@{'/player/' + ${thread.author.username}}">
+                            <img th:src="@{'https://crafatar.com/renders/body/' + ${thread.author.id.toString()} + '?overlay'}">
+                        </a>
                     </div>
-                    <div class="news-content">
-                        <div class="card-header">
-                            <td th:text="${announcement.title}"></td>
-                            <div class="card-subheader">
-                                by </td> <a th:href="@{'/player/' + ${announcement.author.username}}" th:text="${announcement.author.username}"></a>
-                                &bull;
-                                <time th:datetime="${announcement.timestamp}" data-format="ago" data-toggle="tooltip"></time>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="content" th:utext="${announcement.formattedBody}">
+                    <div class="col-lg-12 col-xl-11">
+                        <h3>
+                            <span th:text="${thread.title}"></span>
 
+                            <div class="tagline">
+                                by <a th:style="@{'color:' + ${thread.author.getRankColor()}}" th:href="@{'/player/' + ${thread.author.username}}" th:text="${thread.author.username}"></a>
+                                &bull;
+                                <time th:datetime="${thread.timestamp}" data-format="ago" data-toggle="tooltip"></time>
                             </div>
+                        </h3>
+                        <div class="post" th:utext="${thread.formattedBody}">
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a class="btn btn-primary btn-sm btn-block" th:href="${announcement.getFriendlyUrl()}">READ MORE...</a>
-                </div>
+
+                <a class="mt-3 btn btn-primary btn-sm btn-block" th:href="${thread.getFriendlyUrl()}">READ MORE...</a>
             </div>
     </div>
 </div>

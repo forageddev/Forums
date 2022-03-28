@@ -20,12 +20,12 @@
 
     <div class="card card-thread">
         <div class="row">
-            <div class="col-lg-1 col-md-2">
+            <div class="col-lg-12 col-xl-1">
                 <a th:href="@{'/player/' + ${thread.author.username}}">
                     <img th:src="@{'https://crafatar.com/renders/body/' + ${thread.author.id.toString()} + '?overlay'}">
                 </a>
             </div>
-            <div class="col">
+            <div class="col-xl-11 col-lg-12">
                 <h3>
                     <span th:text="${thread.title}"></span>
                     <div class="upthread" th:classappend="${session.user == null ? 'disabled' : ''}">
@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="tagline">
-                        by <a th:href="@{'/player/' + ${thread.author.username}}" th:text="${thread.author.username}"></a>
+                        by <a th:style="@{'color:' + ${thread.author.getRankColor()}}" th:href="@{'/player/' + ${thread.author.username}}" th:text="${thread.author.username}"></a>
                         &bull;
                         <time th:datetime="${thread.timestamp}" data-format="ago" data-toggle="tooltip"></time>
                     </div>
@@ -45,16 +45,16 @@
             </div>
         </div>
     </div>
-    <div class="card card-thread-reply" th:classappend="${session.user == null ? 'disabled' : ''}">
+    <div class="card card-thread-reply p-2" th:classappend="${session.user == null ? 'disabled' : ''}">
         <div class="thread-reply-avatar">
-            <img th:src="@{'https://crafatar.com/avatars/' + ${thread.author.id.toString()} + '?size=24?overlay'}">
+            <img th:src="@{'https://crafatar.com/avatars/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : thread.author.id.toString()} + '?size=24?overlay'}">
         </div>
         <form class="thread-reply-content">
             <div class="form-group mb-2">
-                <textarea class="form-control"></textarea>
+                <textarea th:disabled="${session.user == null}" class="form-control"></textarea>
             </div>
             <div class="text-right">
-                <button type="submit" class="btn btn-primary btn-sm">Post</button>
+                <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
             </div>
         </form>
     </div>

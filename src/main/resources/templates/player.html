@@ -8,7 +8,7 @@
 <body>
 <div layout:fragment="content">
     <div class="row">
-        <div class="col-md-12 col-lg-4">
+        <div class="col-lg-12 col-xl-4">
             <div class="card card-profile">
                 <div class="card-header" th:style="'background: ' + ${user.online ? '#3CB152' : '#C62828'} + ';'">
                     <strong th:text="${user.online ? 'Online' : 'Offline'}"></strong>
@@ -28,9 +28,13 @@
                     <div class="player-rank" style="color:" th:styleappend="${user.getRankColor()}" th:text="${user.primaryGrant.rank.id}"></div>
                 </div>
             </div>
+
+            <div th:if="${session.user != null && session.user.id == user.id}" class="card card-profile-generic">
+                <a class="btn btn-nice btn-primary" href="/account">Edit your account</a>
+            </div>
         </div>
 
-        <div class="col-md-12 col-lg-8">
+        <div class="col-lg-12 col-xl-8">
             <div class="card-body">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">

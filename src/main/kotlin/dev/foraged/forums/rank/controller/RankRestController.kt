@@ -1,4 +1,4 @@
-package dev.foraged.forums.web.controller.api
+package dev.foraged.forums.rank.controller
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement

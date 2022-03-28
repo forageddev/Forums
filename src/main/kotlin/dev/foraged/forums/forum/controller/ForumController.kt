@@ -1,5 +1,6 @@
-package dev.foraged.forums.web.controller
+package dev.foraged.forums.forum.controller
 
+import dev.foraged.forums.forum.ForumThread
 import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
@@ -11,22 +12,36 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.ModelAndView
+import java.util.*
 
 @Controller
 class ForumController @Autowired constructor(val userService: UserService, val forumService: ForumService, val categoryRepository: ForumCategoryRepository, val forumRepository: ForumRepository, val threadRepository: ThreadRepository)
 {
 
     @RequestMapping(value = ["/forums/{id}"], method = [RequestMethod.GET])
-    fun forumCategory(@PathVariable id: String): ModelAndView
+    fun forumCategory(@PathVariable id: String, @RequestParam filter: String?): ModelAndView
     {
         val modelAndView = ModelAndView("forums/forum")
         val subForum = categoryRepository.findById(id).orElse(null)
         if (subForum != null)
         {
+            val threads: List<ForumThread> = when (filter) {
+                "NEW" -> subForum.threads.sortedBy {
+                    it.timestamp
+                }
+                "TOP" -> subForum.threads.sortedBy {
+                    it.upvotes.size
+                }
+                else -> subForum.threads.sortedBy {
+                    it.lastEdited
+                }
+            }
+
             modelAndView.addObject("forum", subForum)
-            modelAndView.addObject("threads", subForum.threads)
+            modelAndView.addObject("threads", threads)
             return modelAndView
         }
         throw ResponseStatusException(

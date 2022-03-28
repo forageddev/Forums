@@ -1,8 +1,9 @@
-package dev.foraged.forums.web.controller
+package dev.foraged.forums.forum.controller
 
 import dev.foraged.forums.forum.ForumThread
 import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
+import dev.foraged.forums.forum.repository.ThreadReplyRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.impl.ForumService
 import dev.foraged.forums.user.User
@@ -22,14 +23,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @Controller
-class ThreadController
+class ThreadController @Autowired constructor(val userService: UserService, val forumRepository: ForumRepository, val forumService: ForumService, val threadRepository: ThreadRepository, val categoryRepository: ForumCategoryRepository, val replyRepository: ThreadReplyRepository)
 {
-    @Autowired lateinit var userService: UserService
-    @Autowired lateinit var forumRepository: ForumRepository
-    @Autowired lateinit var forumService: ForumService
-    @Autowired lateinit var threadRepository: ThreadRepository
-    @Autowired lateinit var categoryRepository: ForumCategoryRepository
-
     //
     // Get thread details
     //
@@ -37,7 +32,7 @@ class ThreadController
     fun thread(@PathVariable id: String, @PathVariable(required = false) title: String?): ModelAndView
     {
         val modelAndView = ModelAndView()
-        val forumThread = threadRepository!!.findById(id)
+        val forumThread = threadRepository.findById(id)
         if (forumThread.isPresent)
         {
             val thread = forumThread.get()
@@ -67,9 +62,11 @@ class ThreadController
     {
         val modelAndView = ModelAndView()
         modelAndView.viewName = "forums/edit"
-        val thread = threadRepository!!.findById(id)
+        val thread = threadRepository.findById(id)
         if (thread.isPresent)
-        {         // todo Make sure they have permission to edit this thread
+        {
+
+            // todo Make sure they have permission to edit this thread
             modelAndView.addObject("thread", thread)
             return modelAndView
         }
@@ -141,7 +138,7 @@ class ThreadController
     ): ModelAndView
     {
         // todo make sure they have access to the forum they are trying to post to
-        val subForum = categoryRepository!!.findByDisplayName(thread.forum)
+        val subForum = categoryRepository!!.findByDisplayName(thread.forum.name)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Category not found"
             )
@@ -156,9 +153,9 @@ class ThreadController
         thread.author = user // debug todo set to user -- also make sure they're logging in LOL
         subForum.threads.add(thread) // only stores id now
         subForum.lastActivity = System.currentTimeMillis()
-        threadRepository!!.save(thread)
+        threadRepository.save(thread)
         categoryRepository.save(subForum)
-        forumRepository!!.save(forum)
+        forumRepository.save(forum)
         println("Saved and updated.")
 
         // Redirect them to there new thread :D

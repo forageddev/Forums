@@ -17,7 +17,7 @@ class ForumService @Autowired constructor(val mongoTemplate: MongoTemplate) : IF
 
     override fun getForum(name: String?): Forum
     {
-        return mongoTemplate!!.findById(name, Forum::class.java)
+        return mongoTemplate.findById(name, Forum::class.java)
     }
 
     override val subForums: List<ForumCategory>

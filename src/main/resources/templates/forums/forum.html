@@ -14,8 +14,18 @@
             <a th:href="${forum.friendlyUrl}" th:text="${forum.displayName}"></a>
         </li>
 
-        <div class="navbar-nav ml-auto nav-item" th:if="${session.user != null}">
-            <a href="/thread/create" class="btn">New thread</a>
+        <div class="navbar-nav ml-auto nav-item">
+            <button type="button" target="filter-menu" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span th:text="${#request.getParameter('filter') == null ? 'HOT' : #request.getParameter('filter')}"></span>
+            </button>
+
+            <ul id="filter-menu" class="dropdown-menu" role="menu">
+                <li><a th:classappend="${#request.getParameter('filter') == 'HOT' || #request.getParameter('filter') == null ? 'active' : ''}" href="?filter=HOT">HOT</a></li>
+                <li><a th:classappend="${#request.getParameter('filter') == 'NEW' ? 'active' : ''}" href="?filter=NEW">NEW</a></li>
+                <li><a th:classappend="${#request.getParameter('filter') == 'TOP' ? 'active' : ''}" href="?filter=TOP">TOP</a></li>
+            </ul>
+
+            <a th:if="${session.user != null}" href="/thread/create" class="btn">New thread</a>
         </div>
     </ul>
 

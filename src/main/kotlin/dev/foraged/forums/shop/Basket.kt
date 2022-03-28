@@ -34,6 +34,12 @@ class Basket(
         return items.isEmpty()
     }
 
+    fun has(pack: Package) : Boolean {
+        return items.any {
+            it.item == pack
+        }
+    }
+
     fun remove(pack: Package) {
         items.removeIf {
             it.item == pack

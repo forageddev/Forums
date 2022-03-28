@@ -1,4 +1,4 @@
-package dev.foraged.forums.web.controller
+package dev.foraged.forums.user.controller
 
 import dev.foraged.forums.rank.RankRepository
 import dev.foraged.forums.user.grant.Grant
@@ -11,12 +11,19 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.ModelAndView
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @Controller
 class UserController {
     @Autowired lateinit var userService: UserService
     @Autowired lateinit var rankRepository: RankRepository
+
+    @RequestMapping(value = ["/player"], method = [RequestMethod.GET])
+    fun getPlayer(request: HttpServletRequest) : String
+    {
+        return "redirect:/player/${request.getParameter("name")}"
+    }
 
     @RequestMapping(value = ["/player/{id}"], method = [RequestMethod.GET])
     fun getPlayer(@PathVariable id: String?): ModelAndView

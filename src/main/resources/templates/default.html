@@ -96,14 +96,16 @@
                         <div class="nasa-header">
 
                             <div class="nasa-help-text bold">
-                                Need help? <a href="https://discord.gg/JpYZ4UXGvM">Contact Us</a>
+                                <form method="get" action="/player/" id="search-player">
+                                    <input autocomplete="off" name="name" type="text" minlength="3" maxlength="16" size="16" placeholder="Search players." />
+                                </form>
                             </div>
 
 
                             <div th:if="${session.user != null}" class="nasa-user-control">
-                                <div class="nasa-user-head">
+                                <a th:href="@{'/player/' + ${session.user.username}}" class="nasa-user-head">
                                     <img th:src="@{'https://cravatar.eu/avatar/' + ${session.user.id.toString().replace('-', '')} + '?overlay=true'}">
-                                </div>
+                                </a>
                                 <div class="nasa-user-details">
                                     <span>logged in as</span>
                                     <span class="nasa-user-username" th:text="${session.user.username}"></span>
@@ -141,7 +143,7 @@
                             <div layout:fragment="content"></div>
                         </div>
 
-                        <div class="nasa-section section--footer">
+                        <div class="nasa-section section--footer mt-3">
                             <div class="store-copyright">
                                 <p>Copyright © 2022 Endermite, LLC</p>
                                 <p>We are not affiliated with Minecraft or Mojang</p>

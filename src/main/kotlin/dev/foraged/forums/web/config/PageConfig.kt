@@ -1,9 +1,11 @@
 package dev.foraged.forums.web.config
 
+import dev.foraged.forums.user.interceptor.UserInterceptorHandler
 import nz.net.ultraq.thymeleaf.LayoutDialect
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
@@ -16,6 +18,12 @@ open class PageConfig : WebMvcConfigurer
         registry.addViewController("/").setViewName("home")
         registry.addViewController("/dashboard").setViewName("dashboard")
         registry.addViewController("/login").setViewName("login")
+    }
+
+    override fun addInterceptors(registry: InterceptorRegistry)
+    {
+        registry.addInterceptor(UserInterceptorHandler()).addPathPatterns(
+            "/shop/basket/*", "/store/basket/*", "/thread/create", "/account")
     }
 
     @Bean

@@ -5,12 +5,12 @@
  * explicit permission from original author: Darragh Hay
  */
 
-package dev.foraged.forums.user.connection
+package dev.foraged.forums.shop
 
-enum class ConnectionType {
-    GITHUB,
-    DISCORD,
-    TWITTER,
-    YOUTUBE,
-    TWITCH
+enum class TransactionStatus
+{
+    PENDING,
+    COMPLETED,
+    REFUNDED,
+    CHARGE_BACK
 }

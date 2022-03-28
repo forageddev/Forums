@@ -628,6 +628,33 @@ w{
     font-family:Kanit,sans-serif
 }
 /*
+search thing
+ */
+
+#search-player input[type="text"] {
+    background: url(http://i1078.photobucket.com/albums/w498/molenmaulana/search-white_zps878b551d.png) no-repeat 10px 6px #444;
+    border: 0 none;
+    font: bold 12px Arial,Helvetica,Sans-serif;
+    color: #cccccc;
+    width:150px;
+    padding: 6px 15px 6px 35px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+    -webkit-transition: all 0.7s ease 0s;
+    -moz-transition: all 0.7s ease 0s;
+    -o-transition: all 0.7s ease 0s;
+    transition: all 0.7s ease 0s;
+}
+#search-player input[type="text"]:focus {
+    width: 200px;
+}
+
+/*
 breadcrumb
  */
 .breadcrumb {
@@ -1146,6 +1173,36 @@ Player page
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.2rem;
+}
+
+.form-control:focus {
+    background: transparent;
+    border: transparent;
+    color: var(--font-color);
+}
+
+.card {
+    background: #232323;
+    border-color: transparent;
+}
+
+.card-profile-generic {
+    background: #232323;
+    padding: 0.5rem;
+    margin-top: 20px;
+
+    background: #232323;
+    border-radius: 0.25rem;
+}
+
+.btn-nice {
+    font-size:.8rem;
+    padding:3px 10px;
+    background:var(--primary-color);
+    color:#fff;
+    border:none;
+    font-weight:400;
+    text-transform:uppercase
 }
 
 /*	PROFILE STATS CARD
@@ -1750,6 +1807,7 @@ a:hover{
     background:var(--secondary-color);
     border-radius:10px;
     padding:20px;
+    margin-bottom: 20px;
     text-align:center
 }
 .sidebar .panel .panel-heading{
@@ -1877,13 +1935,13 @@ a:hover{
     grid-area:b10;
     transition-delay:3.25s
 }
-.nasa-header .nasa-user-details .currency>.dropdown-menu,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu{
+.nasa-header .nasa-user-details .currency>.dropdown-menu,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu, .breadcrumb .navbar-nav>.dropdown-menu{
     padding:15px 0;
     min-width:auto;
     border-radius:10px;
     border:none
 }
-.nasa-header .nasa-user-details .currency>.dropdown-menu>li>a,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu>li>a{
+.nasa-header .nasa-user-details .currency>.dropdown-menu>li>a,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu>li>a, .breadcrumb .navbar-nav>.dropdown-menu>li>a{
     padding:5px 20px;
     font-weight:600;
     -webkit-transition:.25s ease-in-out;
@@ -1891,15 +1949,15 @@ a:hover{
     transition:.25s ease-in-out;
     font-size:1.05rem
 }
-.nasa-header .nasa-user-details .currency>.dropdown-menu>li>a:hover,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu>li>a:hover{
+.nasa-header .nasa-user-details .currency>.dropdown-menu>li>a:hover,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu>li>a:hover, .breadcrumb .navbar-nav>.dropdown-menu>li>a:hover{
     background:0 0;
     color:var(--primary-color)
 }
-.nasa-header .nasa-user-details .currency>.dropdown-menu>li.active>a,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu>li.active>a{
+.nasa-header .nasa-user-details .currency>.dropdown-menu>li.active>a,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu>li.active>a, .breadcrumb .navbar-nav>.dropdown-menu>li.active>a{
     background:0 0;
     color:var(--primary-color)
 }
-.nasa-header .nasa-user-details .currency>.dropdown-menu::before,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu::before{
+.nasa-header .nasa-user-details .currency>.dropdown-menu::before,.nasa-user-menu .actions .currency.nasa-dropdown>.dropdown-menu::before, .breadcrumb .navbar-nav>.dropdown-menu::before{
     display:block;
     width:0;
     background:0 0;

@@ -7,5 +7,4 @@
 
 package dev.foraged.forums.user.connection
 
-class Connection(val type: ConnectionType, val username: String, val id: String) {
-}
+class Connection(val type: ConnectionType, val username: String, val id: String, var enabled: Boolean = true)

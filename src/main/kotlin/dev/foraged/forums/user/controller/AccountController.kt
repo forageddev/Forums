@@ -5,7 +5,7 @@
  * explicit permission from original author: Darragh Hay
  */
 
-package dev.foraged.forums.web.controller
+package dev.foraged.forums.user.controller
 
 import dev.foraged.forums.forum.ForumCategory
 import dev.foraged.forums.forum.repository.ForumCategoryRepository
@@ -14,36 +14,27 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 
-class ProfileController @Autowired constructor(val userService: UserService, val categoryRepository: ForumCategoryRepository) {
+@Controller
+class AccountController @Autowired constructor(val userService: UserService) {
 
-    @RequestMapping(value = ["/profile"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/account"], method = [RequestMethod.GET])
     fun home(): ModelAndView
     {
         val modelAndView = ModelAndView()
 
-        categoryRepository.findById("announcements").ifPresent { category: ForumCategory ->
-            modelAndView.addObject(
-                "announcements",
-                category.threads
-            )
-        }
-        modelAndView.viewName = "home"
+        modelAndView.viewName = "account"
         return modelAndView
     }
 
-    @RequestMapping(value = ["/profile/oauth/discord"], method = [RequestMethod.GET])
-    fun oauth(): ModelAndView
+    @RequestMapping(value = ["/account/oauth/discord"], method = [RequestMethod.GET])
+    fun oauth(@RequestParam("code") code: String): ModelAndView
     {
         val modelAndView = ModelAndView()
 
-        categoryRepository.findById("announcements").ifPresent { category: ForumCategory ->
-            modelAndView.addObject(
-                "announcements",
-                category.threads
-            )
-        }
+
         modelAndView.viewName = "home"
         return modelAndView
     }

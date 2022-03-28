@@ -1,4 +1,4 @@
-package dev.foraged.forums.web.controller.api
+package dev.foraged.forums.user.controller.rest
 
 import com.google.gson.*
 import dev.foraged.forums.Application
@@ -52,7 +52,10 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
                         },
                     lastServer = "hub-01"
                 )
+
                 println("created new user")
+                user.grants.add(Grant(rankRepository.findById("default").get()))
+                println("and applied default rank")
             } catch (e: Exception) {
                 user = null
             }

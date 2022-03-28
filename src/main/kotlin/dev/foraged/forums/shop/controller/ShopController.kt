@@ -5,24 +5,23 @@
  * explicit permission from original author: Darragh Hay
  */
 
-package dev.foraged.forums.web.controller
+package dev.foraged.forums.shop.controller
 
 import dev.foraged.forums.shop.repository.CategoryRepository
 import dev.foraged.forums.shop.repository.PackageRepository
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
 import me.senta.coinbase.Coinbase
-import me.senta.coinbase.body.CreateChargeBody
 import me.senta.coinbase.constant.PricingType
-import me.senta.coinbase.factory.CoinbaseBuilder
-import me.senta.coinbase.models.Price
+import me.senta.coinbase.constant.body.CreateChargeBody
+import me.senta.coinbase.services.factory.CoinbaseBuilder
+import me.senta.coinbase.services.models.Price
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.ModelAndView
-import java.math.BigDecimal
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletResponse
 class ShopController @Autowired constructor(val userService : UserService, val categoryRepository: CategoryRepository, val packageRepository: PackageRepository) {
 
     val coinbase: Coinbase = CoinbaseBuilder().withAPIKey("7c779704-8848-4872-a68b-18c18b8a5b71").build()
-    // uh i have to go now you gonna need to either do smt about that or idk what ill look later
 
     @RequestMapping(value = ["/store", "/shop"], method = [RequestMethod.GET])
     fun home(): ModelAndView {
@@ -50,6 +48,16 @@ class ShopController @Autowired constructor(val userService : UserService, val c
         modelAndView.addObject("categories", categoryRepository.findAll())
         modelAndView.addObject("packages", categoryRepository.findById(category).orElse(null)?.packages)
         modelAndView.addObject("categoryId", category)
+        return modelAndView
+    }
+
+    @RequestMapping(value = ["/store/payment-pending", "/shop/payment-pending"], method = [RequestMethod.GET])
+    fun pending(): ModelAndView {
+        val modelAndView = ModelAndView()
+
+        modelAndView.viewName = "shop/pending"
+
+        modelAndView.addObject("categories", categoryRepository.findAll())
         return modelAndView
     }
 
