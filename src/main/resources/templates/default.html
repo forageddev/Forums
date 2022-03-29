@@ -108,7 +108,7 @@
                                 </a>
                                 <div class="nasa-user-details">
                                     <span>logged in as</span>
-                                    <span class="nasa-user-username" th:text="${session.user.username}"></span>
+                                    <span class="nasa-user-username" style="color:" th:styleappend="${session.user.rankColor}" th:text="${session.user.username}"></span>
 
                                     <div class="toolbar">
                                         <div class="logout">

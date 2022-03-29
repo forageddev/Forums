@@ -14,8 +14,8 @@
             <a th:href="${forum.friendlyUrl}" th:text="${forum.displayName}"></a>
         </li>
 
-        <div class="navbar-nav ml-auto nav-item">
-            <button type="button" target="filter-menu" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <div class="navbar-nav ml-auto nav-item d-inline-block">
+            <button style="float: left;margin-left: 2px" type="button" target="filter-menu" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <span th:text="${#request.getParameter('filter') == null ? 'HOT' : #request.getParameter('filter')}"></span>
             </button>
 
@@ -25,7 +25,8 @@
                 <li><a th:classappend="${#request.getParameter('filter') == 'TOP' ? 'active' : ''}" href="?filter=TOP">TOP</a></li>
             </ul>
 
-            <a th:if="${session.user != null}" href="/thread/create" class="btn">New thread</a>
+
+            <a style="float: left;margin-left: 2px" th:if="${session.user != null}" href="/thread/create" class="btn">New thread</a>
         </div>
     </ul>
 
@@ -72,7 +73,7 @@
                 <td class="forum-latest">
                     <div class="meta" th:if="${thread.lastReply == null}">None</div>
                     <div th:if="${thread.lastReply != null}">
-                        by <a th:href="@{'/player/' + ${thread.lastReply.author.username}}" style="color: red;" th:text="${thread.lastReply.getAuthor().username}"></a>
+                        by <a th:href="@{'/player/' + ${thread.lastReply.author.username}}" style="color:" th:styleappend="${thread.lastReply.author.getRankColor()}" th:text="${thread.lastReply.getAuthor().username}"></a>
                         <div class="meta">
                             <time th:datetime="${thread.lastReply.timestamp}" data-format="ago" data-toggle="tooltip"></time>
                         </div>

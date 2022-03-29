@@ -29,13 +29,13 @@ class ForumController @Autowired constructor(val userService: UserService, val f
         if (subForum != null)
         {
             val threads: List<ForumThread> = when (filter) {
-                "NEW" -> subForum.threads.sortedBy {
+                "NEW" -> subForum.threads.sortedByDescending {
                     it.timestamp
                 }
-                "TOP" -> subForum.threads.sortedBy {
+                "TOP" -> subForum.threads.sortedByDescending {
                     it.upvotes.size
                 }
-                else -> subForum.threads.sortedBy {
+                else -> subForum.threads.sortedByDescending {
                     it.lastEdited
                 }
             }

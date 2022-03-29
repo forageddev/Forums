@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
 @Document(collection = "users")
-class User(
+open class User(
     @Id var id: UUID,
     var username: String = MojangUtils.fetchName(id)!!, // THIS MIGHT BE INNEFICINET MAYBE COME BACK AND LOOK AT DECLARING THIS VARIABLE HERE
     var email: String? = null,
@@ -144,5 +144,34 @@ class User(
         metadata.addProperty("staffOptions", staffOptions)*/
         //chain.add("metadata", metadata)
         return chain.complete()
+    }
+
+    override fun equals(other: Any?): Boolean
+    {
+        return if (other is UUID) id == other
+        else id.toString() == other
+    }
+
+    override fun hashCode(): Int
+    {
+        var result = id.hashCode()
+        result = 31 * result + username.hashCode()
+        result = 31 * result + (email?.hashCode() ?: 0)
+        result = 31 * result + (lastServer?.hashCode() ?: 0)
+        result = 31 * result + (authSecret?.hashCode() ?: 0)
+        result = 31 * result + (registerSecret?.hashCode() ?: 0)
+        result = 31 * result + (lastAuthenticatedAddress?.hashCode() ?: 0)
+        result = 31 * result + (password?.hashCode() ?: 0)
+        result = 31 * result + registered.hashCode()
+        result = 31 * result + online.hashCode()
+        result = 31 * result + basket.hashCode()
+        result = 31 * result + connections.hashCode()
+        result = 31 * result + dateJoined.hashCode()
+        result = 31 * result + dateLastSeen.hashCode()
+        result = 31 * result + grants.hashCode()
+        result = 31 * result + punishments.hashCode()
+        result = 31 * result + ipAddresses.hashCode()
+        result = 31 * result + metaData.hashCode()
+        return result
     }
 }

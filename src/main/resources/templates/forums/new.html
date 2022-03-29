@@ -35,7 +35,7 @@
             <div class="form-group mt-2">
                 <p>
                     <label class="mt-2" for="forum">Forum:</label>
-                    <select class="form-control" name="forum" id="forum" required>
+                    <select class="form-control" name="category" id="forum" required>
                         <option value="" th:selected="${id.isEmpty()}">Select a forum...</option>
                         <tr th:each="forum : ${forums}">
                             <option th:value="${forum.displayName}" th:text="${forum.displayName}" th:selected="${forum.id == id}"></option>

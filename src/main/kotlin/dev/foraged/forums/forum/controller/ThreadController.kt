@@ -1,6 +1,8 @@
 package dev.foraged.forums.forum.controller
 
+import dev.foraged.forums.forum.ForumContentReference
 import dev.foraged.forums.forum.ForumThread
+import dev.foraged.forums.forum.ForumThreadReply
 import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadReplyRepository
@@ -12,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.validation.BindingResult
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.ModelAndView
 import java.util.*
@@ -132,33 +131,87 @@ class ThreadController @Autowired constructor(val userService: UserService, val 
 
     @RequestMapping(value = ["/thread/create"], method = [RequestMethod.POST])
     fun createThread(
-        thread: @Valid ForumThread,
+        reference: @Valid ForumContentReference,
         bindingResult: BindingResult?,
         request: HttpServletRequest
     ): ModelAndView
     {
         // todo make sure they have access to the forum they are trying to post to
-        val subForum = categoryRepository!!.findByDisplayName(thread.forum.name)
+        val category = categoryRepository!!.findByDisplayName(reference.category)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Category not found"
             )
-        thread.category = subForum
-        val forum = subForum.forum
-        // if(forum.hasAccess(user) && subForum.hasAccess(user)) // make sure it just sends an error saying u cant go there buddy!
         val user = request.session.getAttribute("user") as User
-            ?: throw ResponseStatusException(
-                HttpStatus.FORBIDDEN, "User not logged in" // todo We should also re-direct to /login/
-            )
+        val thread = ForumThread(
+            title = reference.title,
+            body = reference.body,
+            category = category,
+            forum = category.forum,
+            author = user
+        )
+        // add perm c heck
 
-        thread.author = user // debug todo set to user -- also make sure they're logging in LOL
-        subForum.threads.add(thread) // only stores id now
-        subForum.lastActivity = System.currentTimeMillis()
+        category.threads.add(thread) // only stores id now
+        category.lastActivity = System.currentTimeMillis()
         threadRepository.save(thread)
-        categoryRepository.save(subForum)
-        forumRepository.save(forum)
+        categoryRepository.save(category)
+        forumRepository.save(category.forum)
         println("Saved and updated.")
 
         // Redirect them to there new thread :D
         return ModelAndView("redirect:" + thread.friendlyUrl)
     }// Gotta make sure there is no thread id called that or we'll be in some issues.
+
+    @RequestMapping(value = ["/thread/{id}/reply"], method = [RequestMethod.POST])
+    fun replyThread(
+        @PathVariable id: String,
+        reference: @Valid ForumContentReference,
+        bindingResult: BindingResult?,
+        request: HttpServletRequest
+    ): String
+    {
+        val user = request.session.getAttribute("user") as User
+        val thread = threadRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Thread not found")
+        // add perm c heck
+
+        val reply = ForumThreadReply(
+            body = reference.body,
+            thread = thread,
+            author = user
+        )
+        thread.replies.add(reply)
+
+        thread.category.lastActivity = System.currentTimeMillis()
+        thread.lastReply = reply
+        threadRepository.save(thread)
+        replyRepository.save(reply)
+        categoryRepository.save(thread.category)
+        forumRepository.save(thread.forum)
+        println("Created reply.")
+
+        return "redirect:" + thread.friendlyUrl
+    }
+
+    @RequestMapping(value = ["/thread/{id}/vote"], method = [RequestMethod.GET])
+    fun voteThread(
+        @PathVariable id: String,
+        request: HttpServletRequest
+    ): String
+    {
+        val user = request.session.getAttribute("user") as User
+        val thread = threadRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Thread not found")
+        // add perm c heck
+
+        if (thread.upvotes.any {
+            it.id == user.id
+            }) thread.upvotes.removeIf {
+                it.id == user.id
+        }
+        else thread.upvotes.add(user)
+
+        threadRepository.save(thread)
+        println("Voted.")
+
+        return "redirect:" + thread.friendlyUrl
+    }
 }

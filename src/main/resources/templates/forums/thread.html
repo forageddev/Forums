@@ -29,7 +29,7 @@
                 <h3>
                     <span th:text="${thread.title}"></span>
                     <div class="upthread" th:classappend="${session.user == null ? 'disabled' : ''}">
-                        <a href="#" th:text="${thread.upvotes}">
+                        <a th:href="@{'/thread/' + ${thread.id} + '/vote'}" th:text="${thread.upvotes.size()}">
                             <i class="fas fa-arrow-up fa-fw"></i>
                         </a>
                     </div>
@@ -45,19 +45,36 @@
             </div>
         </div>
     </div>
+    <div th:each="reply : ${thread.replies}" class="card card-thread">
+        <div class="row pl-5 pr-5">
+            <div class="col-lg-12 col-xl-1">
+                <a th:href="@{'/player/' + ${reply.author.username}}">
+                    <img style="max-width: 32px;max-height: 32px" th:src="@{'https://crafatar.com/avatars/' + ${reply.author.id.toString()} + '?overlay'}">
+                    <a th:style="@{'color:' + ${reply.author.getRankColor()}}" th:href="@{'/player/' + ${reply.author.username}}" th:text="${reply.author.username}"></a>
+                </a>
+            </div>
+            <div class="col-xl-11 col-lg-12">
+                <div class="post" th:utext="${reply.formattedBody}">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card card-thread-reply p-2" th:classappend="${session.user == null ? 'disabled' : ''}">
         <div class="thread-reply-avatar">
             <img th:src="@{'https://crafatar.com/avatars/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : thread.author.id.toString()} + '?size=24?overlay'}">
         </div>
-        <form class="thread-reply-content">
+        <form class="thread-reply-content" method="post" th:action="@{'/thread/' + ${thread.id} + '/reply'}">
             <div class="form-group mb-2">
-                <textarea th:disabled="${session.user == null}" class="form-control"></textarea>
+                <textarea name="body" th:disabled="${session.user == null}" class="form-control"></textarea>
             </div>
             <div class="text-right">
                 <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
             </div>
         </form>
     </div>
+
+
 </div>
 </body>
 </html>
