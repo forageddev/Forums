@@ -8,27 +8,22 @@
 
 <div layout:fragment="content">
     <div class="centered-card text-center">
-        <form style="margin: 2rem; padding-bottom: 1rem" class="form-signin" th:action="@{/login}" method="post">
+        <form style="margin: 2rem; padding-bottom: 1rem" class="form-signin" th:action="@{/guest-login}" method="post">
             <h2>
                 <i class="fa fa-lock"> </i>
-                <span>LOGIN</span>
+                <span>GUEST LOGIN</span>
             </h2>
 
             <div class="form-group mt-2">
                 <label for="username" class="sr-only">Username</label>
                 <input type="text" name="username" id="username" class="form-control" placeholder="Username" required=""/>
             </div>
-            <div class="form-group mt-2">
-                <label for="password" class="sr-only">Password</label>
-                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required=""/>
-                <a class="text-info" th:href="@{/reset}">Forgot password?</a>
-            </div>
-            <button type="submit" class="btn btn-primary mt-2">Login</button>
+            <button type="submit" class="btn btn-primary mt-2">Login as guest</button>
             <div class="mt-2">
-                Don't have an account?
-                <a class="text-info" th:href="@{/register}">Create an account</a> or <a class="text-info" href="/guest-login">continue as guest</a>
+                Already have an account?
+                <a class="text-info" href="/login">login</a> or <a class="text-info" th:href="@{/register}">Create an account</a>
             </div>
-            <div class="mt-1">
+            <div class="mt-1 text-center">
                 If you continue as a guest you will be unable to spend points you have earned on your account due to security reasons.
             </div>
             <input type="hidden" name="csrfmiddlewaretoken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">

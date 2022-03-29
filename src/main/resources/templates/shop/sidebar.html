@@ -17,11 +17,11 @@
             </div>
         </div>
     </div>
-    <div th:if="${session.user != null}" class="panel panel-default module">
+    <div th:if="${session.user != null || session.guest != null}" th:with="user=${session.user != null ? session.user : (session.guest != null ? session.guest : null)}" class="panel panel-default module">
         <div class="panel-heading">Your basket</div>
         <div class="panel-body">
             <div class="packages-row">
-                <div th:each="item : ${session.user.basket.items}" class="package">
+                <div th:each="item : ${user.basket.items}" class="package">
                     <div th:with="package=${item.item}" class="info">
                         <div class="text text-left">
                             <div class="name">
@@ -53,18 +53,18 @@
                         </div>
                     </div>
                 </div>
-                <div th:if="${session.user.basket.isEmpty()}" class="col-12">
+                <div th:if="${user.basket.isEmpty()}" class="col-12">
                     <span>Your basket is currently empty!</span>
                 </div>
             </div>
-            <div th:if="${!session.user.basket.isEmpty()}" class="top-donator">
+            <div th:if="${!user.basket.isEmpty()}" class="top-donator">
                 <h3 class="info package-name">
-                    Total: $<span th:text="${session.user.basket.total}"></span>
+                    Total: $<span th:text="${user.basket.total}"></span>
                 </h3>
                 <br>
 
                 <div id="smart-button-container">
-                    <a style="visibility: visible;
+                    <a th:if="${session.user != null}" style="visibility: visible;
                             height: 45px;
                             margin-bottom: 10px;
                             width: 100%;

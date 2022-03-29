@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.ModelAndView
-import java.util.*
 
 @Controller
 class ForumController @Autowired constructor(val userService: UserService, val forumService: ForumService, val categoryRepository: ForumCategoryRepository, val forumRepository: ForumRepository, val threadRepository: ThreadRepository)
@@ -52,7 +51,7 @@ class ForumController @Autowired constructor(val userService: UserService, val f
     @RequestMapping(value = ["/forums"], method = [RequestMethod.GET])
     fun home(): ModelAndView
     {
-        val modelAndView = ModelAndView("forums")
+        val modelAndView = ModelAndView("forums/index")
         modelAndView.addObject("forums", forumRepository.findAll())
         println("error with model and view")
         return modelAndView

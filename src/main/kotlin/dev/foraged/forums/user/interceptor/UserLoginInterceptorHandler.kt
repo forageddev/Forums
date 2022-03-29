@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Service
-class UserInterceptorHandler : HandlerInterceptorAdapter() {
+class UserLoginInterceptorHandler : HandlerInterceptorAdapter() {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val user = request.session.getAttribute("user") as User?
+        val user = request.session.getAttribute("user") as User? ?: request.session.getAttribute("guest") as User?
         if (user == null) response.sendRedirect("/login")
         return user != null
     }

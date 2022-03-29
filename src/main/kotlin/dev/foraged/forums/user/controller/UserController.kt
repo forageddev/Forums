@@ -28,7 +28,7 @@ class UserController {
     @RequestMapping(value = ["/player/{id}"], method = [RequestMethod.GET])
     fun getPlayer(@PathVariable id: String?): ModelAndView
     {
-        val modelAndView = ModelAndView("player")
+        val modelAndView = ModelAndView("player/index")
         val user = userService.findUserByName(id)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Player not found"

@@ -27,15 +27,15 @@
                                         </div>
                                     </div>
                                     <div class="button">
-                                        <div class="package-actions displayblock">
+                                        <div class="package-actions displayblock" th:with="user=${session.user != null ? session.user : (session.guest != null ? session.guest : null)}">
                                             <div class="package-ajax-btns">
 
                                             </div>
-                                            <div th:if="${session.user != null}" class="package-add">
-                                                <a th:if="${!session.user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-primary btn-block">Add to cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
-                                                <a th:if="${session.user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-danger btn-block">Remove from cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
+                                            <div th:if="${user != null}" class="package-add">
+                                                <a th:if="${!user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-primary btn-block">Add to cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
+                                                <a th:if="${user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-danger btn-block">Remove from cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
                                             </div>
-                                            <div th:if="${session.user == null}" class="package-add">
+                                            <div th:if="${user == null}" class="package-add">
                                                 <a href="/login" class="btn btn-sm btn-primary btn-block">Login</a>
                                             </div>
                                         </div>

@@ -7,8 +7,6 @@
 
 package dev.foraged.forums.user.controller
 
-import dev.foraged.forums.forum.ForumCategory
-import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.user.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -25,7 +23,7 @@ class AccountController @Autowired constructor(val userService: UserService) {
     {
         val modelAndView = ModelAndView()
 
-        modelAndView.viewName = "account"
+        modelAndView.viewName = "player/account"
         return modelAndView
     }
 

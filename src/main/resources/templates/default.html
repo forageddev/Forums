@@ -72,7 +72,7 @@
 
                                     <h3 th:if="${#httpServletRequest.requestURI != '/' && !#httpServletRequest.requestURI.startsWith('/shop') && #lists.size(#strings.arraySplit(#httpServletRequest.requestURI, '/')) != 1}" th:text="${#strings.arraySplit(#httpServletRequest.requestURI, '/')[1]}" class="animeobj medium minor" style="transform: translateX(0%);"></h3>
 
-                                    <div th:if="${#httpServletRequest.requestURI.startsWith('/shop')}">
+                                    <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store'))}">
 
 
                                         <a th:each="category : ${categories}" th:href="@{'/shop/' + ${category.id}}">
@@ -118,22 +118,41 @@
                                 </div>
                             </div>
 
-                            <div th:if="${session.user == null}" class="nasa-user-control">
-                                <div class="nasa-user-head">
-                                    <img src="https://cravatar.eu/avatar/606e2ff0ed7748429d6ce1d3321c7838">
-                                </div>
-                                <div class="nasa-user-details">
-                                    <span class="text-danger">not logged in!</span>
-                                    <span class="nasa-user-username">???</span>
+                            <div th:if="${session.user == null}">
+                                <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) && session.guest != null}" class="nasa-user-control">
+                                    <th:block th:with="guest=${session.guest}">
+                                        <a th:href="@{'/shop'}" class="nasa-user-head">
+                                            <img th:src="@{'https://cravatar.eu/avatar/' + ${guest.id.toString().replace('-', '')} + '?overlay=true'}">
+                                        </a>
+                                        <div class="nasa-user-details">
+                                            <span>logged in as guest</span>
+                                            <span class="nasa-user-username" style="color:" th:styleappend="${guest.rankColor}" th:text="${guest.username}"></span>
 
-                                    <div class="toolbar">
-                                        <div class="login">
-                                            <a href="/login" class="btn btn-danger">Login</a>
+                                            <div class="toolbar">
+                                                <div class="logout">
+                                                    <a href="/logout" class="btn btn-danger">Logout</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </div>
+
+                                <div th:if="${!(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) || session.guest == null}" class="nasa-user-control">
+                                    <a href="/login" class="nasa-user-head">
+                                        <img src="https://cravatar.eu/avatar/606e2ff0ed7748429d6ce1d3321c7838">
+                                    </a>
+                                    <div class="nasa-user-details">
+                                        <span class="text-danger">not logged in!</span>
+                                        <span class="nasa-user-username">???</span>
+
+                                        <div class="toolbar">
+                                            <div class="login">
+                                                <a href="/login" class="btn btn-danger">Login</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
                         <div class="notification">

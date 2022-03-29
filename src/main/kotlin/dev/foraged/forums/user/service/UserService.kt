@@ -18,7 +18,6 @@ import java.util.*
 class UserService : UserDetailsService
 {
     @Autowired lateinit var userRepository: UserRepository
-    @Autowired lateinit var roleRepository: RankRepository
     @Autowired lateinit var encoder: BCryptPasswordEncoder
 
     fun findUserByEmail(email: String?): User?
@@ -32,6 +31,10 @@ class UserService : UserDetailsService
 
     fun findUserByName(name: String?): User? {
         return userRepository.findByUsernameIgnoreCase(name)
+    }
+
+    fun findUserByUniqueId(uuid: UUID): User? {
+        return userRepository.findById(uuid).orElse(null)
     }
 
     fun save(user: User): User
