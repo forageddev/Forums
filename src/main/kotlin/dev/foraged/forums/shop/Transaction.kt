@@ -7,18 +7,17 @@
 
 package dev.foraged.forums.shop
 
-import org.apache.catalina.User
-import org.apache.commons.lang3.RandomStringUtils
+import dev.foraged.forums.user.User
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "transactions")
 class Transaction(
-    @Id val id: String = RandomStringUtils.randomAlphanumeric(16),
-    @DBRef val user: User,
     val basket: Basket,
-    var status: TransactionStatus,
+    @Id val id: String = basket.id,
+    @DBRef val user: User,
+    var status: TransactionStatus = TransactionStatus.PENDING,
     val gateway: TransactionGateway,
     val timestamp: Long = System.currentTimeMillis()
 )

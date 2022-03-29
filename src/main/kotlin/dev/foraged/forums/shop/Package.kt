@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.math.BigDecimal
+import java.math.BigInteger
 
 @Document(collection = "shop_packages")
 class Package(
@@ -21,6 +22,16 @@ class Package(
     @DBRef val sale: Sale? = null
 ) : Comparable<Package>
 {
+    val effectivePrice: BigDecimal get() {
+        return if (sale != null) {
+            if (sale.discount!!.toDouble() <= 1) {
+                price.subtract(BigDecimal((price.toDouble() / 100) * (sale.discount.toDouble() * 100)))
+            } else {
+                price.subtract(sale.discount)
+            }
+        } else price
+    }
+
     override fun equals(other: Any?): Boolean {
         return when (other) {
             is Package -> { id == other.id }

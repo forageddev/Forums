@@ -7,13 +7,16 @@
 
 package dev.foraged.forums.shop.repository
 
-import dev.foraged.forums.shop.Sale
+import dev.foraged.forums.shop.Transaction
+import dev.foraged.forums.user.User
 import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SaleRepository : MongoRepository<Sale?, String?>
+interface TransactionRepository : MongoRepository<Transaction?, String?>
 {
-    override fun findAll(): List<Sale?>
-    fun getSalesByActiveIsTrue() : List<Sale?>
+    /** Retrieves a section by it's name, with it outputting  */
+    fun getById(name: String?): Transaction?
+
+    fun getTransactionsByUser(user: User) : Transaction?
 }

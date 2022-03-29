@@ -19,5 +19,3 @@ class Category(
     val order: Int = 0,
     @DBRef val packages: MutableList<Package> = mutableListOf()
 )
-{
-}

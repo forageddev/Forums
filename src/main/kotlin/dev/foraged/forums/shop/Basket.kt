@@ -7,9 +7,11 @@
 
 package dev.foraged.forums.shop
 
+import org.apache.commons.lang3.RandomStringUtils
 import java.math.BigDecimal
 
 class Basket(
+    var id: String = RandomStringUtils.randomAlphanumeric(16),
     var items: MutableList<BasketItem> = mutableListOf()
 ) {
     val total: BigDecimal get() {
@@ -26,7 +28,7 @@ class Basket(
 
     fun quantity(pack: Package, amount: Int) {
         if (amount != 0 && items.any { it.item == pack }) items.find { it.item == pack }!!.quantity = amount
-        else if (amount == 0) items.removeIf { it.item == pack }
+        else if (amount == 0) remove(pack)
         else items.add(BasketItem(pack, 1))
     }
 

@@ -1,5 +1,6 @@
 package dev.foraged.forums.web.config
 
+import dev.foraged.forums.Application
 import dev.foraged.forums.shop.interceptor.ShopInterceptorHandler
 import dev.foraged.forums.user.interceptor.UserLoginInterceptorHandler
 import dev.foraged.forums.user.interceptor.UserLoginNotGuestInterceptorHandler
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-open class PageConfig @Autowired constructor(val userService: UserService) : WebMvcConfigurer
+open class PageConfig : WebMvcConfigurer
 {
     override fun addViewControllers(registry: ViewControllerRegistry)
     {
@@ -33,7 +34,7 @@ open class PageConfig @Autowired constructor(val userService: UserService) : Web
             "/shop/basket/*", "/store/basket/*")
         registry.addInterceptor(UserLoggedInInterceptorHandler()).addPathPatterns(
             "/register", "/login", "/guest-login")
-        registry.addInterceptor(ShopInterceptorHandler(userService)).addPathPatterns("/shop/**", "/store/**")
+        registry.addInterceptor(ShopInterceptorHandler()).addPathPatterns("/shop/**", "/store/**")
     }
 
     @Bean

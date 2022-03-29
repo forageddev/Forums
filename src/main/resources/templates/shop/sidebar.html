@@ -30,7 +30,7 @@
                                 </h3>
                             </div>
                             <div class="price">
-                                <span th:if="${package.sale == null || !package.sale.active}" th:text="${'Price: ' + package.price}"></span>
+                                <span th:if="${package.sale == null || !package.sale.active}" th:text="${'Price: $' + package.price}"></span>
                             </div>
                         </div>
                         <div class="button">
@@ -109,7 +109,8 @@
                 <script src="https://www.paypal.com/sdk/js?client-id=AV_0lkkcwQf_iwBjZkd2y1ODVNen-klzZ1erVOx7C_tTYfW1UdXGi0uvHctbmEXo0Ljk4AqeMLoCgcrc&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
                 <script th:inline="javascript">
                     function initPayPalButton() {
-                        var total = [[${session.user.basket.total}]];
+                        const total = [[${user.basket.total}]];
+                        const basketId = [[${user.basket.id}]]
 
                         paypal.Buttons({
                             style: {
@@ -124,6 +125,7 @@
                                 return actions.order.create({
                                     purchase_units: [{
                                         "amount": {
+                                            "custom_id": basketId,
                                             "currency_code": "USD",
                                             "value": total
                                         }
@@ -155,7 +157,7 @@
                                     }, 1000)
 
                                     setTimeout(function () {
-                                        window.location.href = "/shop/purchase-complete"
+                                        window.location.href = `/shop/purchase-complete?transaction_id=${orderData}`
                                     }, 3000)
 
                                     // Or go to another URL:  actions.redirect('thank_you.html');

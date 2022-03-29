@@ -7,10 +7,4 @@
 
 package dev.foraged.forums.shop
 
-enum class TransactionStatus {
-    PENDING,
-    ACTIONS_QUEUED,
-    COMPLETED,
-    REFUNDED,
-    CHARGE_BACK
-}
+class PackageAction(val target: String = "local", val type: PackageActionType, val requiresLogin: Boolean = true)

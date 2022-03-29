@@ -7,10 +7,7 @@
 
 package dev.foraged.forums.shop
 
-enum class TransactionStatus {
-    PENDING,
-    ACTIONS_QUEUED,
-    COMPLETED,
-    REFUNDED,
-    CHARGE_BACK
+enum class PackageActionType {
+    GRANT,
+    COMMAND
 }

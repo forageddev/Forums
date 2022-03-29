@@ -7,6 +7,7 @@
 
 package dev.foraged.forums.shop.interceptor
 
+import dev.foraged.forums.Application
 import dev.foraged.forums.user.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
@@ -15,14 +16,16 @@ import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class ShopInterceptorHandler(val userService: UserService) : HandlerInterceptorAdapter()
+class ShopInterceptorHandler : HandlerInterceptorAdapter()
 {
-    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean
-    {
-        try
-        {
+    var service: UserService? = null
+
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        if (service == null) service = Application.CONTEXT.beanFactory.getBean("mongoUserDetails") as UserService
+
+        try {
             request.cookies.forEach {
-                if (it.name.equals("guest", true)) request.session.setAttribute("guest", userService.findUserByUniqueId(UUID.fromString(it.value)))
+                if (it.name.equals("guest", true)) request.session.setAttribute("guest", service!!.findUserByUniqueId(UUID.fromString(it.value)))
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

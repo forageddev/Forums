@@ -18,17 +18,13 @@ import revxrsal.commands.cli.ConsoleCommandHandler
 open class Application
 {
     @Bean
-    open fun init(roleRepository: RankRepository): CommandLineRunner
-    {
+    open fun init(roleRepository: RankRepository): CommandLineRunner {
         return CommandLineRunner {
             if (!roleRepository.findById("default").isPresent) roleRepository.save(Rank(id = "default", name = "Default"))
         }
-
-
     }
 
-    companion object
-    {
+    companion object {
         val COMMAND_HANDLER = ConsoleCommandHandler.create()
         val MARKDOWN_PARSER = Parser.builder().build()
         val MARKDOWN_RENDERER = HtmlRenderer.builder().build()

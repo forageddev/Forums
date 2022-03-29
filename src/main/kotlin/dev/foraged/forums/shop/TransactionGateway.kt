@@ -7,8 +7,7 @@
 
 package dev.foraged.forums.shop
 
-enum class TransactionGateway
-{
+enum class TransactionGateway {
     PAYPAL,
     COINBASE,
     POINTS
