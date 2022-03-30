@@ -62,7 +62,7 @@
 
     <div class="card card-thread-reply p-2" th:classappend="${session.user == null ? 'disabled' : ''}">
         <div class="thread-reply-avatar">
-            <img th:src="@{'https://crafatar.com/avatars/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : thread.author.id.toString()} + '?size=24?overlay'}">
+            <img th:src="@{'https://crafatar.com/avatars/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : session.user.id.toString()} + '?size=24?overlay'}">
         </div>
         <form class="thread-reply-content" method="post" th:action="@{'/thread/' + ${thread.id} + '/reply'}">
             <div class="form-group mb-2">

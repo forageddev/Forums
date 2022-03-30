@@ -7,8 +7,12 @@
 
 package dev.foraged.forums.shop.controller
 
+import dev.foraged.forums.shop.Basket
+import dev.foraged.forums.shop.Transaction
+import dev.foraged.forums.shop.TransactionGateway
 import dev.foraged.forums.shop.repository.CategoryRepository
 import dev.foraged.forums.shop.repository.PackageRepository
+import dev.foraged.forums.shop.repository.TransactionRepository
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
 import me.senta.coinbase.Coinbase
@@ -30,13 +34,15 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Controller
-class ShopController @Autowired constructor(val userService : UserService, val categoryRepository: CategoryRepository, val packageRepository: PackageRepository) {
+class ShopController @Autowired constructor(val transactionRepository: TransactionRepository, val userService : UserService, val categoryRepository: CategoryRepository, val packageRepository: PackageRepository) {
 
     val coinbase: Coinbase = CoinbaseBuilder().withAPIKey("7c779704-8848-4872-a68b-18c18b8a5b71").build()
 
     @RequestMapping(value = ["/guest-login"], method = [RequestMethod.GET])
     fun guestLogin(): ModelAndView {
         val modelAndView = ModelAndView()
+
+        coinbase
 
         modelAndView.viewName = "guest-login"
         return modelAndView
@@ -78,9 +84,22 @@ class ShopController @Autowired constructor(val userService : UserService, val c
         return modelAndView
     }
 
-    @RequestMapping(value = ["/store/payment-pending", "/shop/payment-pending"], method = [RequestMethod.GET])
-    fun pending(): ModelAndView {
-        val modelAndView = ModelAndView()
+    @RequestMapping(value = ["/store/payment-pending/{gateway}", "/shop/payment-pending/{gateway}"], method = [RequestMethod.GET])
+    fun pending(@PathVariable gateway: TransactionGateway = TransactionGateway.COINBASE, request: HttpServletRequest): ModelAndView {
+        val modelAndView = ModelAndView() // remove default gateway assignation
+
+        val user = (request.session.getAttribute("user") as User?) ?: request.session.getAttribute("guest") as User
+        val transaction = Transaction(
+            basket = user.basket,
+            user = user,
+            gateway = gateway
+        )
+
+        transactionRepository.save(transaction)
+        user.basket = Basket()
+        userService.save(user)
+
+
 
         modelAndView.viewName = "shop/pending"
 
@@ -92,8 +111,9 @@ class ShopController @Autowired constructor(val userService : UserService, val c
     fun crypto(response: HttpServletResponse, request: HttpServletRequest): String {
         val user = (request.session.getAttribute("user") as User?) ?: request.session.getAttribute("guest") as User
 
-        val body = CreateChargeBody("Nasa Network", "Complete yur payment for play.nasa.gg", PricingType.fixed_price)
+        val body = CreateChargeBody("Nasa Network", "Complete your payment for play.nasa.gg. Your payment will process under the name ${user.username}", PricingType.fixed_price)
         body.localPrice = Price(user.basket.total.toDouble().toString(), "USD")
+        body.metadata = mapOf("transaction_id" to user.basket.id, "uniqueId" to user.id.toString())
 
         return "redirect:" + (coinbase.chargesService.createCharge(body).execute().body()?.hostedUrl ?: "/shop/crypto-failure")
     }

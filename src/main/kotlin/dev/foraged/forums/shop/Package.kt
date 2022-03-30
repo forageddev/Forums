@@ -19,7 +19,8 @@ class Package(
     @Id val id: String = RandomStringUtils.randomAlphanumeric(8),
     val name: String,
     val price: BigDecimal,
-    @DBRef val sale: Sale? = null
+    @DBRef val sale: Sale? = null,
+    val actions: MutableList<PackageAction> = mutableListOf()
 ) : Comparable<Package>
 {
     val effectivePrice: BigDecimal get() {

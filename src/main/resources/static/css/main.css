@@ -1175,7 +1175,7 @@ Player page
     letter-spacing: 0.2rem;
 }
 
-.form-control:focus {
+.form-control:focus, .form-control:disabled {
     background: transparent;
     border: transparent;
     color: var(--font-color);
