@@ -1,4 +1,4 @@
-package dev.foraged.forums.user.punishment
+package dev.foraged.forums.punishment
 
 enum class PunishmentType(val action: String, val color: String)
 {

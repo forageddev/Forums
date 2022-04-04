@@ -36,7 +36,8 @@
                                                 <a th:if="${user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-danger btn-block">Remove from cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
                                             </div>
                                             <div th:if="${user == null}" class="package-add">
-                                                <a href="/login" class="btn btn-sm btn-primary btn-block">Login</a>
+                                                <a href="/login" class="btn btn-sm btn-success btn-block">Login</a>
+                                                <a href="/guest-login" class="btn btn-sm btn-danger btn-block">Guest Login</a>
                                             </div>
                                         </div>
                                     </div>

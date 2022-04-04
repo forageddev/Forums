@@ -7,15 +7,15 @@ import dev.foraged.forums.Application
 import dev.foraged.forums.rank.Rank
 import dev.foraged.forums.rank.RankRepository
 import dev.foraged.forums.shop.Basket
-import dev.foraged.forums.shop.Package
 import dev.foraged.forums.user.connection.Connection
 import dev.foraged.forums.user.connection.ConnectionType
-import dev.foraged.forums.user.grant.Grant
-import dev.foraged.forums.user.punishment.Punishment
-import dev.foraged.forums.user.punishment.PunishmentType
+import dev.foraged.forums.grant.Grant
+import dev.foraged.forums.punishment.Punishment
+import dev.foraged.forums.punishment.PunishmentType
 import dev.foraged.forums.util.JsonChain
 import dev.foraged.forums.util.MojangUtils
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
@@ -44,8 +44,8 @@ open class User(
         password = password
     )
 
-    var grants: MutableList<Grant> = mutableListOf()
-    var punishments: MutableList<Punishment> = mutableListOf()
+    @DBRef(lazy=true) var grants: MutableList<Grant> = mutableListOf()
+    @DBRef(lazy=true) var punishments: MutableList<Punishment> = mutableListOf()
 
     /** Returns a map of ip addresses and date used  */
     var ipAddresses: MutableMap<Date, String> = mutableMapOf()

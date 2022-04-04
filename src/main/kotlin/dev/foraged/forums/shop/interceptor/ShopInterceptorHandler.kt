@@ -23,10 +23,16 @@ class ShopInterceptorHandler : HandlerInterceptorAdapter()
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (service == null) service = Application.CONTEXT.beanFactory.getBean("mongoUserDetails") as UserService
 
-        try {
-            request.cookies.forEach {
-                if (it.name.equals("guest", true)) request.session.setAttribute("guest", service!!.findUserByUniqueId(UUID.fromString(it.value)))
+        try
+        {
+            if (request.cookies != null) request.cookies.forEach {
+                if (it.name.equals("guest", true)) request.session.setAttribute(
+                    "guest",
+                    service!!.findUserByUniqueId(UUID.fromString(it.value))
+                )
             }
+        } catch (ex: NullPointerException) {
+            // dont do anything
         } catch (ex: Exception) {
             ex.printStackTrace()
             throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "Error whilst trying to read client cookies please clear your cache and try again.")

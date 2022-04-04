@@ -138,31 +138,22 @@
                             },
 
                             onApprove: function(data, actions) {
-                                return actions.order.capture().then(function(orderData) {
-
-                                    // Full available details
-                                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-
-                                    const element = document.getElementById('paypal-button-container');
-                                    element.innerHTML = `
+                                const element = document.getElementById('paypal-button-container');
+                                element.innerHTML = `
                                             <div class="circle-loader">
                                               <div class="checkmark" style="display: none"></div>
                                             </div>`;
 
-                                    setTimeout(function () {
-                                        element.innerHTML = `
+                                setTimeout(function () {
+                                    element.innerHTML = `
                                                     <div class="circle-loader load-complete">
                                                       <div class="checkmark draw" style="display: block"></div>
                                                     </div>`;
-                                    }, 1000)
+                                }, 1000)
 
-                                    setTimeout(function () {
-                                        window.location.href = `/shop/purchase-complete?transaction_id=${orderData}`
-                                    }, 3000)
-
-                                    // Or go to another URL:  actions.redirect('thank_you.html');
-
-                                });
+                                setTimeout(function () {
+                                    window.location.href = `/shop/payment-pending/paypal?id=${data.orderID}`
+                                }, 3000)
                             },
 
                             onError: function(err) {

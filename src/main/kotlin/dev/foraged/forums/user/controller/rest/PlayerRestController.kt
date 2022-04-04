@@ -5,9 +5,11 @@ import dev.foraged.forums.Application
 import dev.foraged.forums.rank.RankRepository
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.UserRepository
-import dev.foraged.forums.user.grant.Grant
-import dev.foraged.forums.user.punishment.Punishment
-import dev.foraged.forums.user.punishment.PunishmentType
+import dev.foraged.forums.grant.Grant
+import dev.foraged.forums.grant.GrantRepository
+import dev.foraged.forums.punishment.Punishment
+import dev.foraged.forums.punishment.PunishmentRepository
+import dev.foraged.forums.punishment.PunishmentType
 import dev.foraged.forums.user.service.UserService
 import dev.foraged.forums.util.MojangUtils
 import org.apache.commons.lang3.RandomStringUtils
@@ -27,8 +29,13 @@ import kotlin.Exception
 import kotlin.String
 
 @RestController
-class PlayerRestController @Autowired constructor(val userService: UserService, val userRepository: UserRepository, val rankRepository: RankRepository)
-{
+class PlayerRestController @Autowired constructor(
+    val punishmentRepository: PunishmentRepository,
+    val grantRepository: GrantRepository,
+    val userService: UserService,
+    val userRepository: UserRepository,
+    val rankRepository: RankRepository
+) {
     @RequestMapping(value = ["/api/v1/player"], method = [RequestMethod.POST])
     fun getData(request: HttpServletRequest): String {
         val data = JsonObject()
@@ -54,7 +61,9 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
                 )
 
                 println("created new user")
-                user.grants.add(Grant(rankRepository.findById("default").get()))
+                val grant = Grant(rankRepository.findById("default").get(), target = user)
+                grantRepository.save(grant)
+                user.grants.add(grant)
                 println("and applied default rank")
             } catch (e: Exception) {
                 user = null
@@ -132,6 +141,7 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
                 punishment.removedAt = System.currentTimeMillis()
                 punishment.removedReason = reason
                 punishment.removed = true
+                punishmentRepository.save(punishment)
                 response.addProperty("status", "success")
             } else {
                 response.addProperty("status", "not-found")
@@ -142,7 +152,10 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
                 response.addProperty("status", "already-found")
                 error = true
             } else {
-                user.addPunishment(Application.GSON.fromJson(data.asJsonObject, Punishment::class.java))
+                val punishment = Application.GSON.fromJson(data.asJsonObject, Punishment::class.java)
+
+                user.addPunishment(punishment)
+                punishmentRepository.save(punishment)
                 response.addProperty("status", "success")
             }
         }
@@ -167,9 +180,9 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
                 val remover = UUID.fromString(data["removedBy"].asString)
                 val reason = data["removedReason"].asString
                 println("got here")
-                if (user.activeGrants.filterNotNull().any { it.id == id.toString() }) //) .stream().anyMatch { g: Grant? -> g.getId().toString() == uuid.toString() })
+                if (user.activeGrants.any { it.id == id.toString() }) //) .stream().anyMatch { g: Grant? -> g.getId().toString() == uuid.toString() })
                 {
-                    val grant = user.grants.filterNotNull().find { it.id == id }!!
+                    val grant = grantRepository.findById(id).get()
                     println("found grant")
                     grant.removed = true
                     grant.removedBy = remover
@@ -177,21 +190,22 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
                     grant.removedReason = reason
                     userService.save(user)
                     response.addProperty("status", "success")
+                    grantRepository.save(grant)
                 } else {
                     response.addProperty("status", "not-found")
                 }
-            } else
-            {
+            } else {
                 val grant = Application.GSON.fromJson(data.asJsonObject, Grant::class.java)
                 grant.rank = Application.CONTEXT.beanFactory.getBean(RankRepository::class.java).findById(data.asJsonObject["rank"].asString).get()
+                grant.target = user
+                grantRepository.save(grant)
 
-                    //Utils.INSTANCE.rank(data.asJsonObject["rank"].asString).get() old
                 response.addProperty("status", "success")
             }
             userService.save(user)
         }
         response.addProperty("success", !error)
-        return Application.Companion.GSON.toJson(response)
+        return Application.GSON.toJson(response)
     }
 
     @RequestMapping(value = ["/api/v1/player/status"], method = [RequestMethod.POST])
@@ -245,24 +259,7 @@ class PlayerRestController @Autowired constructor(val userService: UserService, 
             if (data.has("dateLastSeen")) user.dateLastSeen = Date(data["dateLastSeen"].asLong)
             if (data.has("lastServer")) user.lastServer = data["lastServer"].asString
             if (data.has("authSecret")) user.authSecret = data["authSecret"].asString
-            if (data.has("lastAuthenticatedAddress")) user.lastAuthenticatedAddress =
-                data["lastAuthenticatedAddress"].asString
-            if (data.has("grants"))
-            {
-                user.grants.clear()
-                for (element in JsonParser().parse(data["grants"].asString).asJsonArray)
-                {
-                    user.addGrant(Application.GSON.fromJson(element.asJsonObject, Grant::class.java))
-                }
-            }
-            if (data.has("punishments"))
-            {
-                user.punishments.clear()
-                for (element in JsonParser().parse(data["punishments"].asString).asJsonArray)
-                {
-                    user.addPunishment(Application.GSON.fromJson(element.asJsonObject, Punishment::class.java))
-                }
-            }
+            if (data.has("lastAuthenticatedAddress")) user.lastAuthenticatedAddress = data["lastAuthenticatedAddress"].asString
             // todo some meta data saving or osmthing honestly most this shit needs re-writing at some point#
             // its a fucking shit show lmao
         }

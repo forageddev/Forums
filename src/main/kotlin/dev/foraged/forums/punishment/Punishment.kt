@@ -1,23 +1,23 @@
-package dev.foraged.forums.user.grant
+package dev.foraged.forums.punishment
 
 import com.google.gson.JsonObject
-import com.google.gson.annotations.JsonAdapter
-import dev.foraged.forums.rank.Rank
 import dev.foraged.forums.rank.RankRepository
-import dev.foraged.forums.rank.adapter.RankReferenceJsonAdapter
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.UserRepository
-import dev.foraged.forums.user.adapter.UserReferenceJsonAdapter
 import dev.foraged.forums.util.JsonChain
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
-import org.springframework.stereotype.Component
+import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
-class Grant(
-    @DBRef @JsonAdapter(RankReferenceJsonAdapter::class) var rank: Rank,
-    var duration: Long = Long.MAX_VALUE,
+
+@Document(collection = "punishments")
+class Punishment(
+    var type: PunishmentType,
+    @DBRef var target: User,
+    val duration: Long? = null,
     var issuedReason: String = "",
     var issuedBy: UUID? = null,
     var issuedOn: String = "",
@@ -29,24 +29,31 @@ class Grant(
     var removedOn: String? = null,
     var removedAt: Long? = null,
 
-    val id: String = RandomStringUtils.randomAlphanumeric(24)
-) : Comparable<Grant>
+    @Id val id: String = RandomStringUtils.randomAlphanumeric(24)
+) : Comparable<Punishment>
 {
+    @Autowired lateinit var repository: RankRepository
+    @Autowired lateinit var userRepository: UserRepository
+
     val active: Boolean
         get() {
             if (removedAt != null) return false
-            if (duration != Long.MAX_VALUE) if (System.currentTimeMillis() >= issuedAt + duration) return false
+            if (duration != null && duration != Long.MAX_VALUE) {
+                if (System.currentTimeMillis() >= issuedAt + duration) return false
+            }
             return true
         }
 
-    override fun compareTo(other: Grant): Int {
+    override fun compareTo(other: Punishment): Int
+    {
         return (other.issuedAt - issuedAt).toInt()
     }
 
-    fun json() : JsonObject {
+    fun json() : JsonObject
+    {
         val chain = JsonChain()
             .append("id", id)
-            .append("rank", rank.id)
+            .append("type", type.name)
             .append("issuedBy", issuedBy)
             .append("issuedAt", issuedAt)
             .append("issuedOn", issuedOn)

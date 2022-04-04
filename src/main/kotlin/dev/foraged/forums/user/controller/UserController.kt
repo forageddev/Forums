@@ -1,7 +1,7 @@
 package dev.foraged.forums.user.controller
 
 import dev.foraged.forums.rank.RankRepository
-import dev.foraged.forums.user.grant.Grant
+import dev.foraged.forums.grant.Grant
 import dev.foraged.forums.user.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

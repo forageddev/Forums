@@ -15,6 +15,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import javax.servlet.http.Cookie
 
 @Configuration
 @EnableWebSecurity
@@ -58,7 +59,11 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter()
             .passwordParameter("password")
             .and().logout()
             .logoutRequestMatcher(AntPathRequestMatcher("/logout"))
-            .logoutSuccessUrl("/").and().exceptionHandling()
+            .logoutSuccessUrl("/").addLogoutHandler { req, res, auth ->
+                val cookie = Cookie("guest", "")
+                cookie.maxAge = 0
+                res.addCookie(cookie)
+            }.and().exceptionHandling()
     }
 
     @Throws(Exception::class)

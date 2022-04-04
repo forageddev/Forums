@@ -7,9 +7,14 @@
 
 package dev.foraged.forums.shop.controller
 
+import com.paypal.core.PayPalEnvironment
+import com.paypal.core.PayPalHttpClient
+import com.paypal.orders.Order
+import com.paypal.orders.OrdersCaptureRequest
 import dev.foraged.forums.shop.Basket
 import dev.foraged.forums.shop.Transaction
 import dev.foraged.forums.shop.TransactionGateway
+import dev.foraged.forums.shop.TransactionStatus
 import dev.foraged.forums.shop.repository.CategoryRepository
 import dev.foraged.forums.shop.repository.PackageRepository
 import dev.foraged.forums.shop.repository.TransactionRepository
@@ -37,12 +42,11 @@ import javax.servlet.http.HttpServletResponse
 class ShopController @Autowired constructor(val transactionRepository: TransactionRepository, val userService : UserService, val categoryRepository: CategoryRepository, val packageRepository: PackageRepository) {
 
     val coinbase: Coinbase = CoinbaseBuilder().withAPIKey("7c779704-8848-4872-a68b-18c18b8a5b71").build()
+    val paypal: PayPalHttpClient = PayPalHttpClient(PayPalEnvironment.Live("AV_0lkkcwQf_iwBjZkd2y1ODVNen-klzZ1erVOx7C_tTYfW1UdXGi0uvHctbmEXo0Ljk4AqeMLoCgcrc", "EK9bIjiMmEkTcC5tHjpZiZ_1ic2zF4UyQoSD1K9jhXeSXYLCi4x7mcjb-4g898_a6gVAA0p69uU3kJVW"))
 
     @RequestMapping(value = ["/guest-login"], method = [RequestMethod.GET])
     fun guestLogin(): ModelAndView {
         val modelAndView = ModelAndView()
-
-        coinbase
 
         modelAndView.viewName = "guest-login"
         return modelAndView
@@ -85,25 +89,38 @@ class ShopController @Autowired constructor(val transactionRepository: Transacti
     }
 
     @RequestMapping(value = ["/store/payment-pending/{gateway}", "/shop/payment-pending/{gateway}"], method = [RequestMethod.GET])
-    fun pending(@PathVariable gateway: TransactionGateway = TransactionGateway.COINBASE, request: HttpServletRequest): ModelAndView {
-        val modelAndView = ModelAndView() // remove default gateway assignation
+    fun pending(@PathVariable gateway: String, @RequestParam(name = "id", required = false) id: String?, request: HttpServletRequest): ModelAndView {
+        val modelAndView = ModelAndView()
+        modelAndView.viewName = "shop/pending"
+        modelAndView.addObject("categories", categoryRepository.findAll())
 
+        val way = TransactionGateway.valueOf(gateway.uppercase())
+
+        if (way == TransactionGateway.PAYPAL)
+        {
+            var order: Order? = null
+            try {
+                (paypal.execute(OrdersCaptureRequest(id)).result() ?: throw RuntimeException("broke")).also { order = it }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                modelAndView.viewName = "redirect:/shop/payment-error?illegal=true"
+                return modelAndView
+            }
+        }
         val user = (request.session.getAttribute("user") as User?) ?: request.session.getAttribute("guest") as User
         val transaction = Transaction(
             basket = user.basket,
             user = user,
-            gateway = gateway
+            gateway = way
         )
+        if (way != TransactionGateway.COINBASE) {
+            transaction.status = TransactionStatus.ACTIONS_QUEUED
+        }
 
         transactionRepository.save(transaction)
         user.basket = Basket()
         userService.save(user)
 
-
-
-        modelAndView.viewName = "shop/pending"
-
-        modelAndView.addObject("categories", categoryRepository.findAll())
         return modelAndView
     }
 
@@ -114,6 +131,7 @@ class ShopController @Autowired constructor(val transactionRepository: Transacti
         val body = CreateChargeBody("Nasa Network", "Complete your payment for play.nasa.gg. Your payment will process under the name ${user.username}", PricingType.fixed_price)
         body.localPrice = Price(user.basket.total.toDouble().toString(), "USD")
         body.metadata = mapOf("transaction_id" to user.basket.id, "uniqueId" to user.id.toString())
+        body.redirectUrl = "https://nasa.gg/shop/payment-pending/coinbase"
 
         return "redirect:" + (coinbase.chargesService.createCharge(body).execute().body()?.hostedUrl ?: "/shop/crypto-failure")
     }

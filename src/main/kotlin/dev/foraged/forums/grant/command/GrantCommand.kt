@@ -1,9 +1,9 @@
-package dev.foraged.forums.user.grant.command
+package dev.foraged.forums.grant.command
 
 import dev.foraged.forums.Application
 import dev.foraged.forums.rank.RankRepository
 import dev.foraged.forums.user.UserRepository
-import dev.foraged.forums.user.grant.Grant
+import dev.foraged.forums.grant.Grant
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import revxrsal.commands.annotation.Command
@@ -22,6 +22,7 @@ class GrantCommand @Autowired constructor(val rankRepository: RankRepository, va
         val rank = rankRepository.findById(rank).get()
 
         user.addGrant(Grant(
+            target = user,
             rank = rank
         ))
         userRepository.save(user)
