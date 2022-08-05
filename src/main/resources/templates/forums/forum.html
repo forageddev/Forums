@@ -6,7 +6,7 @@
 <div layout:fragment="content">
     <ul class="breadcrumb text-capitalize">
         <li class="breadcrumb-item">
-            <a href="/forums">
+            <a href="/">
                 <i class="fas fa-home fa-fw"></i>
             </a>
         </li>
@@ -52,7 +52,7 @@
                     <div class="row" style="width: 100%">
                         <div class="col-lg-2 col-md-4 d-md-none d-none d-sm-none d-xs-none d-lg-block">
                             <div>
-                                <img style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${thread.author.id.toString().replace('-', '')} + '?size=32&overlay=true'}">
+                                <img style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${thread.author.identifier.toString().replace('-', '')} + '?size=32&overlay=true'}">
                             </div>
                         </div>
                         <div class="col-lg-10 col-md-8 col-sm-12">

@@ -5,6 +5,7 @@ import dev.foraged.forums.forum.repository.ForumCategoryRepository
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.impl.ForumService
+import dev.foraged.forums.ticket.service.impl.TicketTemplateService
 import dev.foraged.forums.user.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

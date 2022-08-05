@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Nasa</title>
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Nyte</title>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
@@ -15,10 +15,10 @@
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js"></script>
 </head>
 <body id="page-index">
-    <div class="nasa-pageContent">
-        <div class="nasa-pageWrapper">
-            <div class="nasa-sectionContainer">
-                <div class="nasa-section section--left">
+    <div class="nyte-pageContent">
+        <div class="nyte-pageWrapper">
+            <div class="nyte-sectionContainer">
+                <div class="nyte-section section--left">
                     <div class="mask">
                         <img src="https://cdn.discordapp.com/attachments/917630475080720414/925309008166944798/2021-12-28_00.47.32.png">
                         <svg width="589" height="1080" viewBox="0 0 589 1080" fill="none" xmlns="http://www.w3.org/2000/svg" class="">
@@ -29,35 +29,36 @@
                     </div>
                     <div class="heading">
                         <div class="section-top">
-                            <div class="nasa-navigation-trigger">
-                                <button type="button" class="nasa-nav-trigger">
+                            <div class="nyte-navigation-trigger">
+                                <button type="button" class="nyte-nav-trigger">
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
                             </div>
 
-                            <div class="logo">
-                                <img src="https://i.imgur.com/bz5wuYg.png" alt="Nasa Network">
-                            </div>
-                            <div class="nasa-server-status-container">
-                                <div class="nasa-server-status clipboardobj" data-clipboard-text="play.nasa.gg">
-                                    <div class="nasa-server-player-count">
-                                        <span class="nasa-player-count counter">2</span> Players Online
+                            <a href="/" class="logo">
+                                <img src="https://i.imgur.com/AS26sti.png" alt="Nyte Network">
+                            </a>
+                            <div class="nyte-server-status-container">
+                                <div class="nyte-server-status clipboardobj" data-clipboard-text="play.nyte.cc">
+                                    <div class="nyte-server-player-count">
+                                        <span class="nyte-player-count counter">2</span> Players Online
                                     </div>
-                                    <div class="nasa-server-ip">play.nasa.gg</div>
+                                    <div class="nyte-server-ip">play.nyte.cc</div>
                                 </div>
                             </div>
                         </div>
                         <div class="section-body">
-                            <div class="nasa-navigation closed" style="transform: translateX(-350%);">
+                            <div class="nyte-navigation closed" style="transform: translateX(-350%);">
                                 <h1 class="bold">Navigation</h1>
-                                <ul class="nav navbar-nav nasa-navigation-links">
+                                <ul class="nav navbar-nav nyte-navigation-links">
                                     <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/' ? 'active':''}" style="transform: translateX(-300%);"><a href="/">Home</a></li>
                                     <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/forums' ? 'active':''}" style="transform: translateX(-300%);"><a href="/forums">Forums</a></li>
                                     <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/leaderboards' ? 'active':''}" style="transform: translateX(-300%);"><a href="/leaderboards">Leaderboards</a></li>
                                     <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/staff' ? 'active':''}" style="transform: translateX(-300%);"><a href="/staff">Staff</a></li>
                                     <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/famous' ? 'active':''}" style="transform: translateX(-300%);"><a href="/famous">Famous</a></li>
+                                    <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/ticket' ? 'active':''}" style="transform: translateX(-300%);"><a href="/ticket">Ticket</a></li>
                                     <li class="animeobj" th:classappend="${#httpServletRequest.requestURI == '/shop' ? 'active':''}" style="transform: translateX(-300%);"><a href="/shop">Shop</a></li>
                                 </ul>
                             </div>
@@ -65,7 +66,7 @@
 
                                 <div class="title">
                                     <h3 th:if="${#httpServletRequest.requestURI == '/'}" class="animeobj medium minor" style="transform: translateX(0%);">Welcome To</h3>
-                                    <h1 th:if="${#httpServletRequest.requestURI == '/'}" class="animeobj bold" style="transform: translateX(0%);">Nasa</h1>
+                                    <h1 th:if="${#httpServletRequest.requestURI == '/'}" class="animeobj bold" style="transform: translateX(0%);">Nyte</h1>
 
                                     <h3 th:if="${#httpServletRequest.requestURI != '/'}" class="animeobj medium minor" style="transform: translateX(0%);">Exploring</h3>
                                     <h1 th:if="${#httpServletRequest.requestURI != '/'}" th:text="${#strings.arraySplit(#httpServletRequest.requestURI, '/')[0]}" class="animeobj bold" style="transform: translateX(0%);"></h1>
@@ -81,7 +82,7 @@
                                     </div>
                                 </div>
 
-                                <div class="nasa-category-description">
+                                <div class="nyte-category-description">
 
                                 </div>
                             </div>
@@ -90,64 +91,64 @@
                 </div>
 
 
-                <div class="nasa-section section--right">
+                <div class="nyte-section section--right">
                     <div class="container main-content">
 
-                        <div class="nasa-header">
+                        <div class="nyte-header">
 
-                            <div class="nasa-help-text bold">
+                            <div class="nyte-help-text bold">
                                 <form method="get" action="/player/" id="search-player">
                                     <input autocomplete="off" name="name" type="text" minlength="3" maxlength="16" size="16" placeholder="Search players." />
                                 </form>
                             </div>
 
 
-                            <div th:if="${session.user != null}" class="nasa-user-control">
-                                <a th:href="@{'/player/' + ${session.user.username}}" class="nasa-user-head">
-                                    <img th:src="@{'https://cravatar.eu/avatar/' + ${session.user.id.toString().replace('-', '')} + '?overlay=true'}">
+                            <div th:if="${session.user != null}" class="nyte-user-control">
+                                <a th:href="@{'/player/' + ${session.user.username}}" class="nyte-user-head">
+                                    <img th:src="@{'https://visage.surgeplay.com/bust/168/' + ${session.user.identifier.toString().replace('-', '')} + '?overlay=true'}">
                                 </a>
-                                <div class="nasa-user-details">
+                                <div class="nyte-user-details">
                                     <span>logged in as</span>
-                                    <span class="nasa-user-username" style="color:" th:styleappend="${session.user.rankColor}" th:text="${session.user.username}"></span>
+                                    <span class="nyte-user-username" style="color:" th:styleappend="${session.profile.bestDisplayRank.siteColor}" th:text="${session.user.username}"></span>
 
                                     <div class="toolbar">
                                         <div class="logout">
-                                            <a href="/logout" class="btn btn-danger">Logout</a>
+                                            <a href="/logout" class="btn btn-primary">Logout</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div th:if="${session.user == null}">
-                                <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) && session.guest != null}" class="nasa-user-control">
+                                <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) && session.guest != null}" class="nyte-user-control">
                                     <th:block th:with="guest=${session.guest}">
-                                        <a th:href="@{'/shop'}" class="nasa-user-head">
-                                            <img th:src="@{'https://cravatar.eu/avatar/' + ${guest.id.toString().replace('-', '')} + '?overlay=true'}">
+                                        <a th:href="@{'/shop'}" class="nyte-user-head">
+                                            <img th:src="@{'https://visage.surgeplay.com/bust/168/' + ${guest.identifier.toString().replace('-', '')} + '?overlay=true'}">
                                         </a>
-                                        <div class="nasa-user-details">
+                                        <div class="nyte-user-details">
                                             <span>logged in as guest</span>
-                                            <span class="nasa-user-username" style="color:" th:styleappend="${guest.rankColor}" th:text="${guest.username}"></span>
+                                            <span class="nyte-user-username text-white" th:text="${guest.username}"></span>
 
                                             <div class="toolbar">
                                                 <div class="logout">
-                                                    <a href="/logout" class="btn btn-danger">Logout</a>
+                                                    <a href="/logout" class="btn btn-primary">Logout</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </th:block>
                                 </div>
 
-                                <div th:if="${!(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) || session.guest == null}" class="nasa-user-control">
-                                    <a href="/login" class="nasa-user-head">
-                                        <img src="https://cravatar.eu/avatar/606e2ff0ed7748429d6ce1d3321c7838">
+                                <div th:if="${!(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) || session.guest == null}" class="nyte-user-control">
+                                    <a href="/login" class="nyte-user-head">
+                                        <img src="https://visage.surgeplay.com/bust/168/606e2ff0ed7748429d6ce1d3321c7838">
                                     </a>
-                                    <div class="nasa-user-details">
+                                    <div class="nyte-user-details">
                                         <span class="text-danger">not logged in!</span>
-                                        <span class="nasa-user-username">???</span>
+                                        <span class="nyte-user-username text-white">???</span>
 
                                         <div class="toolbar">
                                             <div class="login">
-                                                <a href="/login" class="btn btn-danger">Login</a>
+                                                <a href="/login" class="btn btn-primary">Login</a>
                                             </div>
                                         </div>
                                     </div>
@@ -162,9 +163,9 @@
                             <div layout:fragment="content"></div>
                         </div>
 
-                        <div class="nasa-section section--footer mt-3">
+                        <div class="nyte-section section--footer mt-5">
                             <div class="store-copyright">
-                                <p>Copyright © 2022 Endermite, LLC</p>
+                                <p>Copyright © 2022 Cubed Studios</p>
                                 <p>We are not affiliated with Minecraft or Mojang</p>
                             </div>
                         </div>
@@ -184,10 +185,10 @@
 
 
     <script>
-        var a = document.querySelector(".nasa-navigation"),
-        b = document.querySelectorAll(".nasa-navigation-links li.animeobj"),
-        c = document.querySelector(".nasa-nav-trigger"),
-        d = document.querySelector(".nasa-package-overlay"),
+        var a = document.querySelector(".nyte-navigation"),
+        b = document.querySelectorAll(".nyte-navigation-links li.animeobj"),
+        c = document.querySelector(".nyte-nav-trigger"),
+        d = document.querySelector(".nyte-package-overlay"),
         g = document.querySelector(".section-body .section-main"),
         h = document.querySelectorAll(".title .animeobj");
 
@@ -280,9 +281,9 @@
             }, 1e3), g.classList.remove("isNavOpen"))
         }
 
-        $(".nasa-nav-trigger").click(function() {
+        $(".nyte-nav-trigger").click(function() {
             a.classList.contains("isAnimating") || (toggleNav(), a.classList.add("isAnimating"))
-        }), $(".nasa-section.section--right").click(function() {
+        }), $(".nyte-section.section--right").click(function() {
             a.classList.contains("closed") || a.classList.contains("isAnimating") || (toggleNav(), a.classList.add("isAnimating"))
         })
     </script>

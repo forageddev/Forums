@@ -4,11 +4,11 @@ import dev.foraged.forums.forum.ForumCategory
 import dev.foraged.forums.forum.ForumThread
 import dev.foraged.forums.forum.ForumThreadReply
 import dev.foraged.forums.forum.repository.ForumCategoryRepository
-import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadReplyRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.ICategoryService
 import dev.foraged.forums.forum.service.impl.ForumService
+import dev.foraged.forums.ticket.service.impl.TicketTemplateService
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
 import org.apache.commons.lang3.RandomStringUtils
@@ -30,7 +30,7 @@ class CategoryController @Autowired constructor(val forumService: ForumService, 
     {
         val id: String = RandomStringUtils.randomAlphanumeric(12)
 
-        val thread = ForumThread(id, author, title, forum = forum.forum, category = forum)
+        val thread = ForumThread(id, author.identifier, title = title, forum = forum.forum, category = forum)
         thread.body = content
         forum.threads.add(thread)
         threadRepository.save(thread) // Adds the thread to global thread collection
@@ -40,7 +40,7 @@ class CategoryController @Autowired constructor(val forumService: ForumService, 
 
     fun createReply(thread: ForumThread, author: User, content: String)
     {
-        val reply = ForumThreadReply(author = author, body = content, thread = thread)
+        val reply = ForumThreadReply(authorId = author.identifier, body = content, thread = thread)
         thread.replies.add(reply)
         replyRepository.save(reply)
         println("Added reply to thread " + thread.id)

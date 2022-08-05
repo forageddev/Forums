@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="/ticket">Ticket</a>
+        </li>
+    </ul>
+
+    <div class="row justify-content-center">
+        <a class="col-md-5" href="/ticket/create">
+            <div class="card card-thread p-5">
+                <h2 class="text-white">Create a new Ticket</h2>
+                <br>
+                <p class="text-white">To create a new ticket click here. You will be able to select from a variety of ticket types and fill out the questions to your liking. Please be aware that abuse of this ticket system could result in punishment or account deletion.</p>
+            </div>
+        </a>
+        <a class="col-md-5" href="/ticket/manage">
+            <div class="card card-thread p-5">
+                <h2 class="text-white">View your Tickets</h2>
+                <br>
+                <p class="text-white">To view your open or closed tickets click here. You will be able to view all tickets you have created on our website. You will be able to review the result and outcome of each of your opened tickets here.</p>
+            </div>
+        </a>
+    </div>
+</div>
+</body>
+</html>

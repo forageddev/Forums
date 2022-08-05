@@ -3,21 +3,23 @@ package dev.foraged.forums.forum.service.impl
 import dev.foraged.forums.forum.Forum
 import dev.foraged.forums.forum.ForumCategory
 import dev.foraged.forums.forum.service.IForumService
+import dev.foraged.forums.ticket.service.ITicketTemplateService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.findById
 import org.springframework.stereotype.Service
 
 @Service
 class ForumService @Autowired constructor(val mongoTemplate: MongoTemplate) : IForumService
 {
-    override fun findAll(): List<Forum>
-    {
-        return mongoTemplate!!.findAll(Forum::class.java)
-    }
-
-    override fun getForum(name: String?): Forum
+    override fun getForum(name: String): Forum
     {
         return mongoTemplate.findById(name, Forum::class.java)
+    }
+
+    override fun findAll(): List<Forum>
+    {
+        return mongoTemplate.findAll(Forum::class.java)
     }
 
     override val subForums: List<ForumCategory>
@@ -33,7 +35,7 @@ class ForumService @Autowired constructor(val mongoTemplate: MongoTemplate) : IF
 
     override fun addForum(forum: Forum?): Forum?
     {
-        mongoTemplate!!.save(forum)
+        mongoTemplate.save(forum)
         return forum
     }
 }

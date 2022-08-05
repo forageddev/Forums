@@ -22,7 +22,7 @@
 
                     &zwnj; granted
 
-                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
+                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
                     <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
 
                     &zwnj; the
@@ -43,7 +43,7 @@
 
                     &zwnj; granted
 
-                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
+                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
                     <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
 
                     &zwnj; the

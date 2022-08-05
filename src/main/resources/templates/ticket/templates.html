@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/ticket">Ticket</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="/ticket/create">Create</a>
+        </li>
+    </ul>
+
+    <div class="row staff-row justify-content-center">
+        <div class="col staff-members text-center">
+            <div class="staff-member-group">
+                <tr th:each="template : ${templates}">
+                    <a th:href="@{'/ticket/create/' + ${template.id}}" class="staff-member col p-3">
+                        <h2 th:text="${template.displayName}"></h2>
+
+                        <h4 class="mt-3" th:text="${template.description}"></h4>
+                    </a>
+                </tr>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

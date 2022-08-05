@@ -7,10 +7,24 @@
 
 <body>
 <div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/player">Player</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a th:href="${'/player/' + user.username}" th:text="${user.username}"></a>
+        </li>
+    </ul>
+
     <div class="row">
         <div class="col-lg-12 col-xl-4">
             <div class="card card-profile">
-                <div class="card-header" th:style="'background: ' + ${user.online ? '#3CB152' : '#C62828'} + ';'">
+                <div class="card-header" th:style="'background: ' + ${user.online ? '#3CB152' : '#E53A52'} + ';'">
                     <strong th:text="${user.online ? 'Online' : 'Offline'}"></strong>
                     <div th:if="${user.online}" th:text="'Playing on ' + ${user.lastServer}"></div>
                     <div th:if="${!user.online}">
@@ -20,37 +34,79 @@
                 </div>
                 <div class="card-body">
                     <div class="player-avatar">
-                        <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.id.toString()} + '?overlay'}">
+                        <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.identifier.toString()} + '?overlay'}">
                     </div>
                     <div class="player-username">
                         <strong class="player-username" th:text="${user.username}"></strong>
                     </div>
-                    <div class="player-rank" style="color:" th:styleappend="${user.getRankColor()}" th:text="${user.primaryGrant.rank.id}"></div>
+                    <div class="player-rank" style="color:" th:styleappend="${user.bestDisplayRank.siteColor}" th:text="${user.bestDisplayRank.id}"></div>
+                </div>
+
+                <div class="card-body mt-3">
+                    <span>First joined on <strong><time th:datetime="${user.firstSeen}" data-format="datetime" data-toggle="tooltip"></time></strong></span><br>
+                    <strong>1</strong> <span>monthly views</span>
                 </div>
             </div>
 
-            <div th:if="${session.user != null && session.user.id == user.id}" class="card card-profile-generic">
-                <a class="btn btn-nice btn-primary" href="/account">Edit your account</a>
-            </div>
+            <span class="btn punishment-btn">
+                <span th:text="${#lists.size(user.punishments)}"></span> SERVER PUNISHMENTS
+                <br>
+                <span th:text="${#lists.size(transactions)}"></span> STORE PURCHASES
+            </span>
+
+            <a th:if="${session.user != null && session.user.identifier == user.identifier}" class="btn btn-nice btn-primary p-2 mt-3" style="width: 100%" href="/account">Edit your account</a>
         </div>
 
         <div class="col-lg-12 col-xl-8">
             <div class="card-body">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${page} == 'general' ? 'active' : ''" th:href="'/player/' + ${user.username}">General</a>
+                        <a class="nav-link btn" th:classappend="${page} == 'general' ? 'active' : ''" th:href="'/player/' + ${user.username}">General</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${page} == 'stats' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/stats'">Statistics</a>
+                        <a class="nav-link btn" th:classappend="${page} == 'stats' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/stats'">Statistics</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${page} == 'forums' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/threads'">Forums</a>
+                        <a class="nav-link btn" th:classappend="${page} == 'forums' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/threads'">Forums</a>
+                    </li>
+                </ul>
+
+                <ul class="nav nav-pills nav-fill" th:if="${session.profile != null && session.profile.bestDisplayRank.staff}">
+                    <li class="nav-item">
+                        <a class="nav-link btn" th:classappend="${section} == 'grants' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/grants'">Grants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn" th:classappend="${section} == 'punishments' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/punishments'">Punishments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn" th:classappend="${section} == 'reports' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/reports'">Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn" th:classappend="${section} == 'requests' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/requests'">Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn" th:classappend="${section} == 'comments' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/comments'">Comments</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.profile.hasPermission('forums.tickets.management')}">
+                        <a class="nav-link btn" th:classappend="${section} == 'tickets' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/tickets'">Tickets</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.profile.hasPermission('forums.transactions.management')}">
+                        <a class="nav-link btn" th:classappend="${section} == 'transactions' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/transactions'">Transactions</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.profile.hasPermission('forums.aclogs.management')}">
+                        <a class="nav-link btn" th:classappend="${section} == 'logs' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/anticheat_logs'">Anticheat Logs</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.profile.hasPermission('forums.chatlogs.management')}">
+                        <a class="nav-link btn" th:classappend="${section} == 'chat_logs' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/chat_logs'">Chat Logs</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.profile.hasPermission('forums.commandlogs.management')}">
+                        <a class="nav-link btn" th:classappend="${section} == 'command_logs' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/command_logs'">Command Logs</a>
                     </li>
                 </ul>
             </div>
-            <div th:replace="'/player/' + ${page} :: ${page}"></div>
+            <div th:replace="'/player/__${page}__' :: __${page}__"></div>
         </div>
     </div>
 </div>
 </body>
-</html>
+</html>`

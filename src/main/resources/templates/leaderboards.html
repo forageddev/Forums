@@ -4,45 +4,58 @@
 <body>
 
 <div layout:fragment="content">
-    <div class="row">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="/leaderboards">Leaderboards</a>
+        </li>
+    </ul>
+
+    <div class="pl-5 pr-5 row">
         <th th:each="user : ${users}">
-            <div class="col-md-3">
-                <div class="leaderboard text-center">
+            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-sm-12 col-xs-12">
+                <div class="leaderboard text-center mb-3">
                     <div class="header">
                         Global
                     </div>
-                    <div class="leaderboard-content">
-                        <top class="leaderboard-sub-heading mt-2">
+                    <div class="leaderboard-content pl-2 pr-2">
+                        <top class="leaderboard-sub-heading">
                             <div class="row">
-                                <div class="col-md-2">
-                                    <h2 class="text-center">Rank</h2>
+                                <div class="col-2">
+                                    <h2 class="pos">Rank</h2>
                                 </div>
 
-                                <div class="col-md-7">
-                                    <h2 class="text-center">User</h2>
+                                <div class="col-7">
+                                    <h2 class="pos">Player</h2>
                                 </div>
 
-                                <div class="col-md-3">
-                                    <h2 class="text-center">Value</h2>
+                                <div class="col-3">
+                                    <h2 class="pos">ELO</h2>
                                 </div>
                             </div>
                         </top>
 
                         <pos class="leaderboard-position" th:each="pos : ${new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }}">
-                            <div class="row">
+                            <div class="row mt-2">
                                 <div class="col-md-2">
-                                    <h2 class="text-center pos" th:text="${pos}"></h2>
+                                    <h2 class="pos" th:text="${pos}"></h2>
                                 </div>
 
                                 <div class="col-md-7">
-                                    <a th:href="@{'/player/' + ${user.username}}" class="text-center">
-                                        <img class="staff-head" th:src="@{'https://crafatar.com/avatars/' + ${user.id.toString()} + '?size=24&overlay'}">
-                                        <h2 class="text-center" th:text="${user.username.substring('0', (user.username.length() >= 9 ? '9' : user.username.length()))}"></h2>
+                                    <a th:href="@{'/player/' + ${user.username}}">
+                                        <span style="white-space: nowrap">
+                                            <img style="display: inline" th:src="@{'https://crafatar.com/avatars/' + ${user.identifier.toString()} + '?size=24&overlay'}">
+                                            <h2 style="display: inline" class="pos pl-1" th:text="${user.username}"></h2>
+                                        </span>
                                     </a>
                                 </div>
 
                                 <div class="col-md-3">
-                                    <h2 class="text-center" th:text="1000"></h2>
+                                    <h2 class="pos" th:text="1000"></h2>
                                 </div>
                             </div>
                         </pos>

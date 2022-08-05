@@ -20,7 +20,7 @@ class HomeController @Autowired constructor(val userService: UserService, val ca
         categoryRepository.findById("announcements").ifPresent { category: ForumCategory ->
             modelAndView.addObject(
                 "announcements",
-                category.threads
+                category.threads.sortedByDescending { it.timestamp }
             )
         }
         modelAndView.viewName = "home"

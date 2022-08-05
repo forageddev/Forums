@@ -1,5 +1,6 @@
 package dev.foraged.forums.web.config
 
+import com.minexd.core.profile.ProfileService
 import dev.foraged.forums.user.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
@@ -13,8 +14,8 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class CustomizeAuthenticationSuccessHandler : AuthenticationSuccessHandler
 {
-    @Autowired
-    private val userRepository: UserRepository? = null
+    val userRepository = UserRepository
+
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
@@ -24,7 +25,9 @@ class CustomizeAuthenticationSuccessHandler : AuthenticationSuccessHandler
         //set our response to OK status
         response.status = HttpServletResponse.SC_OK
         response.sendRedirect(if (request.getAttribute("redirect") == null) "/" else request.getAttribute("redirect") as String)
-        request.session.setAttribute("user", userRepository!!.findByUsername(authentication.name))
+        val user = userRepository.findByUsername(authentication.name) ?: throw RuntimeException("Authentication not found.")
+        request.session.setAttribute("user", user)
+        request.session.setAttribute("profile", ProfileService.fetchProfile(user.identifier))
         for (auth in authentication.authorities)
         {
             /*if ("ADMIN".equals(auth.getAuthority())) {

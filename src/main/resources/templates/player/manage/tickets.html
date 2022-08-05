@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="tickets">
+    <div class="alert alert-danger" th:if="${tickets.isEmpty()}">
+        <i class="fas fa-times-circle fa-fw"></i> Not enough data to display
+    </div>
+    <div class="card card-forum" th:if="${!tickets.isEmpty()}">
+        <table class="table table-forum table-responsive">
+            <thead>
+            <tr>
+                <th>Author</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Replies</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Type</th>
+                <th>Activity</th>
+            </tr>
+            </thead>
+            <colgroup>
+                <col width="45%">
+                <col width="10%">
+                <col width="20%">
+                <col width="25%">
+            </colgroup>
+            <div th:each="thread : ${tickets}">
+                <tbody>
+                <td class="forum-title forum-title-upvotes">
+                    <div class="row" style="width: 100%">
+                        <div class="col-xl-3 col-lg-2 col-md-4 d-md-none d-none d-sm-none d-xs-none d-lg-block">
+                            <div>
+                                <img style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${thread.author.identifier.toString().replace('-', '')} + '?size=32&overlay=true'}">
+                            </div>
+                        </div>
+                        <div class="col-xl-9 col-lg-10 col-md-8 col-sm-12">
+                            <div>
+                                <a th:href="${thread.friendlyUrl}" th:text="${thread.id}"></a>
+                                <div class="meta">
+                                    by <a th:href="@{'/player/' + ${thread.author.username}}"  th:style="@{'color: ' + ${thread.author.getRankColor()}}" th:text="${thread.author.username}"></a>
+                                    &bull;
+                                    <time th:datetime="${thread.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${thread.replies.size()}"></td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${thread.template.displayName}"></td>
+                <td class="forum-latest">
+                    <div class="meta" th:if="${thread.lastReply == null}">None</div>
+                    <div th:if="${thread.lastReply != null}">
+                        by <a th:href="@{'/player/' + ${thread.lastReply.author.username}}" style="color:" th:styleappend="${thread.lastReply.author.getRankColor()}" th:text="${thread.lastReply.getAuthor().username}"></a>
+                        <div class="meta">
+                            <time th:datetime="${thread.lastReply.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/ticket">Ticket</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/ticket/manage">Manage</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a th:href="${'/ticket/manage/' + ticket.author.username}" th:text="${ticket.author.username}"></a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a th:href="${ticket.friendlyUrl}" th:text="${ticket.template.displayName + ' #' + ticket.id}"></a>
+        </li>
+    </ul>
+
+    <div class="card card-thread">
+        <div class="row">
+            <div class="col-lg-12 col-xl-1">
+                <a th:href="@{'/player/' + ${ticket.author.username}}">
+                    <img style="height: 125px;width:auto" th:src="@{'https://visage.surgeplay.com/full/168/' + ${ticket.author.identifier.toString()} + '?overlay'}">
+                </a>
+            </div>
+            <div class="col-xl-11 col-lg-12">
+                <h3>
+                    <span th:text="${ticket.template.displayName + ' #' + ticket.id}"></span>
+
+                    <div class="tagline">
+                        by <a th:style="@{'color:' + ${ticket.author.getRankColor()}}" th:href="@{'/player/' + ${ticket.author.username}}" th:text="${ticket.author.username}"></a>
+                        &bull;
+                        <time th:datetime="${ticket.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                    </div>
+                </h3>
+                <div class="post">
+                    <tr class="form-control" th:each="completed : ${ticket.fields}">
+                        <h2 th:text="${completed.field.id}"></h2>
+                        <p th:text="${completed.value}"></p>
+                        <br>
+                    </tr>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:each="reply : ${ticket.replies}" class="card card-thread">
+        <div class="row pl-5 pr-5">
+            <div class="col-12" style="white-space: nowrap">
+                <img style="display: inline;max-width: 48px;max-height: 48px" th:src="@{'https://visage.surgeplay.com/bust/48/' + ${reply.author.identifier.toString()} + '?overlay'}">
+
+                <div style="display: inline;white-space: nowrap">
+                    <a th:style="@{'display: inline;color:' + ${reply.author.getRankColor()}}" th:href="@{'/player/' + ${reply.author.username}}" th:text="${reply.author.username}"></a>
+                    <time style="display: inline" th:datetime="${reply.timestamp}" data-format="datetime" data-toggle="tooltip"></time>
+
+                    <br>
+                    <div class="post" style="padding-left: 56px;margin-top: -20px;word-break: break-word" th:utext="${reply.formattedBody}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-thread-reply p-2" th:classappend="${session.user == null ? 'disabled' : ''}">
+        <div class="thread-reply-avatar">
+            <img th:src="@{'https://visage.surgeplay.com/bust/168/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : session.user.identifier.toString()} + '?size=24?overlay'}">
+        </div>
+        <form class="thread-reply-content" method="post" th:action="@{'/ticket/manage/' + ${ticket.id} + '/reply'}">
+            <div class="form-group mb-2">
+                <textarea name="body" th:disabled="${session.user == null}" class="form-control"></textarea>
+            </div>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+</body>
+</html>

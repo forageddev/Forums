@@ -6,6 +6,20 @@
 </head>
 <body>
 <div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/shop">Shop</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a th:href="${'/shop/' + categoryId}" th:text="${category.name}"></a>
+        </li>
+    </ul>
+
     <div class="body">
         <div class="content">
             <div class="panel panel-default">
@@ -35,9 +49,9 @@
                                                 <a th:if="${!user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-primary btn-block">Add to cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
                                                 <a th:if="${user.basket.has(package)}" th:href="@{'/shop/basket/' + ${categoryId} + '/' + ${package.id} + '/add'}" class="btn btn-sm btn-danger btn-block">Remove from cart  <i class="ml-2 fas fa-shopping-basket"></i></a>
                                             </div>
-                                            <div th:if="${user == null}" class="package-add">
-                                                <a href="/login" class="btn btn-sm btn-success btn-block">Login</a>
-                                                <a href="/guest-login" class="btn btn-sm btn-danger btn-block">Guest Login</a>
+                                            <div th:if="${user == null}" style="white-space: nowrap" class="package-add">
+                                                <a href="/login" style="display: inline" class="btn btn-sm btn-success btn-block">Login</a>
+                                                <a href="/guest-login" style="display: inline" class="btn btn-sm btn-danger btn-block">Guest Login</a>
                                             </div>
                                         </div>
                                     </div>

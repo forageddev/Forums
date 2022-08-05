@@ -1,5 +1,6 @@
 package dev.foraged.forums.forum.controller
 
+import com.minexd.core.profile.ProfileService
 import dev.foraged.forums.forum.ForumContentReference
 import dev.foraged.forums.forum.ForumThread
 import dev.foraged.forums.forum.ForumThreadReply
@@ -8,6 +9,7 @@ import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.forum.repository.ThreadReplyRepository
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.forum.service.impl.ForumService
+import dev.foraged.forums.ticket.service.impl.TicketTemplateService
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -136,18 +138,23 @@ class ThreadController @Autowired constructor(val userService: UserService, val 
         request: HttpServletRequest
     ): ModelAndView
     {
-        // todo make sure they have access to the forum they are trying to post to
-        val category = categoryRepository!!.findByDisplayName(reference.category)
+        val category = categoryRepository.findByDisplayName(reference.category)
             ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Category not found"
             )
-        val user = request.session.getAttribute("user") as User
+        val user = request.session.getAttribute("user") as User? ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to view this page.")
+        val profile = ProfileService.getOrFetchProfile(user.identifier, false) ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to view this page.")
+
+        if (category.permission.isNotEmpty() && !profile.hasPermission(category.permission)) throw
+                ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "You do not have permission to post threads to this forum."
+                )
         val thread = ForumThread(
             title = reference.title,
-            body = reference.body,
+            body = reference.body.replace("<script>", "<script type=\"javascript/blocked\">"),
             category = category,
             forum = category.forum,
-            author = user
+            authorId = user.identifier
         )
         // add perm c heck
 
@@ -170,14 +177,14 @@ class ThreadController @Autowired constructor(val userService: UserService, val 
         request: HttpServletRequest
     ): String
     {
-        val user = request.session.getAttribute("user") as User
+        val user = request.session.getAttribute("user") as User? ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to post replies.")
         val thread = threadRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Thread not found")
         // add perm c heck
 
         val reply = ForumThreadReply(
-            body = reference.body,
+            body = reference.body.replace("<script>", "<script type=\"javascript/blocked\">"),
             thread = thread,
-            author = user
+            authorId = user.identifier
         )
         thread.replies.add(reply)
 
@@ -203,9 +210,9 @@ class ThreadController @Autowired constructor(val userService: UserService, val 
         // add perm c heck
 
         if (thread.upvotes.any {
-            it.id == user.id
+            it.identifier == user.identifier
             }) thread.upvotes.removeIf {
-                it.id == user.id
+                it.identifier == user.identifier
         }
         else thread.upvotes.add(user)
 

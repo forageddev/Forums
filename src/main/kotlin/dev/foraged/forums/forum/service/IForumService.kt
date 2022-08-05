@@ -9,7 +9,7 @@ interface IForumService
     fun findAll(): List<Forum>
 
     /** Retrieves a forum by it's name, with it outputting  */
-    fun getForum(name: String?): Forum
+    fun getForum(name: String): Forum
     val subForums: List<ForumCategory>
 
     /**

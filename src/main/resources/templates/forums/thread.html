@@ -6,9 +6,12 @@
 <div layout:fragment="content">
     <ul class="breadcrumb text-capitalize">
         <li class="breadcrumb-item">
-            <a href="/forums">
+            <a href="/">
                 <i class="fas fa-home fa-fw"></i>
             </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/forums">Forums</a>
         </li>
         <li class="breadcrumb-item">
             <a th:href="${thread.category.friendlyUrl}" th:text="${thread.category.displayName}"></a>
@@ -22,15 +25,16 @@
         <div class="row">
             <div class="col-lg-12 col-xl-1">
                 <a th:href="@{'/player/' + ${thread.author.username}}">
-                    <img th:src="@{'https://crafatar.com/renders/body/' + ${thread.author.id.toString()} + '?overlay'}">
+                    <img style="height: 125px;width:auto" th:src="@{'https://visage.surgeplay.com/full/168/' + ${thread.author.identifier.toString()} + '?overlay'}">
                 </a>
             </div>
             <div class="col-xl-11 col-lg-12">
                 <h3>
                     <span th:text="${thread.title}"></span>
                     <div class="upthread" th:classappend="${session.user == null ? 'disabled' : ''}">
-                        <a th:href="@{'/thread/' + ${thread.id} + '/vote'}" th:text="${thread.upvotes.size()}">
+                        <a th:href="@{'/thread/' + ${thread.id} + '/vote'}">
                             <i class="fas fa-arrow-up fa-fw"></i>
+                            <span th:text="${thread.upvotes.size()}" class="count"></span>
                         </a>
                     </div>
 
@@ -47,14 +51,16 @@
     </div>
     <div th:each="reply : ${thread.replies}" class="card card-thread">
         <div class="row pl-5 pr-5">
-            <div class="col-lg-12 col-xl-1">
-                <a th:href="@{'/player/' + ${reply.author.username}}">
-                    <img style="max-width: 32px;max-height: 32px" th:src="@{'https://crafatar.com/avatars/' + ${reply.author.id.toString()} + '?overlay'}">
-                    <a th:style="@{'color:' + ${reply.author.getRankColor()}}" th:href="@{'/player/' + ${reply.author.username}}" th:text="${reply.author.username}"></a>
-                </a>
-            </div>
-            <div class="col-xl-11 col-lg-12">
-                <div class="post" th:utext="${reply.formattedBody}">
+            <div class="col-12" style="white-space: nowrap">
+                <img style="display: inline;max-width: 48px;max-height: 48px" th:src="@{'https://visage.surgeplay.com/bust/48/' + ${reply.author.identifier.toString()} + '?overlay'}">
+
+                <div style="display: inline;white-space: nowrap">
+                    <a th:style="@{'display: inline;color:' + ${reply.author.getRankColor()}}" th:href="@{'/player/' + ${reply.author.username}}" th:text="${reply.author.username}"></a>
+                    <time style="display: inline" th:datetime="${reply.timestamp}" data-format="datetime" data-toggle="tooltip"></time>
+
+                    <br>
+                    <div class="post" style="padding-left: 56px;margin-top: -20px;word-break: break-word" th:utext="${reply.formattedBody}">
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,7 +68,7 @@
 
     <div class="card card-thread-reply p-2" th:classappend="${session.user == null ? 'disabled' : ''}">
         <div class="thread-reply-avatar">
-            <img th:src="@{'https://crafatar.com/avatars/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : session.user.id.toString()} + '?size=24?overlay'}">
+            <img th:src="@{'https://visage.surgeplay.com/bust/168/' + ${session.user == null ? '606e2ff0ed7748429d6ce1d3321c7838' : session.user.identifier.toString()} + '?size=24?overlay'}">
         </div>
         <form class="thread-reply-content" method="post" th:action="@{'/thread/' + ${thread.id} + '/reply'}">
             <div class="form-group mb-2">

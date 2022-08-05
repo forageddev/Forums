@@ -1,10 +1,11 @@
 package dev.foraged.forums.forum
 
+import com.minexd.core.profile.ProfileService
 import dev.foraged.forums.Application
 import dev.foraged.forums.user.User
+import dev.foraged.forums.user.UserRepository
 import org.apache.commons.lang3.RandomStringUtils
 import org.commonmark.node.Node
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
@@ -13,7 +14,7 @@ import java.util.*
 @Document(collection = "threads")
 open class ForumThread(
     @Id var id: String = RandomStringUtils.randomAlphanumeric(12),
-    @DBRef var author: User? = null,
+    var authorId: UUID,
     var title: String = "",
     var body: String = "",
 
@@ -28,6 +29,7 @@ open class ForumThread(
 {
     @DBRef var replies: LinkedList<ForumThreadReply> = LinkedList()
     @DBRef var lastReply: ForumThreadReply? = null
+    val author: User = UserRepository.findByIdentifier(authorId)!!
 
     val friendlyUrl: String
         get() =
@@ -38,9 +40,13 @@ open class ForumThread(
                 .replace(" ", "-")
 
     val formattedBody: String
-        get()
-        {
-            val body: Node = Application.MARKDOWN_PARSER.parse(body)
+        get() {
+            val safeBody = body
+                .replace("<script>", "<script type=\"javascript/blocked\">")
+                .replace("<div>", "<bdiv>")
+                .replace("</div>", "</bdiv>")
+
+            val body: Node = Application.MARKDOWN_PARSER.parse(safeBody)
             return Application.MARKDOWN_RENDERER.render(body)
         }
 }

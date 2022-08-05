@@ -1,8 +1,25 @@
 package dev.foraged.forums
 
 import com.google.gson.GsonBuilder
-import dev.foraged.forums.rank.Rank
-import dev.foraged.forums.rank.RankRepository
+import com.google.gson.InstanceCreator
+import com.minexd.core.CoreShared
+import com.minexd.core.plugin.Plugin
+import com.minexd.core.plugin.PluginEventHandler
+import com.minexd.core.profile.Profile
+import com.minexd.core.profile.ProfileService
+import dev.foraged.forums.profile.SiteProfile
+import dev.foraged.forums.shop.ShopMessages
+import dev.foraged.shop.ShopShared
+import gg.scala.aware.AwareHub
+import gg.scala.aware.uri.WrappedAwareUri
+import gg.scala.store.ScalaDataStoreShared
+import gg.scala.store.connection.mongo.AbstractDataStoreMongoConnection
+import gg.scala.store.connection.mongo.impl.UriDataStoreMongoConnection
+import gg.scala.store.connection.mongo.impl.details.DataStoreMongoConnectionDetails
+import gg.scala.store.connection.redis.AbstractDataStoreRedisConnection
+import gg.scala.store.connection.redis.impl.DataStoreRedisConnection
+import gg.scala.store.serializer.serializers.GsonSerializer
+import net.evilblock.cubed.serializers.Serializers
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 import org.springframework.boot.CommandLineRunner
@@ -12,16 +29,30 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import revxrsal.commands.cli.ConsoleCommandHandler
+import java.lang.reflect.Type
+import java.util.*
+import java.util.logging.Logger
 
 @SpringBootApplication
 @ComponentScan("dev.foraged.forums")
-open class Application
+open class Application : ScalaDataStoreShared(), Plugin
 {
-    @Bean
-    open fun init(roleRepository: RankRepository): CommandLineRunner {
-        return CommandLineRunner {
-            if (!roleRepository.findById("default").isPresent) roleRepository.save(Rank(id = "default", name = "Default"))
-        }
+    override fun getProfileType(): Type { return Profile::class.java }
+    override fun getLogger(): Logger { return Logger.getAnonymousLogger() }
+    override fun createProfileInstance(uuid: UUID) = SiteProfile(uuid)
+    override fun getEventHandler(): PluginEventHandler { return getEventHandler() }
+    override fun getActiveGroups(): Set<String> { return setOf("GLOBAL") }
+
+    override fun getNewRedisConnection(): AbstractDataStoreRedisConnection {
+        return DataStoreRedisConnection()
+    }
+
+    override fun debug(from: String, message: String) {
+        getLogger().info("[${from}] [debug] $message")
+    }
+
+    override fun getNewMongoConnection(): AbstractDataStoreMongoConnection {
+        return UriDataStoreMongoConnection(DataStoreMongoConnectionDetails("mongodb://localhost:27017/Scala", "Scala"))
     }
 
     companion object {
@@ -39,17 +70,25 @@ open class Application
         fun main(args: Array<String>) {
             CONTEXT = SpringApplication.run(Application::class.java, *args)
             INSTANCE = Application()
+            AwareHub.configure(WrappedAwareUri()) {
+                GSON!!
+            }
+            ScalaDataStoreShared.INSTANCE = INSTANCE
+            Serializers.useGsonBuilderThenRebuild {
+                it.registerTypeAdapter(Profile::class.java, object : InstanceCreator<Profile> {
+                    override fun createInstance(p0: Type): Profile {
+                        return SiteProfile(UUID.randomUUID())
+                    }
 
-            // initialize mail variables
-            val properties = System.getProperties()
-            properties["mail.smtp.host"] = "smtp.gmail.com"
-            properties["mail.smtp.port"] = "465"
-            properties["mail.smtp.ssl.enable"] = "true"
-            properties["mail.smtp.auth"] = "true"
-
+                }).create()
+            }
+            GsonSerializer.provideCustomGson {
+                Serializers.gson
+            }
+            CoreShared(INSTANCE).configure()
+            ShopShared().configure(CONTEXT.getBean(ShopMessages::class.java))
 
             COMMAND_HANDLER.pollInput()
-
         }
     }
 }

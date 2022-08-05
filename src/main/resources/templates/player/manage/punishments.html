@@ -4,24 +4,24 @@
 </head>
 <body>
 <div class="block" th:fragment="punishments">
-    <button type="button" class="m-2 btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Create a punishment</button>
+    <button type="button" class="m-2 btn btn-primary p-2" style="width: 100%" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Create a punishment</button>
 
     <div class="alert alert-danger" th:if="${user.punishments.isEmpty()}">
         <i class="fas fa-times-circle fa-fw"></i> This player doesn't have any punishments
     </div>
 
-    <div class="card-body" th:if="${!user.punishments.isEmpty()}">
+    <div class="card-body p-1" th:if="${!user.punishments.isEmpty()}">
         <div class="card p-1" style="background: var(--extraBackground)" th:each="punishment : ${user.punishments}">
-            <div class="container d-flex d-inline d-block p-2" th:if="${punishment.isActive()}">
+            <div class="container d-flex d-inline d-block p-2 mt-0" th:if="${punishment.isActive()}">
                 &zwnj;<img height="16" th:if="${punishment.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${punishment.issuedBy.toString()} + '?size=16?overlay'}">
                 <img height="16" th:if="${punishment.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
 
-                &zwnj; <p style="margin-bottom: 0" th:class="${punishment.getIssuedByStyles()}" th:text="${punishment.getIssuedByName()}"></p>
+                &zwnj; <p style="margin-bottom: 0;color:" th:styleappend="${punishment.getIssuedByRankColor()}" th:text="${punishment.getIssuedByName()}"></p>
 
-                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getType().getAction()}"></p>
+                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getPunishmentType().getAction()}"></p>
 
-                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
-                <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
+                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
+                <p style="margin-bottom: 0;color: " th:styleappend="${user.bestDisplayRank.siteColor}" th:text="${user.username}"></p>
 
                 &zwnj; for
 
@@ -32,12 +32,12 @@
                 &zwnj; &zwnj;<img height="16" th:if="${punishment.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${punishment.issuedBy.toString()} + '?size=16?overlay'}">
                 <img height="16" th:if="${punishment.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
 
-                &zwnj; <p style="margin-bottom: 0" th:class="${punishment.getIssuedByStyles()}" th:text="${punishment.getIssuedByName()}"></p>
+                &zwnj; <p style="margin-bottom: 0;color:" th:styleappend="${punishment.getIssuedByRankColor()}" th:text="${punishment.getIssuedByName()}"></p>
 
-                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getType().getAction()}"></p>
+                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getPunishmentType().getAction()}"></p>
 
-                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.id.toString()} + '?size=16?overlay'}">
-                <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
+                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
+                <p style="margin-bottom: 0;color: " th:styleappend="${user.bestDisplayRank.siteColor}" th:text="${user.username}"></p>
 
                 &zwnj; for
 

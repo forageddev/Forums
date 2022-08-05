@@ -4,19 +4,29 @@
 <body>
 
 <div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a th:href="${'/' + #strings.arraySplit(#httpServletRequest.requestURI, '/')[0]}" th:text="${#strings.arraySplit(#httpServletRequest.requestURI, '/')[0]}"></a>
+        </li>
+    </ul>
+
     <div class="row staff-row justify-content-center">
         <div class="col staff-members text-center">
             <tr th:each="entry, stat : ${data}">
                 <div class="staff-member-group" th:id="${entry.key.id}">
-
                     <ta class="m-1" th:each="user : ${entry.value}">
                         <a th:href="@{'/player/' + ${user.username}}" class="staff-member col">
                             <div class="staff-head text-center ml-5 mr-5">
-                                <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.id.toString()} + '?overlay'}">
+                                <img th:src="@{'https://visage.surgeplay.com/full/168/' + ${user.identifier.toString()} + '?overlay'}">
                             </div>
 
                             <h4 style="color: #D9D9D9" th:text="${user.username}"></h4>
-                            <h1 th:style="@{'color:' + ${entry.key.hexColor}}" th:text="${#strings.toUpperCase(entry.key.name)}"></h1>
+                            <h1 th:style="@{'color:' + ${entry.key.siteColor}}" th:text="${#strings.toUpperCase(entry.key.id)}"></h1>
                         </a>
                     </ta>
                 </div>

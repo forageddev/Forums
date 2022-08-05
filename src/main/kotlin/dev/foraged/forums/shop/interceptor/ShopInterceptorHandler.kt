@@ -23,8 +23,7 @@ class ShopInterceptorHandler : HandlerInterceptorAdapter()
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (service == null) service = Application.CONTEXT.beanFactory.getBean("mongoUserDetails") as UserService
 
-        try
-        {
+        try {
             if (request.cookies != null) request.cookies.forEach {
                 if (it.name.equals("guest", true)) request.session.setAttribute(
                     "guest",

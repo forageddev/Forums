@@ -2,9 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 </head>
-<body>
-<div th:fragment="general" class="alert alert-danger">
-    <i class="fas fa-times-circle fa-fw"></i> Not enough data to display
-</div>
-</body>
+    <body>
+        <div th:fragment="general">
+            <div class="alert alert-danger">
+                <i class="fas fa-times-circle fa-fw"></i> Not enough data to display
+            </div>
+
+            <div id="comment-box">
+                <form th:if="${session.profile != null}" method="post" th:action="@{'/player/' + ${user.username} + '/reply'}">
+                    <img th:src="@{'https://visage.surgeplay.com/bust/48/' + ${session.profile.identifier.toString().replace('-', '')} + '?overlay=true&scale=3'}">
+                    <input name="text" id="text"  placeholder="Why not say hello?">
+                </form>
+                <form th:if="${session.profile == null}">
+                    <img th:src="@{'https://visage.surgeplay.com/bust/48/606e2ff0ed7748429d6ce1d3321c7838?overlay=true&scale=3'}">
+                    <input name="text" id="text" placeholder="log in to say hi..." disabled="">
+                </form>
+                <div id="comments">
+                    <div class="comment" th:each="message : ${messages}">
+                        <a th:href="'/player/' + ${message.author.username}">
+                            <img th:src="@{'https://visage.surgeplay.com/bust/48/' + ${message.author.identifier.toString().replace('-', '')} + '?overlay=true&scale=3'}">
+                        </a>
+
+                        <div class="comment-body">
+                            <div class="comment-text" th:text="${message.message}"></div>
+                            <div class="comment-info">
+
+                                <a style="color: " th:styleappend="${message.profile.bestDisplayRank.siteColor}" th:href="'/player/' + ${message.author.username}"><strong th:text="${message.author.username}"></strong></a>
+                                &nbsp;<time th:datetime="${message.timestamp}" data-format="ago" data-toggle="tooltip">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

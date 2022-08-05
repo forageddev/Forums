@@ -8,11 +8,11 @@
 <div layout:fragment="content">
     <div th:if="${announcements != null}">
         <tr th:each="thread : ${announcements}">
-            <div class="card card-thread">
+            <div class="card card-thread mb-3">
                 <div class="row">
                     <div class="col-lg-12 col-xl-1">
                         <a th:href="@{'/player/' + ${thread.author.username}}">
-                            <img th:src="@{'https://crafatar.com/renders/body/' + ${thread.author.id.toString()} + '?overlay'}">
+                            <img style="height: 125px;width:auto" th:src="@{'https://visage.surgeplay.com/full/168/' + ${thread.author.identifier.toString()} + '?overlay'}">
                         </a>
                     </div>
                     <div class="col-lg-12 col-xl-11">

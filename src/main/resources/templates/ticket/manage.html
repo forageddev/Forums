@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/ticket">Ticket</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a href="/ticket/manage">Manage</a>
+        </li>
+
+        <div class="navbar-nav ml-auto nav-item d-inline-block">
+            <button style="float: left;margin-left: 2px" type="button" target="filter-menu" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span th:text="${#request.getParameter('filter') == null ? 'HOT' : #request.getParameter('filter')}"></span>
+            </button>
+
+            <ul id="filter-menu" class="dropdown-menu" role="menu">
+                <li><a th:classappend="${#request.getParameter('filter') == 'OPEN' || #request.getParameter('filter') == null ? 'active' : ''}" href="?filter=OPEN">OPEN</a></li>
+                <li><a th:classappend="${#request.getParameter('filter') == 'ALL' ? 'active' : ''}" href="?filter=ALL">ALL</a></li>
+                <li><a th:classappend="${#request.getParameter('filter') == 'RESOLVED' ? 'active' : ''}" href="?filter=RESOLVED">RESOLVED</a></li>
+            </ul>
+        </div>
+    </ul>
+
+    <div class="card card-forum" th:if="${!tickets.isEmpty()}">
+        <table class="table table-forum table-responsive">
+            <thead>
+            <tr>
+                <th>Identifier</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Type</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Replies</th>
+                <th>Activity</th>
+            </tr>
+            </thead>
+            <colgroup>
+                <col width="55%">
+                <col class="d-none d-sm-none d-xs-none d-md-table-cell" width="10%">
+                <col class="d-none d-sm-none d-xs-none d-md-table-cell" width="10%">
+                <col width="25%">
+            </colgroup>
+            <tbody>
+            <tr th:each="ticket : ${tickets}">
+                <td class="forum-title forum-title-upvotes">
+                    <div class="row" style="width: 100%">
+                        <div class="col-lg-2 col-md-4 d-md-none d-none d-sm-none d-xs-none d-lg-block">
+                            <div>
+                                <img style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${ticket.author.identifier.toString().replace('-', '')} + '?size=32&overlay=true'}">
+                            </div>
+                        </div>
+                        <div class="col-lg-10 col-md-8 col-sm-12">
+                            <div class="upvotes" th:value="${ticket.template.displayName}"></div>
+                            <div>
+                                <a th:href="${ticket.friendlyUrl}" th:text="${ticket.id}"></a>
+                                <div class="meta">
+                                    by <a th:href="@{'/player/' + ${ticket.author.username}}"  th:style="@{'color: ' + ${ticket.author.getRankColor()}}" th:text="${ticket.author.username}"></a>
+                                    &bull;
+                                    <time th:datetime="${ticket.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${ticket.template.displayName}"></td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${ticket.replies.size()}"></td>
+                <td class="forum-latest">
+                    <div class="meta" th:if="${ticket.lastReply == null}">None</div>
+                    <div th:if="${ticket.lastReply != null}">
+                        by <a th:href="@{'/player/' + ${ticket.lastReply.author.username}}" style="color:" th:styleappend="${ticket.lastReply.author.getRankColor()}" th:text="${ticket.lastReply.getAuthor().username}"></a>
+                        <div class="meta">
+                            <time th:datetime="${ticket.lastReply.timestamp}" data-format="ago" data-toggle="tooltip"></time>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

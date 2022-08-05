@@ -9,15 +9,9 @@ package dev.foraged.forums.shop.controller
 
 import com.google.gson.JsonObject
 import dev.foraged.forums.Application
-import dev.foraged.forums.shop.Basket
-import dev.foraged.forums.shop.Transaction
 import dev.foraged.forums.shop.TransactionStatus
 import dev.foraged.forums.shop.repository.TransactionRepository
-import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
-import me.senta.coinbase.constant.PricingType
-import me.senta.coinbase.constant.body.CreateChargeBody
-import me.senta.coinbase.services.models.Price
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,8 +23,8 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/v1/payment")
-class PaymentController @Autowired constructor(val userService: UserService, val transactionRepository: TransactionRepository)
-{
+class PaymentController @Autowired constructor(val userService: UserService, val transactionRepository: TransactionRepository) {
+
     @RequestMapping(value = ["/crypto/verify", "/crypto/verify"], method = [RequestMethod.POST])
     fun tracker(@RequestBody raw: String, response: HttpServletResponse, request: HttpServletRequest): String {
         val body = Application.GSON.fromJson(raw, JsonObject::class.java)
@@ -47,9 +41,9 @@ class PaymentController @Autowired constructor(val userService: UserService, val
             {
                 val transaction = transactionRepository.getById(id)
 
-                if (transaction != null)
-                {
+                if (transaction != null) {
                     transaction.status = TransactionStatus.ACTIONS_QUEUED
+                    transaction.execute()
                     transactionRepository.save(transaction)
                 } else return "transaction not found"
             } else return "invalid user"

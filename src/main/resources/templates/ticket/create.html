@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{default}">
+<body>
+
+<div layout:fragment="content">
+    <ul class="breadcrumb text-capitalize">
+        <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fas fa-home fa-fw"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/ticket">Ticket</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/ticket/create">Create</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a th:href="${'/ticket/create' + template.id}" th:text="${template.displayName}"></a>
+        </li>
+    </ul>
+
+    <h2>Creating a <span th:text="${template.displayName}"></span></h2>
+    <div class="row staff-row justify-content-center">
+        <div class="col staff-members text-center">
+            <div class="staff-member-group">
+                <form th:action="@{'/ticket/create/' + ${template.id}}" method="post" enctype="application/x-www-form-urlencoded" style="width: 100%">
+                    <tr class="form-control" th:each="field : ${template.fields}">
+                        <h2 th:text="${field.displayName}"></h2>
+                        <input th:id="${field.id}" th:name="${field.id}" th:type="${field.inputType}" th:required="${field.required}" th:placeholder="${field.placeholderValue}" class="staff-member form-control col p-5">
+                    </tr>
+
+                    <input type="submit" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,27 +1,28 @@
 package dev.foraged.forums.user.service
 
-import dev.foraged.forums.rank.RankRepository
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.UserRepository
-import dev.foraged.forums.util.MojangUtils
+import gg.scala.cache.uuid.ScalaStoreUuidCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @Service
 class UserService : UserDetailsService
 {
-    @Autowired lateinit var userRepository: UserRepository
+    val userRepository by lazy {
+        UserRepository
+    }
     @Autowired lateinit var encoder: BCryptPasswordEncoder
 
-    fun findUserByEmail(email: String?): User?
-    {
+    fun findUserByEmail(email: String): User? {
         return userRepository.findByEmail(email)
     }
 
@@ -29,17 +30,16 @@ class UserService : UserDetailsService
         return userRepository.findByRegisterSecret(email)
     }
 
-    fun findUserByName(name: String?): User? {
+    fun findUserByName(name: String): User? {
         return userRepository.findByUsernameIgnoreCase(name)
     }
 
     fun findUserByUniqueId(uuid: UUID): User? {
-        return userRepository.findById(uuid).orElse(null)
+        return userRepository.findByIdentifier(uuid)
     }
 
-    fun save(user: User): User
-    {
-        return userRepository.save(user)
+    fun save(user: User): CompletableFuture<Void> {
+        return userRepository.controller.save(user, DataStoreStorageType.MONGO)
     }
 
     /**
@@ -50,16 +50,10 @@ class UserService : UserDetailsService
     @Throws(Exception::class)
     fun createUser(user: User)
     {
-        val uniqueId = MojangUtils.fetchUUID(user.username) ?: throw RuntimeException("Error finding uniqueId")
-        val existingUser = userRepository!!.findById(uniqueId).orElse(null)
-        user.id = uniqueId
+        val uniqueId = ScalaStoreUuidCache.uniqueId(user.username) ?: throw RuntimeException("Error finding uniqueId")
+        user.identifier = uniqueId
         user.password = encoder.encode(user.password)
-
-        if (existingUser != null) {
-            user.grants.addAll(existingUser.grants)
-            user.punishments.addAll(existingUser.punishments)
-        }
-        userRepository.save(user)
+        userRepository.controller.save(user)
     }
 
     @Throws(UsernameNotFoundException::class)
@@ -83,9 +77,10 @@ class UserService : UserDetailsService
     private fun getUserAuthority(user: User): List<GrantedAuthority>
     {
         val permissions: MutableList<GrantedAuthority> = ArrayList()
-        for (grant in user.activeGrants.filterNotNull()) grant.rank.compoundedPermissions.forEach {
+        // make this use other one too
+        /* for (grant in user.activeGrants.filterNotNull()) grant.rank.compoundedPermissions.forEach {
             permissions.add(SimpleGrantedAuthority(it))
-        }
+        }*/
         return permissions
     }
 

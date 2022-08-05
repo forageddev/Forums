@@ -1,40 +1,54 @@
 package dev.foraged.forums.web.controller
 
 import com.google.gson.internal.LinkedTreeMap
+import com.minexd.core.profile.Profile
+import com.minexd.core.profile.ProfileService
+import com.minexd.core.rank.Rank
+import com.minexd.core.rank.RankService
+import com.mongodb.client.model.Filters
 import dev.foraged.forums.Application
-import dev.foraged.forums.rank.Rank
-import dev.foraged.forums.rank.RankRepository
-import dev.foraged.forums.user.User
-import dev.foraged.forums.user.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
+import gg.scala.store.storage.impl.MongoDataStoreStorageLayer
+import gg.scala.store.storage.type.DataStoreStorageType
+import org.bson.Document
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.ModelAndView
 import revxrsal.commands.annotation.Command
 import revxrsal.commands.cli.core.CommandLineActor
+import java.util.concurrent.CompletableFuture
 
 @Controller
-class StaffController @Autowired constructor(val userController: UserRepository, val rankRepository: RankRepository) {
+class StaffController {
 
-    val staffMapCache: MutableMap<Rank, List<User>> = LinkedTreeMap()
-    val famousMapCache: MutableMap<Rank, List<User>> = LinkedTreeMap()
+    val staffMapCache: MutableMap<Rank, Collection<Profile>> = LinkedTreeMap()
+    val famousMapCache: MutableMap<Rank, Collection<Profile>> = LinkedTreeMap()
 
     init {
         Application.COMMAND_HANDLER.register(this)
-        recache()
     }
 
     fun recache() {
-        rankRepository.findAll().filterNotNull().sortedByDescending { it.weight }.forEach { rank ->
-            if (rank.hasPermission("minecraft.staff"))
-                staffMapCache[rank] = userController.findAll().filterNotNull().filter {
-                    it.primaryGrant != null && it.primaryGrant!!.rank.id == rank.id
+        staffMapCache.clear()
+        famousMapCache.clear()
+        println("Starting recache.")
+
+        for (it in RankService.controller.loadAll(DataStoreStorageType.MONGO).join().values)
+        {
+            println(it.displayName)
+            if (it.staff) staffMapCache[it] =
+                ProfileService.controller.useLayerWithReturn<MongoDataStoreStorageLayer<Profile>, Collection<Profile>>(
+                    DataStoreStorageType.MONGO
+                ) {
+                    this.loadAllWithFilterSync(Filters.elemMatch("grants", Document.parse("{ rankId: '${it.identifier}' }"))).values
                 }
 
-            if (rank.hasPermission("minecraft.famous")) famousMapCache[rank] = userController.findAll().filterNotNull().filter {
-                it.primaryGrant!!.rank.id == rank.id
-            }
+            if ("forums.display.famous" in it.getCompoundedPermissions()) famousMapCache[it] =
+                ProfileService.controller.useLayerWithReturn<MongoDataStoreStorageLayer<Profile>, Collection<Profile>>(
+                    DataStoreStorageType.MONGO
+                ) {
+                    this.loadAllWithFilterSync(Filters.elemMatch("grants", Document.parse("{ rankId: '${it.identifier}' }"))).values
+                }
         }
     }
 
@@ -51,7 +65,7 @@ class StaffController @Autowired constructor(val userController: UserRepository,
         val modelAndView = ModelAndView()
 
         modelAndView.addObject("data", staffMapCache)
-        modelAndView.addObject("controller", userController)
+        modelAndView.addObject("controller", ProfileService)
         modelAndView.viewName = "staff"
         return modelAndView
     }
@@ -61,7 +75,7 @@ class StaffController @Autowired constructor(val userController: UserRepository,
         val modelAndView = ModelAndView()
 
         modelAndView.addObject("data", famousMapCache)
-        modelAndView.addObject("controller", userController)
+        modelAndView.addObject("controller", ProfileService)
         modelAndView.viewName = "staff"
         return modelAndView
     }

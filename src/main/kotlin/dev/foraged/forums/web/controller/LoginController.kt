@@ -1,6 +1,5 @@
 package dev.foraged.forums.web.controller
 
-import com.google.gson.JsonObject
 import dev.foraged.forums.forum.repository.ForumRepository
 import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
