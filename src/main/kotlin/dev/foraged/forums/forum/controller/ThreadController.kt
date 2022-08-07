@@ -209,12 +209,8 @@ class ThreadController @Autowired constructor(val userService: UserService, val 
         val thread = threadRepository.findById(id).orElse(null) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Thread not found")
         // add perm c heck
 
-        if (thread.upvotes.any {
-            it.identifier == user.identifier
-            }) thread.upvotes.removeIf {
-                it.identifier == user.identifier
-        }
-        else thread.upvotes.add(user)
+        if (user.identifier in thread.upvotes) thread.upvotes.remove(user.identifier)
+        else thread.upvotes.add(user.identifier)
 
         threadRepository.save(thread)
         println("Voted.")

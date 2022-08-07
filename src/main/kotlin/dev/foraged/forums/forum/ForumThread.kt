@@ -23,13 +23,13 @@ open class ForumThread(
     val timestamp: Long = System.currentTimeMillis(),
     var lastEdited: Long? = null,
     var lastEditedBy: UUID? = null,
-    @DBRef var upvotes: MutableList<User> = mutableListOf(), // store this in a list so we can determine what users upvoted
+    var upvotes: MutableList<UUID> = mutableListOf(), // store this in a list so we can determine what users upvoted
     var open: Boolean = true // if false people wont be able to post replies
 )
 {
     @DBRef var replies: LinkedList<ForumThreadReply> = LinkedList()
     @DBRef var lastReply: ForumThreadReply? = null
-    val author: User = UserRepository.findByIdentifier(authorId)!!
+    @org.springframework.data.annotation.Transient val author: User = UserRepository.findByIdentifier(authorId)!!
 
     val friendlyUrl: String
         get() =

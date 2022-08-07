@@ -25,7 +25,7 @@ open class Ticket(
     @DBRef var replies: LinkedList<TicketReply> = LinkedList()
     @DBRef var lastReply: TicketReply? = null
 
-    val author: User = UserRepository.findByIdentifier(authorId)!!
+    @org.springframework.data.annotation.Transient val author: User = UserRepository.findByIdentifier(authorId)!!
 
     val friendlyUrl: String get() = "/ticket/manage/$id"
 }

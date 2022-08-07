@@ -71,9 +71,9 @@
                                     <h3 th:if="${#httpServletRequest.requestURI != '/'}" class="animeobj medium minor" style="transform: translateX(0%);">Exploring</h3>
                                     <h1 th:if="${#httpServletRequest.requestURI != '/'}" th:text="${#strings.arraySplit(#httpServletRequest.requestURI, '/')[0]}" class="animeobj bold" style="transform: translateX(0%);"></h1>
 
-                                    <h3 th:if="${#httpServletRequest.requestURI != '/' && !#httpServletRequest.requestURI.startsWith('/shop') && #lists.size(#strings.arraySplit(#httpServletRequest.requestURI, '/')) != 1}" th:text="${#strings.arraySplit(#httpServletRequest.requestURI, '/')[1]}" class="animeobj medium minor" style="transform: translateX(0%);"></h3>
+                                    <h3 th:if="${#httpServletRequest.requestURI != '/' and !#httpServletRequest.requestURI.startsWith('/shop') and #lists.size(#strings.arraySplit(#httpServletRequest.requestURI, '/')) != 1}" th:text="${#strings.arraySplit(#httpServletRequest.requestURI, '/')[1]}" class="animeobj medium minor" style="transform: translateX(0%);"></h3>
 
-                                    <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store'))}">
+                                    <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') or #httpServletRequest.requestURI.startsWith('/store'))}">
 
 
                                         <a th:each="category : ${categories}" th:href="@{'/shop/' + ${category.id}}">
@@ -120,7 +120,7 @@
                             </div>
 
                             <div th:if="${session.user == null}">
-                                <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) && session.guest != null}" class="nyte-user-control">
+                                <div th:if="${(#httpServletRequest.requestURI.startsWith('/shop') or #httpServletRequest.requestURI.startsWith('/store')) and session.guest != null}" class="nyte-user-control">
                                     <th:block th:with="guest=${session.guest}">
                                         <a th:href="@{'/shop'}" class="nyte-user-head">
                                             <img th:src="@{'https://visage.surgeplay.com/bust/168/' + ${guest.identifier.toString().replace('-', '')} + '?overlay=true'}">
@@ -138,7 +138,7 @@
                                     </th:block>
                                 </div>
 
-                                <div th:if="${!(#httpServletRequest.requestURI.startsWith('/shop') || #httpServletRequest.requestURI.startsWith('/store')) || session.guest == null}" class="nyte-user-control">
+                                <div th:if="${!(#httpServletRequest.requestURI.startsWith('/shop') or #httpServletRequest.requestURI.startsWith('/store')) or session.guest == null}" class="nyte-user-control">
                                     <a href="/login" class="nyte-user-head">
                                         <img src="https://visage.surgeplay.com/bust/168/606e2ff0ed7748429d6ce1d3321c7838">
                                     </a>

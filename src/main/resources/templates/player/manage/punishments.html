@@ -10,40 +10,61 @@
         <i class="fas fa-times-circle fa-fw"></i> This player doesn't have any punishments
     </div>
 
-    <div class="card-body p-1" th:if="${!user.punishments.isEmpty()}">
-        <div class="card p-1" style="background: var(--extraBackground)" th:each="punishment : ${user.punishments}">
-            <div class="container d-flex d-inline d-block p-2 mt-0" th:if="${punishment.isActive()}">
-                &zwnj;<img height="16" th:if="${punishment.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${punishment.issuedBy.toString()} + '?size=16?overlay'}">
-                <img height="16" th:if="${punishment.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+    <div class="card card-forum" th:if="${!user.punishments.isEmpty()}">
+        <table class="table table-forum table-responsive">
+            <thead>
+            <tr>
+                <th>Identifier</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Type</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Issued On</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <colgroup>
+                <col width="45%">
+                <col width="10%">
+                <col width="20%">
+                <col width="25%">
+            </colgroup>
+            <div th:each="punishment : ${user.punishments}">
+                <tbody>
+                <td class="forum-title forum-title-upvotes">
+                    <div class="row" style="width: 100%">
+                        <div class="col-xl-3 col-lg-2 col-md-4 d-md-none d-none d-sm-none d-xs-none d-lg-block">
+                            <div>
+                                <img th:if="${punishment.issuedBy != null}" style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${punishment.issuedBy.toString().replace('-', '')} + '?size=32&overlay=true'}">
+                                <img th:if="${punishment.issuedBy == null}" style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/f78a4d8dd51b4b3998a3230f2de0c670?size=32&overlay=true'}">
 
-                &zwnj; <p style="margin-bottom: 0;color:" th:styleappend="${punishment.getIssuedByRankColor()}" th:text="${punishment.getIssuedByName()}"></p>
+                            </div>
+                        </div>
+                        <div class="col-xl-9 col-lg-10 col-md-8 col-sm-12">
+                            <div>
+                                <a th:href="@{'/player/' + ${user.username} + '/punishments/' + ${punishment.uuid}}" th:text="${punishment.uuid}"></a>
+                                <div class="meta">
+                                    by <a th:href="@{'/player/' + ${punishment.getIssuedByName()}}"  th:style="@{'color: ' + ${punishment.getIssuedByRankColor()}}" th:text="${punishment.getIssuedByName()}"></a>
+                                    &bull;
+                                    <time th:datetime="${punishment.issuedAt}" data-format="ago" data-toggle="tooltip"></time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${punishment.punishmentType.context}"></td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${punishment.issuedOn}"></td>
 
-                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getPunishmentType().getAction()}"></p>
-
-                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
-                <p style="margin-bottom: 0;color: " th:styleappend="${user.bestDisplayRank.siteColor}" th:text="${user.username}"></p>
-
-                &zwnj; for
-
-                &zwnj; <p style="margin-bottom: 0" th:text="${punishment.reason}"></p>
-            </div>
-
-            <strike class="container d-flex d-inline d-block p-2" th:if="${!punishment.isActive()}">
-                &zwnj; &zwnj;<img height="16" th:if="${punishment.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${punishment.issuedBy.toString()} + '?size=16?overlay'}">
-                <img height="16" th:if="${punishment.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
-
-                &zwnj; <p style="margin-bottom: 0;color:" th:styleappend="${punishment.getIssuedByRankColor()}" th:text="${punishment.getIssuedByName()}"></p>
-
-                &zwnj; &zwnj;<p style="margin-bottom: 0" th:text="${punishment.getPunishmentType().getAction()}"></p>
-
-                &zwnj; &zwnj;<img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
-                <p style="margin-bottom: 0;color: " th:styleappend="${user.bestDisplayRank.siteColor}" th:text="${user.username}"></p>
-
-                &zwnj; for
-
-                &zwnj; <p style="margin-bottom: 0" th:text="${punishment.reason}"></p>
-            </strike>
-        </div>
+                <td th:if="${punishment.isActive()}" class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell">
+                    <span class="badge badge-success">Active</span>
+                </td>
+                <td th:if="${!punishment.isActive() and punishment.expiresAt == null}" class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell">
+                    <span class="badge badge-danger">Removed</span>
+                </td>
+                <td th:if="${!punishment.isActive() and punishment.expiresAt != null}" class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell">
+                    <span class="badge badge-warning">Expired</span>
+                </td>
+                </tr>
+                </tbody>
+        </table>
+    </div>
     </div>
 </div>
 </body>

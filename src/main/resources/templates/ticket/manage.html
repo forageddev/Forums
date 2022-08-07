@@ -23,7 +23,7 @@
             </button>
 
             <ul id="filter-menu" class="dropdown-menu" role="menu">
-                <li><a th:classappend="${#request.getParameter('filter') == 'OPEN' || #request.getParameter('filter') == null ? 'active' : ''}" href="?filter=OPEN">OPEN</a></li>
+                <li><a th:classappend="${#request.getParameter('filter') == 'OPEN' or #request.getParameter('filter') == null ? 'active' : ''}" href="?filter=OPEN">OPEN</a></li>
                 <li><a th:classappend="${#request.getParameter('filter') == 'ALL' ? 'active' : ''}" href="?filter=ALL">ALL</a></li>
                 <li><a th:classappend="${#request.getParameter('filter') == 'RESOLVED' ? 'active' : ''}" href="?filter=RESOLVED">RESOLVED</a></li>
             </ul>

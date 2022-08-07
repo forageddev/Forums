@@ -146,7 +146,7 @@ class TicketController @Autowired constructor(val userService: UserService, val 
         ref.split("&").forEach { decoded ->
             val input = decoded.split("=")[0]
             if (template.fields.any { it.id == input }) {
-                ticket.fields.add(CompletedTicketField(template.fields.find { it.id == input }!!, decoded.split("=")[1]))
+                ticket.fields.add(CompletedTicketField(template.fields.find { it.id == input }!!, decoded.split("=")[1].replace("+", " ")))
             }
         }
 

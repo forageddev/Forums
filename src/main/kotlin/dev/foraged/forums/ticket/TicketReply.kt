@@ -22,7 +22,7 @@ open class TicketReply(
     val timestamp: Long = System.currentTimeMillis(),
 )
 {
-    val author: User = UserRepository.findByIdentifier(authorId)!!
+    @org.springframework.data.annotation.Transient val author: User = UserRepository.findByIdentifier(authorId)!!
 
     val friendlyUrl: String
         get() = "/ticket/manage/" + ticket.id

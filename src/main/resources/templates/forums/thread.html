@@ -36,6 +36,18 @@
                             <i class="fas fa-arrow-up fa-fw"></i>
                             <span th:text="${thread.upvotes.size()}" class="count"></span>
                         </a>
+
+                        <a class="ml-2" th:if="${thread.open and session.profile != null and (session.profile.bestDisplayRank.staff or thread.author.identifier == session.profile.identifier)}" th:href="@{'/thread/' + ${thread.id} + '/lock'}">
+                            <i class="fas fa-arrow-up fa-lock"></i>
+                        </a>
+
+                        <a class="ml-2" th:if="${!thread.open and session.profile != null and session.profile.bestDisplayRank.staff}" th:href="@{'/thread/' + ${thread.id} + '/unlock'}">
+                            <i class="fas fa-arrow-up fa-lock-open"></i>
+                        </a>
+
+                        <a class="ml-2" th:if="${session.profile != null and (session.profile.bestDisplayRank.staff or thread.author.identifier == session.profile.identifier)}" th:href="@{'/thread/' + ${thread.id} + '/delete'}">
+                            <i class="fas fa-arrow-up fa-trash"></i>
+                        </a>
                     </div>
 
                     <div class="tagline">

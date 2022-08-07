@@ -4,71 +4,67 @@
 </head>
 <body>
 <div class="block" th:fragment="grants">
-    <button type="button" class="m-2 btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Create a grant</button>
+    <button type="button" class="m-2 btn btn-primary p-2" style="width: 100%" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Create a grant</button>
 
     <div class="alert alert-danger" th:if="${user.grants.isEmpty()}">
         <i class="fas fa-times-circle fa-fw"></i> This player doesn't have any grants
     </div>
 
-    <div class="card-body" th:if="${!user.grants.isEmpty()}">
-        <a class="card p-1" style="background: #232323; color: var(--font-color)" th:each="grant : ${user.grants}" th:href="@{'#collapseGrant-' + ${grant.id.toString().split('-')[0]}}" data-toggle="collapse" aria-controls="collapseBan">
-            <div class="container-fluid">
-                <div class="container-fluid d-flex d-inline d-block p-2" th:if="${grant.active}">
-                    &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
-                    <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
+    <div class="card card-forum" th:if="${!user.grants.isEmpty()}">
+        <table class="table table-forum table-responsive">
+            <thead>
+            <tr>
+                <th>Identifier</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Rank</th>
+                <th class="d-none d-sm-none d-xs-none d-md-table-cell">Issued On</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <colgroup>
+                <col width="45%">
+                <col width="10%">
+                <col width="20%">
+                <col width="25%">
+            </colgroup>
+            <div th:each="grant : ${user.grants}">
+                <tbody>
+                <td class="forum-title forum-title-upvotes">
+                    <div class="row" style="width: 100%">
+                        <div class="col-xl-3 col-lg-2 col-md-4 d-md-none d-none d-sm-none d-xs-none d-lg-block">
+                            <div>
+                                <img th:if="${grant.issuedBy != null}" style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/' + ${grant.issuedBy.toString().replace('-', '')} + '?size=32&overlay=true'}">
+                                <img th:if="${grant.issuedBy == null}" style="border-radius: 10%;" th:src="@{'https://cravatar.eu/avatar/f78a4d8dd51b4b3998a3230f2de0c670?size=32&overlay=true'}">
+                            </div>
+                        </div>
+                        <div class="col-xl-9 col-lg-10 col-md-8 col-sm-12">
+                            <div>
+                                <a th:href="@{'/player/' + ${user.username} + '/grants/' + ${grant.id}}" th:text="${grant.id}"></a>
+                                <div class="meta">
+                                    by <a th:href="@{'/player/' + ${grant.getIssuedByName()}}"  th:style="@{'color: ' + ${grant.getIssuedByRankColor()}}" th:text="${grant.getIssuedByName()}"></a>
+                                    &bull;
+                                    <time th:datetime="${grant.issuedAt}" data-format="ago" data-toggle="tooltip"></time>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${grant.rank.displayName}"></td>
+                <td class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell" th:text="${grant.issuedOn}"></td>
 
-                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy != null}" th:class="${grant.issuedBy.getRankColor()}" th:text="${grant.issuedBy.name}"></p>
-                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy == null}">Console</p>
-
-                    &zwnj; granted
-
-                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
-                    <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
-
-                    &zwnj; the
-
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rank.id}"></p>
-
-                    &zwnj; rank for
-
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.issuedReason}"></p>
-                </div>
-
-                <strike class="container-fluid d-flex d-inline d-block p-2" th:if="${!grant.active}">
-                    &zwnj; &zwnj;<img height="16" th:if="${grant.issuedBy != null}" th:src="@{'https://crafatar.com/renders/head/' + ${grant.issuedBy.toString()} + '?size=16?overlay'}">
-                    <img height="16" th:if="${grant.issuedBy == null}" src="https://crafatar.com/renders/head/f78a4d8d-d51b-4b39-98a3-230f2de0c670?size=16?overlay">
-
-                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy != null}" th:class="${grant.issuedBy.getRankColor()}" th:text="${grant.issuedBy.name}"></p>
-                    &zwnj; <p style="margin-bottom: 0" th:if="${grant.issuedBy == null}">Console</p>
-
-                    &zwnj; granted
-
-                    &zwnj; <img height="16" th:src="@{'https://crafatar.com/renders/head/' + ${user.identifier.toString()} + '?size=16?overlay'}">
-                    <p style="margin-bottom: 0;color: " th:styleappend="${user.getRankColor()}" th:text="${user.username}"></p>
-
-                    &zwnj; the
-
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.rank.id}"></p>
-
-                    &zwnj; rank for
-
-                    &zwnj; <p style="margin-bottom: 0" th:text="${grant.issuedReason}"></p>
-                </strike>
-            </div>
-
-            <div class="container-fluid collapse ml-3 mr-3" th:id="@{'collapseGrant-' + ${grant.id.toString().split('-')[0]}}">
-                <strong>Issuer:</strong>
-                <span th:if="${grant.issuedBy != null}" style="margin-bottom: 0;" th:styleappend="@{'color: ' + ${grant.issuedBy.getRankColor()}}" th:text="${grant.issuedBy.name}"></span>
-                <span th:if="${grant.issuedBy == null}">Console</span>
-
-
-                <br>
-                <strong>Reason:</strong>
-                <span style="margin-bottom: 0;" th:text="${grant.issuedReason}"></span>
-
-            </div>
-        </a>
+                <td th:if="${grant.isActive()}" class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell">
+                    <span class="badge badge-success">Active</span>
+                </td>
+                <td th:if="${!grant.isActive() and grant.expiresAt == null}" class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell">
+                    <span class="badge badge-danger">Removed</span>
+                </td>
+                <td th:if="${!grant.isActive() and grant.expiresAt != null}" class="forum-stats d-none d-sm-none d-xs-none d-md-table-cell">
+                    <span class="badge badge-warning">Expired</span>
+                </td>
+                </tr>
+                </tbody>
+        </table>
     </div>
+</div>
 </div>
 </body>
 </html>

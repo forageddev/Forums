@@ -14,6 +14,7 @@ class UserMessage(
     var timestamp: Long = System.currentTimeMillis(),
     @Id val id: UUID = UUID.randomUUID()
 ) {
+    @get:org.springframework.data.annotation.Transient
     val author: User get() = UserRepository.findByIdentifier(authorId)!!
     val profile: Profile get() = ProfileService.fetchProfile(authorId)
 }

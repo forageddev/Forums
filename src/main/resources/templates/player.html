@@ -54,7 +54,7 @@
                 <span th:text="${#lists.size(transactions)}"></span> STORE PURCHASES
             </span>
 
-            <a th:if="${session.user != null && session.user.identifier == user.identifier}" class="btn btn-nice btn-primary p-2 mt-3" style="width: 100%" href="/account">Edit your account</a>
+            <a th:if="${session.user != null and session.user.identifier == user.identifier}" class="btn btn-nice btn-primary p-2 mt-3" style="width: 100%" href="/account">Edit your account</a>
         </div>
 
         <div class="col-lg-12 col-xl-8">
@@ -71,7 +71,7 @@
                     </li>
                 </ul>
 
-                <ul class="nav nav-pills nav-fill" th:if="${session.profile != null && session.profile.bestDisplayRank.staff}">
+                <ul class="nav nav-pills nav-fill" th:if="${session.profile != null and session.profile.bestDisplayRank.staff}">
                     <li class="nav-item">
                         <a class="nav-link btn" th:classappend="${section} == 'grants' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/grants'">Grants</a>
                     </li>

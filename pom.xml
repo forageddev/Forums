@@ -200,6 +200,20 @@
             <artifactId>shared</artifactId>
             <version>0.1.7</version>
         </dependency>
+
+        <!-- leaderboards -->
+        <dependency>
+            <groupId>dev.foraged.cgs</groupId>
+            <artifactId>common</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.foraged.meetup</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- leaderboards -->
         <dependency>
             <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>
@@ -233,6 +247,12 @@
         <dependency>
             <groupId>dev.foraged.commons</groupId>
             <artifactId>serializers</artifactId>
+            <version>2.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.foraged.commons</groupId>
+            <artifactId>shared</artifactId>
             <version>2.1.0</version>
             <scope>compile</scope>
         </dependency>

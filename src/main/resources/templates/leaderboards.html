@@ -10,18 +10,19 @@
                 <i class="fas fa-home fa-fw"></i>
             </a>
         </li>
-        <li class="breadcrumb-item active">
+        <li class="breadcrumb-item">
             <a href="/leaderboards">Leaderboards</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <a th:href="@{'/leaderboards/' + ${category.displayName}}" th:text="${category.displayName}"></a>
         </li>
     </ul>
 
     <div class="pl-5 pr-5 row">
-        <th th:each="user : ${users}">
+        <th th:each="leaderboard : ${category.leaderboards}">
             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-sm-12 col-xs-12">
                 <div class="leaderboard text-center mb-3">
-                    <div class="header">
-                        Global
-                    </div>
+                    <div class="header" th:text="${leaderboard.statisticName}"></div>
                     <div class="leaderboard-content pl-2 pr-2">
                         <top class="leaderboard-sub-heading">
                             <div class="row">
@@ -34,28 +35,28 @@
                                 </div>
 
                                 <div class="col-3">
-                                    <h2 class="pos">ELO</h2>
+                                    <h2 class="pos" th:text="${leaderboard.statisticName}"></h2>
                                 </div>
                             </div>
                         </top>
 
-                        <pos class="leaderboard-position" th:each="pos : ${new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }}">
+                        <pos class="leaderboard-position" th:each="entry : ${leaderboard.comparedCachedValues}">
                             <div class="row mt-2">
                                 <div class="col-md-2">
-                                    <h2 class="pos" th:text="${pos}"></h2>
+                                    <h2 class="pos" th:text="${entry.value.first + 1}"></h2>
                                 </div>
 
                                 <div class="col-md-7">
-                                    <a th:href="@{'/player/' + ${user.username}}">
+                                    <a th:href="@{'/player/' + ${entry.key.username}}">
                                         <span style="white-space: nowrap">
-                                            <img style="display: inline" th:src="@{'https://crafatar.com/avatars/' + ${user.identifier.toString()} + '?size=24&overlay'}">
-                                            <h2 style="display: inline" class="pos pl-1" th:text="${user.username}"></h2>
+                                            <img style="display: inline" th:src="@{'https://crafatar.com/avatars/' + ${entry.key.identifier.toString()} + '?size=24&overlay'}">
+                                            <h2 style="display: inline" class="pos pl-1" th:text="${entry.key.username}"></h2>
                                         </span>
                                     </a>
                                 </div>
 
                                 <div class="col-md-3">
-                                    <h2 class="pos" th:text="1000"></h2>
+                                    <h2 class="pos" th:text="${entry.value.second}"></h2>
                                 </div>
                             </div>
                         </pos>

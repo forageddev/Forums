@@ -35,9 +35,9 @@
                                             </h3>
                                         </div>
                                         <div class="price">
-                                            <span th:if="${package.sale == null || !package.sale.active}" th:text="${'Price: $' + package.price}"></span>
-                                            <span th:if="${package.sale != null && package.sale.active}" style="font-size:16px;text-decoration: line-through;text-decoration-style: solid;color: var(--alert-color)" th:text="${'Price: $' + package.price}"></span>
-                                            <span th:if="${package.sale != null && package.sale.active}" th:text="@{'Sale: $' + ${package.effectivePrice}}" class="sale ml-2"></span>
+                                            <span th:if="${package.sale == null or !package.sale.active}" th:text="${'Price: $' + package.price}"></span>
+                                            <span th:if="${package.sale != null and package.sale.active}" style="font-size:16px;text-decoration: line-through;text-decoration-style: solid;color: var(--alert-color)" th:text="${'Price: $' + package.price}"></span>
+                                            <span th:if="${package.sale != null and package.sale.active}" th:text="@{'Sale: $' + ${package.effectivePrice}}" class="sale ml-2"></span>
                                         </div>
                                     </div>
                                     <div class="button">

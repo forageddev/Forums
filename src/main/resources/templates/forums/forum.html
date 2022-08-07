@@ -20,7 +20,7 @@
             </button>
 
             <ul id="filter-menu" class="dropdown-menu" role="menu">
-                <li><a th:classappend="${#request.getParameter('filter') == 'HOT' || #request.getParameter('filter') == null ? 'active' : ''}" href="?filter=HOT">HOT</a></li>
+                <li><a th:classappend="${#request.getParameter('filter') == 'HOT' or #request.getParameter('filter') == null ? 'active' : ''}" href="?filter=HOT">HOT</a></li>
                 <li><a th:classappend="${#request.getParameter('filter') == 'NEW' ? 'active' : ''}" href="?filter=NEW">NEW</a></li>
                 <li><a th:classappend="${#request.getParameter('filter') == 'TOP' ? 'active' : ''}" href="?filter=TOP">TOP</a></li>
             </ul>

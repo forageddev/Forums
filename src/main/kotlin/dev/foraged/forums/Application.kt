@@ -7,6 +7,10 @@ import com.minexd.core.plugin.Plugin
 import com.minexd.core.plugin.PluginEventHandler
 import com.minexd.core.profile.Profile
 import com.minexd.core.profile.ProfileService
+import com.minexd.core.profile.grant.Grant
+import com.minexd.core.profile.punishment.Punishment
+import com.minexd.core.rank.Rank
+import dev.foraged.commons.CommonsShared
 import dev.foraged.forums.profile.SiteProfile
 import dev.foraged.forums.shop.ShopMessages
 import dev.foraged.shop.ShopShared
@@ -35,13 +39,27 @@ import java.util.logging.Logger
 
 @SpringBootApplication
 @ComponentScan("dev.foraged.forums")
-open class Application : ScalaDataStoreShared(), Plugin
+open class Application : ScalaDataStoreShared(), Plugin, PluginEventHandler
 {
     override fun getProfileType(): Type { return Profile::class.java }
     override fun getLogger(): Logger { return Logger.getAnonymousLogger() }
     override fun createProfileInstance(uuid: UUID) = SiteProfile(uuid)
-    override fun getEventHandler(): PluginEventHandler { return getEventHandler() }
+    override fun getEventHandler(): PluginEventHandler { return this }
     override fun getActiveGroups(): Set<String> { return setOf("GLOBAL") }
+    override fun callGrantUpdateEvent(target: Profile, grant: Grant)
+    {
+        TODO("Not yet implemented")
+    }
+
+    override fun callPunishmentUpdateEvent(target: Profile, punishment: Punishment)
+    {
+        TODO("Not yet implemented")
+    }
+
+    override fun callRankUpdateEvent(rank: Rank)
+    {
+        TODO("Not yet implemented")
+    }
 
     override fun getNewRedisConnection(): AbstractDataStoreRedisConnection {
         return DataStoreRedisConnection()
@@ -86,6 +104,7 @@ open class Application : ScalaDataStoreShared(), Plugin
                 Serializers.gson
             }
             CoreShared(INSTANCE).configure()
+            CommonsShared.configure()
             ShopShared().configure(CONTEXT.getBean(ShopMessages::class.java))
 
             COMMAND_HANDLER.pollInput()

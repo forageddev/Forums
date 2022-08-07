@@ -7,6 +7,7 @@
 
 package dev.foraged.forums.shop.controller
 
+import com.minexd.core.profile.ProfileService
 import com.paypal.core.PayPalEnvironment
 import com.paypal.core.PayPalHttpClient
 import com.paypal.orders.Order
@@ -20,6 +21,7 @@ import dev.foraged.forums.user.User
 import dev.foraged.forums.user.service.UserService
 import dev.foraged.shop.purchase.PackageAction
 import dev.foraged.shop.purchase.PackageActionType
+import gg.scala.cache.uuid.ScalaStoreUuidCache
 import me.senta.coinbase.Coinbase
 import me.senta.coinbase.constant.PricingType
 import me.senta.coinbase.body.CreateChargeBody
@@ -49,7 +51,7 @@ class ShopController @Autowired constructor(
     val packageRepository: PackageRepository
 ) {
 
-    val coinbase: Coinbase = CoinbaseBuilder().withAPIKey("55595e44-ac31-401a-95fd-dde7b4714d8e").build()
+    val coinbase: Coinbase = CoinbaseBuilder().withAPIKey("8dec1ae5-94b9-4327-ba69-d862760f4b19").build()
     val paypal: PayPalHttpClient = PayPalHttpClient(PayPalEnvironment.Live(
         "AbDEJtSnoj1ADUA99_1SOAo7F1959wJVEarI-EyZ4BqRHxDj42zt6nyw3-sdhMUPa-nEAvn_Vvhr71RQ",
         "ELooXhwru0mI8bv4ivYrY6VHBA55b_8HNHrvbuuoz0UoW4farP2uYTNlbuRY9GNWLNAo04J_1CmHoje6")
@@ -111,12 +113,14 @@ class ShopController @Autowired constructor(
         if (request.getAttribute("user") != null) {
             throw ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "You are already logged in.")
         }
-        val user = userService.findUserByName(username) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "A player with that name has never logged on.")
 
-        if (user.registered) {
+        val profile = ProfileService.getOrFetchProfile(ScalaStoreUuidCache.uniqueId(username)!!, false) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "A player with that name has never logged on.")
+        val user = userService.findUserByName(username)
+
+        if (user?.registered == true) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "This account is already registered.")
         }
-        response.addCookie(Cookie("guest", user.identifier.toString()))
+        response.addCookie(Cookie("guest", profile.identifier.toString()))
 
         return "redirect:/shop"
     }
