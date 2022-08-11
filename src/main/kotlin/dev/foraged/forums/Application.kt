@@ -11,6 +11,7 @@ import com.minexd.core.profile.grant.Grant
 import com.minexd.core.profile.punishment.Punishment
 import com.minexd.core.rank.Rank
 import dev.foraged.commons.CommonsShared
+import dev.foraged.forums.leaderboard.LeaderboardService
 import dev.foraged.forums.profile.SiteProfile
 import dev.foraged.forums.shop.ShopMessages
 import dev.foraged.shop.ShopShared
@@ -106,6 +107,7 @@ open class Application : ScalaDataStoreShared(), Plugin, PluginEventHandler
             CoreShared(INSTANCE).configure()
             CommonsShared.configure()
             ShopShared().configure(CONTEXT.getBean(ShopMessages::class.java))
+            LeaderboardService.configure()
 
             COMMAND_HANDLER.pollInput()
         }

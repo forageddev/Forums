@@ -1,5 +1,6 @@
 package dev.foraged.forums.user.controller
 
+import com.minexd.core.profile.Profile
 import com.minexd.core.profile.ProfileService
 import dev.foraged.forums.forum.repository.ThreadRepository
 import dev.foraged.forums.shop.repository.TransactionRepository
@@ -99,36 +100,49 @@ class UserController {
     }
 
     @RequestMapping(value = ["/player/{id}/grants"], method = [RequestMethod.GET])
-    fun getPlayerGrants(@PathVariable id: String): ModelAndView
+    fun getPlayerGrants(@PathVariable id: String, request: HttpServletRequest): ModelAndView
     {
         val modelAndView = getPlayer(id)
+        val profile = request.session.getAttribute("profile") as Profile? ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to view this page")
+        if (!profile.hasPermission("forums.grants.management")) throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this page.")
+
         modelAndView.addObject("page", "manage")
         modelAndView.addObject("section", "grants")
         return modelAndView
     }
 
     @RequestMapping(value = ["/player/{id}/punishments"], method = [RequestMethod.GET])
-    fun getPlayerPunishments(@PathVariable id: String): ModelAndView
+    fun getPlayerPunishments(@PathVariable id: String, request: HttpServletRequest): ModelAndView
     {
         val modelAndView = getPlayer(id)
+        val profile = request.session.getAttribute("profile") as Profile? ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to view this page")
+        if (!profile.bestDisplayRank.staff) throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this page.")
+
         modelAndView.addObject("page", "manage")
         modelAndView.addObject("section", "punishments")
         return modelAndView
     }
 
     @RequestMapping(value = ["/player/{id}/transactions"], method = [RequestMethod.GET])
-    fun getPlayerTransactions(@PathVariable id: String): ModelAndView
+    fun getPlayerTransactions(@PathVariable id: String, request: HttpServletRequest): ModelAndView
     {
         val modelAndView = getPlayer(id)
+        val profile = request.session.getAttribute("profile") as Profile? ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to view this page")
+        if (!profile.hasPermission("forums.transactions.management")) throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this page.")
+
         modelAndView.addObject("page", "manage")
         modelAndView.addObject("section", "transactions")
         return modelAndView
     }
 
     @RequestMapping(value = ["/player/{id}/tickets"], method = [RequestMethod.GET])
-    fun getPlayerTickets(@PathVariable id: String): ModelAndView
+    fun getPlayerTickets(@PathVariable id: String, request: HttpServletRequest): ModelAndView
     {
         val modelAndView = getPlayer(id)
+        val profile = request.session.getAttribute("profile") as Profile? ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "You must be logged in to view this page")
+        if (!profile.hasPermission("forums.tickets.management")) throw ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this page.")
+
+
         modelAndView.addObject("page", "manage")
         modelAndView.addObject("section", "tickets")
         modelAndView.addObject("tickets", ticketRepository.findAllByAuthorId(ScalaStoreUuidCache.uniqueId(id) ?: UUID.fromString(id)).sortedByDescending {

@@ -6,15 +6,14 @@ import dev.foraged.forums.leaderboard.foxtrot.impl.FoxtrotKillsLeaderboard
 import dev.foraged.forums.leaderboard.foxtrot.impl.FoxtrotKillstreakLeaderboard
 import dev.foraged.forums.leaderboard.meetup.impl.*
 
-object MeetupLeaderboardCategory : LeaderboardCategory(
+class MeetupLeaderboardCategory : LeaderboardCategory(
     "meetup",
     "UHC Meetup",
     listOf(
-        MeetupKillsLeaderboard,
-        MeetupDeathsLeaderboard,
-        MeetupKDRLeaderboard,
-        MeetupWinsLeaderboard,
-        MeetupLossesLeaderboard
+        MeetupKillsLeaderboard(),
+        MeetupDeathsLeaderboard(),
+        MeetupWinsLeaderboard(),
+        MeetupLossesLeaderboard()
     )
 ) {
 

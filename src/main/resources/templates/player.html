@@ -72,7 +72,7 @@
                 </ul>
 
                 <ul class="nav nav-pills nav-fill" th:if="${session.profile != null and session.profile.bestDisplayRank.staff}">
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${session.profile.hasPermission('forums.grants.management')}">
                         <a class="nav-link btn" th:classappend="${section} == 'grants' ? 'active' : ''" th:href="'/player/' + ${user.username} + '/grants'">Grants</a>
                     </li>
                     <li class="nav-item">
@@ -104,7 +104,7 @@
                     </li>
                 </ul>
             </div>
-            <div th:replace="'/player/__${page}__' :: __${page}__"></div>
+            <div th:replace="'player/__${page}__' :: __${page}__"></div>
         </div>
     </div>
 </div>

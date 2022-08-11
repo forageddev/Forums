@@ -11,6 +11,12 @@ import java.util.stream.Collectors
 
 class FoxtrotKillsLeaderboard(val serverId: String) : Leaderboard<Int>("Kills")
 {
+    override fun fetchPlayerStats(identifier: UUID): Int {
+        return CommonsShared.getPersistRedis().useResourceWithReturn {
+            async().hget("${serverId}$statisticName", identifier.toString()).get().toInt()
+        } ?: 0
+    }
+
     override fun updateAndRefreshCache() {
         val sortedMap = mutableMapOf<Profile, Pair<Int, Int>>()
 

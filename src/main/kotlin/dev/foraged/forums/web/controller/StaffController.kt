@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.ModelAndView
 import revxrsal.commands.annotation.Command
 import revxrsal.commands.cli.core.CommandLineActor
-import java.util.concurrent.CompletableFuture
 
 @Controller
 class StaffController {
 
     val staffMapCache: MutableMap<Rank, Collection<Profile>> = LinkedTreeMap()
-    val famousMapCache: MutableMap<Rank, Collection<Profile>> = LinkedTreeMap()
+    val mediaMapCache: MutableMap<Rank, Collection<Profile>> = LinkedTreeMap()
 
     init {
         Application.COMMAND_HANDLER.register(this)
@@ -30,7 +29,7 @@ class StaffController {
 
     fun recache() {
         staffMapCache.clear()
-        famousMapCache.clear()
+        mediaMapCache.clear()
         println("Starting recache.")
 
         for (it in RankService.controller.loadAll(DataStoreStorageType.MONGO).join().values)
@@ -40,14 +39,18 @@ class StaffController {
                 ProfileService.controller.useLayerWithReturn<MongoDataStoreStorageLayer<Profile>, Collection<Profile>>(
                     DataStoreStorageType.MONGO
                 ) {
-                    this.loadAllWithFilterSync(Filters.elemMatch("grants", Document.parse("{ rankId: '${it.identifier}' }"))).values
+                    this.loadAllWithFilterSync(Filters.elemMatch("grants", Document.parse("{ rankId: '${it.identifier}' }"))).values.filter {
+                        it.bestDisplayRank.identifier == it.identifier
+                    }
                 }
 
-            if ("forums.display.famous" in it.getCompoundedPermissions()) famousMapCache[it] =
+            if ("forums.display.media" in it.getCompoundedPermissions()) mediaMapCache[it] =
                 ProfileService.controller.useLayerWithReturn<MongoDataStoreStorageLayer<Profile>, Collection<Profile>>(
                     DataStoreStorageType.MONGO
                 ) {
-                    this.loadAllWithFilterSync(Filters.elemMatch("grants", Document.parse("{ rankId: '${it.identifier}' }"))).values
+                    this.loadAllWithFilterSync(Filters.elemMatch("grants", Document.parse("{ rankId: '${it.identifier}' }"))).values.filter {
+                        it.bestDisplayRank.identifier == it.identifier
+                    }
                 }
         }
     }
@@ -70,11 +73,11 @@ class StaffController {
         return modelAndView
     }
 
-    @RequestMapping(value = ["/famous"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/media"], method = [RequestMethod.GET])
     fun famous(): ModelAndView {
         val modelAndView = ModelAndView()
 
-        modelAndView.addObject("data", famousMapCache)
+        modelAndView.addObject("data", mediaMapCache)
         modelAndView.addObject("controller", ProfileService)
         modelAndView.viewName = "staff"
         return modelAndView

@@ -42,7 +42,7 @@ class LeaderboardController
     fun home(@PathVariable("id") id: String): ModelAndView
     {
         val modelAndView = ModelAndView()
-        // THIS 100% NEEDS CHANGING TO A NEW SYSETM.
+
         return CompletableFuture.supplyAsync {
             val category = leaderboardService.findCategoryById(id) ?: throw ResponseStatusException(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, "There is no leaderboard defined with that identifier.")
 
